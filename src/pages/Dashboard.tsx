@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef, type FormEvent } from 'react'
 import {
   BarChart2, Trash2, Edit2, List, ShoppingCart, LayoutDashboard,
-  Box, AlertCircle, ArrowUp, ArrowDown, Power, Download, TrendingUp,
+  Box, Receipt, AlertCircle, ArrowUp, ArrowDown, Power, Download, TrendingUp,
   Package, Search, RefreshCw, ShieldCheck, ShieldOff, Trophy,
-  MessageCircle, ChevronDown, Eye, FileText, Printer, MoreVertical, X,
+  MessageCircle, ChevronDown, Eye, FileText, Printer, MoreVertical, X, Users, AlertTriangle, Grid,
 } from 'lucide-react'
 
 // Custom Malaysian Ringgit icon — replaces the generic dollar-sign icon
@@ -41,6 +41,8 @@ import { uploadProductImage } from '../lib/storage'
 import { formatCurrency, normalizeOrderMode, normalizeUnitType, toNumber, type UnitType } from '../lib/retail'
 import { normalizeStructuredOrderItem, formatInvoiceNo } from '../lib/retail'
 import { Invoice } from '../components/Invoice'
+import Expenses from './Expenses'
+import Attendance from './Attendance'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
 import { invoicePdfFile } from '../lib/invoicePdf'
@@ -79,7 +81,7 @@ type DashboardCoupon = {
   usage_count: number
   min_order_value: number
 }
-type TabKey = 'overview' | 'whatsapp' | 'pos_analytics' | 'billing' | 'advance_orders' | 'products' | 'categories' | 'coupons' | 'users' | 'history'
+type TabKey = 'overview' | 'whatsapp' | 'pos_analytics' | 'billing' | 'advance_orders' | 'products' | 'categories' | 'coupons' | 'users' | 'history' | 'expenses' | 'attendance'
 type PosAnalyticsTab = 'revenue' | 'today' | 'products' | 'categories' | 'coupons'
 type ProfileUser = { id: string; email: string; name: string; mobile: string; role: string; created_at: string }
 
@@ -184,6 +186,8 @@ export default function Dashboard() {
   const [categoryManagerOpen, setCategoryManagerOpen] = useState(false)
   const [openCategoryMenuId, setOpenCategoryMenuId] = useState<string | number | null>(null)
   const [coupons, setCoupons] = useState<DashboardCoupon[]>([])
+  const [advanceOrders, setAdvanceOrders] = useState<any[]>([])
+  const [expensesList, setExpensesList] = useState<any[]>([])
   const [couponForm, setCouponForm] = useState({ code: '', percentage: 10, expiry_date: '', usage_limit: '', min_order_value: '' })
   const [couponSaveError, setCouponSaveError] = useState('')
   const [couponSaveSuccess, setCouponSaveSuccess] = useState('')
@@ -319,6 +323,7 @@ export default function Dashboard() {
   }, [user?.id])
 
   // Analytics (date-aware)
+  const lowStockProducts = products.filter(p => p.isActive && p.stockQuantity <= (p.lowStockAlert || 5))
   const analytics = useMemo(() => {
     // Apply global date filter
     let dated = orders
@@ -1439,12 +1444,15 @@ export default function Dashboard() {
   const allNavItems: Array<{ id: TabKey; icon: React.ReactNode; label: string }> = [
     { id: 'billing',       icon: <ShoppingCart size={20} />,     label: 'Billing Panel' },
     { id: 'advance_orders',icon: <FileText size={20} />,         label: 'Advance Orders' },
-    { id: 'categories',    icon: <Package size={20} />,           label: 'Categories' },
+    { id: 'products',      icon: <Package size={20} />,           label: 'Inventory' },
+      { id: 'categories',    icon: <Grid size={20} />,              label: 'Categories' },
     { id: 'history',       icon: <List size={20} />,             label: 'Order History' },
     { id: 'pos_analytics', icon: <BarChart2 size={20} />,        label: 'Analytics Dashboard' },
     { id: 'coupons',       icon: <Box size={20} />,              label: 'Coupons' },
+    { id: 'expenses',      icon: <Receipt size={20} />,          label: 'Expenses' },
+    { id: 'attendance',    icon: <Users size={20} />,            label: 'Attendance' },
   ]
-  const navItems = allNavItems.filter(item => role === 'admin' || (item.id !== 'pos_analytics' && item.id !== 'coupons'))
+  const navItems = allNavItems.filter(item => role === 'admin' || (item.id !== 'pos_analytics' && item.id !== 'coupons' && item.id !== 'expenses' && item.id !== 'attendance'))
 
   return (
     <div className="admin-shell h-screen min-h-screen bg-bgMain flex flex-col lg:flex-row overflow-hidden">
@@ -1575,6 +1583,23 @@ export default function Dashboard() {
               <>
 
             {/* Revenue KPIs - 5 cards */}
+            
+            {lowStockProducts.length > 0 && (
+              <div className="bg-red-50 rounded-2xl border border-red-100 p-4 shadow-sm mb-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle size={18} className="text-red-600" />
+                  <h3 className="text-[13px] font-black text-red-800 uppercase tracking-wider">Low Stock Alerts ({lowStockProducts.length})</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {lowStockProducts.map(p => (
+                    <span key={p.id} className="bg-white border border-red-200 text-red-700 text-[11px] font-bold px-2.5 py-1 rounded-lg">
+                      {p.name} — <span className="font-black">{p.stockQuantity}</span> left
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3">
               {[
                 { label: l('Total Revenue', 'மொத்த வருவாய்'),    value: formatCurrency(analytics.totalCompletedRevenue), from: 'from-emerald-50 via-emerald-50/80 to-teal-50', iconBg: 'from-emerald-400 to-teal-500', icon: <RMIcon size={16} /> },
@@ -2120,12 +2145,13 @@ export default function Dashboard() {
             {/* Revenue sub-tab */}
             {posAnalyticsTab === 'revenue' && (
               <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
                   {[
-                    { label: 'TOTAL REVENUE',    helper: 'POS + manual combined', value: formatCurrency(analytics.totalCompletedRevenue), icon: <RMIcon size={16} />, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-                    { label: 'COMPLETED BILLS',  helper: 'POS + manual bills',    value: analytics.completedOrders,                       icon: <Trophy size={16} />,      color: 'text-emerald-500', bg: 'bg-emerald-50' },
-                    { label: 'OFFLINE BILLS',    helper: 'Walk-in POS sales',     value: formatCurrency(analytics.posRevenue),            icon: <RMIcon size={16} />, color: 'text-cyan-500',    bg: 'bg-cyan-50' },
-                    { label: 'ONLINE BILLS',     helper: 'Online POS sales',      value: formatCurrency(analytics.onlinePosRevenue),      icon: <RMIcon size={16} />, color: 'text-indigo-500',  bg: 'bg-indigo-50' },
+                    { label: 'NET PROFIT',       helper: 'Total - COGS - Expenses', value: formatCurrency(analytics.netProfit),             icon: <TrendingUp size={16} />,  color: 'text-emerald-600', bg: 'bg-emerald-100' },
+                    { label: 'TOTAL REVENUE',    helper: 'POS + Tailoring',         value: formatCurrency(analytics.totalCompletedRevenue), icon: <RMIcon size={16} />,      color: 'text-blue-500',    bg: 'bg-blue-50' },
+                    { label: 'PRODUCT REVENUE',  helper: 'POS Retail Sales',        value: formatCurrency(analytics.productRevenue),        icon: <Package size={16} />,     color: 'text-orange-500',  bg: 'bg-orange-50' },
+                    { label: 'SERVICE REVENUE',  helper: 'Advance Orders',          value: formatCurrency(analytics.serviceRevenue),        icon: <FileText size={16} />,    color: 'text-cyan-500',    bg: 'bg-cyan-50' },
+                    { label: 'TOTAL EXPENSES',   helper: 'All logged expenses',     value: formatCurrency(analytics.totalExpenses),         icon: <Receipt size={16} />,     color: 'text-red-500',     bg: 'bg-red-50' },
                   ].map((card, index) => (
                     <div key={index} className="bg-white rounded-card border border-borderLight p-5 shadow-soft">
                       <div className="flex items-start justify-between gap-2 mb-4">
@@ -3739,7 +3765,21 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        )}        {tab === 'users' && (
+        )}
+        
+        {tab === 'expenses' && (
+          <div className="flex flex-col h-full overflow-y-auto">
+            <Expenses />
+          </div>
+        )}
+        
+        {tab === 'attendance' && (
+          <div className="flex flex-col h-full overflow-y-auto">
+            <Attendance />
+          </div>
+        )}
+        
+        {tab === 'users' && (
           <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-[20px] font-black text-[#111111]">{l('User Management', 'பயனர் மேலாண்மை')}</h2>

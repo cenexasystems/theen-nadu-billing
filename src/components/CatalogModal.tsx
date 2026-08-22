@@ -16,7 +16,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState('All')
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const [editForm, setEditForm] = useState({ name: '', category: '', price: '' })
+  const [editForm, setEditForm] = useState({ name: '', category: '', price: '', stockQuantity: '' })
   const [editLoading, setEditLoading] = useState(false)
   const [editError, setEditError] = useState('')
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([])
@@ -98,6 +98,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
       category: categoryName,
       category_id: selectedCategory.id,
       price: Number(editForm.price),
+        stock_quantity: Number(editForm.stockQuantity),
     }).eq('id', editingProduct.id)
     if (error) { setEditError(error.message); setEditLoading(false); return }
     await fetchProducts(true)
@@ -225,7 +226,12 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                       <div onClick={() => onAdd(product)} className="cursor-pointer">
                         <div className="flex items-end justify-between mt-2 pt-2 border-t border-[#FDDBB4]/30">
                           <span className="text-[14px] font-black text-[#111111]">RM {product.price}</span>
-                          <span className="text-[9px] font-black text-[#374151] uppercase tracking-wider bg-[#F9FAFB] px-2 py-1 rounded border border-[#FDDBB4]/40">{product.category}</span>
+                          <div className="flex items-center gap-1.5">
+                            {product.stockQuantity <= (product.lowStockAlert || 5) && (
+                               <span className="text-[9px] font-black text-red-600 bg-red-50 border border-red-200 uppercase tracking-wider px-2 py-1 rounded" title={`Stock: ${product.stockQuantity}`}>Low Stock</span>
+                            )}
+                            <span className="text-[9px] font-black text-[#374151] uppercase tracking-wider bg-[#F9FAFB] px-2 py-1 rounded border border-[#FDDBB4]/40">{product.category}</span>
+                          </div>
                         </div>
                       </div>
                     </div>

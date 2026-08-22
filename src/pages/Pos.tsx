@@ -116,7 +116,7 @@ export default function Pos(props: PosProps = {}) {
   const { lang } = useLangStore()
   const l = (en: string, ta: string) => lang === 'ta' ? ta : en
   const navigate = useNavigate()
-  const { logout, role } = useAdminAuthStore()
+  const { LogOut, Volume2, VolumeX, role } = useAdminAuthStore()
   const embeddedMode = Boolean(props.isEmbedded)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [billingAdjOpen, setBillingAdjOpen] = useState(false)
@@ -492,7 +492,7 @@ export default function Pos(props: PosProps = {}) {
 
   // ── Generate bill ─────────────────────────────────────────────────────
   const generateBill = async () => {
-    if (!items.length) { setError('Add at least one product.'); return }
+    if (!items.length) { play('error'); setError('Add at least one product.'); return }
     // Validate required phone
     const normalizedPhone = normalizePhone(customer.phone || '')
     if (!normalizedPhone) { setError('Please enter a valid Malaysian mobile number (e.g. 0123456789 or +60 12-345 6789)'); return }
@@ -584,11 +584,13 @@ export default function Pos(props: PosProps = {}) {
         paymentMethod: paymentMode,
       }
       setInvoice(createdInvoice)
+      play('success')
       void persistInvoicePdf(createdInvoice)
       setItems([])
       setCustomer({ name: '', phone: '', address: '' })
       void fetchProducts()
     } catch (err: unknown) {
+      play('error')
       setError(err instanceof Error ? err.message : 'Failed to generate bill')
     } finally {
       setSaving(false)

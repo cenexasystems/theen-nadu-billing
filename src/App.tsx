@@ -10,6 +10,8 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Pos = lazy(() => import('./pages/Pos'))
 const DigitalInvoice = lazy(() => import('./pages/DigitalInvoice'))
 const Login = lazy(() => import('./pages/Login'))
+const Expenses = lazy(() => import('./pages/Expenses'))
+const Attendance = lazy(() => import('./pages/Attendance'))
 const AdminLogin = lazy(() => import('./pages/AdminLogin'))
 
 function LoadingSpinner() {
