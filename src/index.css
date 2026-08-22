@@ -9,7 +9,7 @@
     margin: 0;
     padding: 0;
     height: 100%;
-    background-color: #C73660;
+    background-color: #C85C10;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     touch-action: manipulation;
@@ -21,10 +21,10 @@
     margin: 0;
     padding: 0;
     height: 100%;
-    background-color: #C73660;
+    background-color: #C85C10;
     background-image:
-      radial-gradient(circle at top left, rgba(232, 84, 124, 0.06), transparent 34%),
-      radial-gradient(circle at top right, rgba(232, 84, 124, 0.05), transparent 28%);
+      radial-gradient(circle at top left, rgba(232, 112, 32, 0.06), transparent 34%),
+      radial-gradient(circle at top right, rgba(232, 112, 32, 0.05), transparent 28%);
     color: #111111;
     /* Noto Sans Tamil listed second so Latin text uses Inter but Tamil falls
        back to the correct Tamil-capable font without reordering glyphs. */
@@ -90,11 +90,11 @@
   }
 
   .mobile-cta-bar {
-    @apply border-t border-[#FDE2E9]/50 bg-white/95 backdrop-blur pb-[calc(env(safe-area-inset-bottom)+0.75rem)];
+    @apply border-t border-[#FDDBB4]/50 bg-white/95 backdrop-blur pb-[calc(env(safe-area-inset-bottom)+0.75rem)];
   }
 
   .mobile-section-title {
-    @apply text-[11px] font-black uppercase tracking-[0.24em] text-[#E8547C];
+    @apply text-[11px] font-black uppercase tracking-[0.24em] text-[#E87020];
   }
 
   .mobile-page-shell {

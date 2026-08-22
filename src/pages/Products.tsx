@@ -154,18 +154,18 @@ export default function Products() {
   }, [products, search, activeCategory, activeRem, sort, variantsMap])
 
   const SkeletonCard = () => (
-    <div className="rounded-2xl border border-[#FDE2E9]/50 bg-white overflow-hidden animate-pulse">
-      <div className="aspect-square bg-[#FDE2E9]/30" />
+    <div className="rounded-2xl border border-[#FDDBB4]/50 bg-white overflow-hidden animate-pulse">
+      <div className="aspect-square bg-[#FDDBB4]/30" />
       <div className="p-3 space-y-2">
-        <div className="h-2 bg-[#FDE2E9]/40 rounded w-1/2" />
-        <div className="h-3 bg-[#FDE2E9]/40 rounded w-4/5" />
-        <div className="h-3 bg-[#FDE2E9]/30 rounded w-3/5" />
+        <div className="h-2 bg-[#FDDBB4]/40 rounded w-1/2" />
+        <div className="h-3 bg-[#FDDBB4]/40 rounded w-4/5" />
+        <div className="h-3 bg-[#FDDBB4]/30 rounded w-3/5" />
         <div className="flex gap-1 mt-2">
-          {[1,2,3,4].map(i => <div key={i} className="h-5 bg-[#FDE2E9]/30 rounded-lg w-10" />)}
+          {[1,2,3,4].map(i => <div key={i} className="h-5 bg-[#FDDBB4]/30 rounded-lg w-10" />)}
         </div>
-        <div className="flex justify-between items-center pt-2 border-t border-[#FDE2E9]/30 mt-2">
-          <div className="h-5 bg-[#FDE2E9]/40 rounded w-14" />
-          <div className="h-8 bg-[#FDE2E9]/40 rounded-xl w-16" />
+        <div className="flex justify-between items-center pt-2 border-t border-[#FDDBB4]/30 mt-2">
+          <div className="h-5 bg-[#FDDBB4]/40 rounded w-14" />
+          <div className="h-8 bg-[#FDDBB4]/40 rounded-xl w-16" />
         </div>
       </div>
     </div>
@@ -174,7 +174,7 @@ export default function Products() {
   return (
     <div className="bg-bgMain min-h-screen">
       {/* Header Panel */}
-      <div className="bg-white border-b border-[#FDE2E9]/30">
+      <div className="bg-white border-b border-[#FDDBB4]/30">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:py-10 text-center">
           <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
             className="text-2xl sm:text-4xl font-black font-headline text-[#111111] mb-2">{t('products.title')}</motion.h1>
@@ -273,13 +273,13 @@ export default function Products() {
               {Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : !loading && filtered.length === 0 ? (
-            <div className="bg-white border border-[#FDE2E9]/40 rounded-3xl p-10 sm:p-20 text-center flex flex-col items-center">
+            <div className="bg-white border border-[#FDDBB4]/40 rounded-3xl p-10 sm:p-20 text-center flex flex-col items-center">
                <div className="w-20 h-20 bg-[#F9FAFB] rounded-full flex items-center justify-center mb-6">
-                 <Search className="text-[#FDE2E9]" size={32}/>
+                 <Search className="text-[#FDDBB4]" size={32}/>
                </div>
                <h3 className="text-xl font-black mb-2 text-[#111111]">{t('products.none')}</h3>
                <p className="text-[#374151] max-w-xs mx-auto mb-6 text-sm">No products found matching your filters.</p>
-               <button onClick={clear} className="text-sm font-black text-[#E8547C] hover:underline">Clear all filters</button>
+               <button onClick={clear} className="text-sm font-black text-[#E87020] hover:underline">Clear all filters</button>
             </div>
           ) : (
             <motion.div layout className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4 items-stretch">
@@ -299,7 +299,7 @@ export default function Products() {
                 <CheckCircle2 size={32} className="text-green-600" />
              </div>
              <div>
-                <h4 className="font-black text-lg text-green-900 leading-tight">Sreeja's Bridal Boutique Quality</h4>
+                <h4 className="font-black text-lg text-green-900 leading-tight">Thenn Nadu Tailoring Quality</h4>
                 <p className="text-sm text-green-700 mt-1">Every herb in our collection is sourced directly from trusted traditional practitioners and verified for purity.</p>
              </div>
           </div>

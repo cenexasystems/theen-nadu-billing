@@ -10,7 +10,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       includeAssets: [
-        'sreeja-bridal-boutique-logo.jpeg',
+        'thenn-nadu-logo.jpeg',
         'pwa-192x192.png',
         'pwa-512x512.png',
         'maskable-icon-512x512.png',
@@ -18,10 +18,10 @@ export default defineConfig({
         'robots.txt',
       ],
       manifest: {
-        name: 'Sreeja Boutique',
-        short_name: 'Sreeja Boutique',
-        description: "Sreeja's Bridal Boutique billing, catalog, coupon, order, receipt, and invoice administration.",
-        theme_color: '#C73660',
+        name: 'Thenn Nadu Legacy',
+        short_name: 'Thenn Nadu',
+        description: "Thenn Nadu Legacy billing, catalog, coupon, order, receipt, and invoice administration.",
+        theme_color: '#E87020',
         background_color: '#FBFAF6',
         display: 'standalone',
         orientation: 'any',

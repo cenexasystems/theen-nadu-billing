@@ -41,7 +41,7 @@ export const publicInvoiceUrl = (invoiceNumber: string) => {
   const origin =
     typeof window !== 'undefined' && window.location?.origin && !window.location.origin.includes('localhost')
       ? window.location.origin
-      : 'https://sreejas-bridal-botique.vercel.app'
+      : 'https://thenn-nadu-legacy.vercel.app'
   return `${origin}/invoice/${encodeURIComponent(formatted)}`
 }
 
@@ -50,29 +50,26 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
   const invoiceUrl = input.invoiceUrl || publicInvoiceUrl(input.invoiceNumber)
   const formattedNo = formatInvoiceNo(input.invoiceNumber)
   const itemsText = input.items && input.items.length > 0
-    ? input.items.map(item => `• ${item.name} (x${item.qty}) - ₹ ${Number(item.lineTotal || 0).toFixed(2)}`).join('\n')
+    ? input.items.map(item => `• ${item.name} (x${item.qty}) - RM ${Number(item.lineTotal || 0).toFixed(2)}`).join('\n')
     : ''
 
-  return `✨ *SREEJA'S BRIDAL BOUTIQUE* ✨
-💖 *Official Purchase Invoice & Receipt* 💖
+  return `✨ *THENN NADU TAILORING* ✨
+🧵 *Official Purchase Invoice & Receipt* 🧵
 
 Dear ${customerName},
 
-Thank you for shopping with Sreeja's Bridal Boutique! We truly appreciate your order.
+Thank you for shopping with Thenn Nadu Tailoring! We truly appreciate your order.
 
 🧾 *INVOICE DETAILS*
 📌 *Invoice No:* #${formattedNo}
-${input.invoiceDate ? `📅 *Date:* ${new Date(input.invoiceDate).toLocaleDateString('en-IN')}\n` : ''}${input.paymentMode ? `💳 *Payment Mode:* ${input.paymentMode}\n` : ''}${input.total !== undefined ? `💰 *Total Amount:* ₹ ${Number(input.total || 0).toFixed(2)}\n` : ''}
+${input.invoiceDate ? `📅 *Date:* ${new Date(input.invoiceDate).toLocaleDateString('en-MY')}\n` : ''}${input.paymentMode ? `💳 *Payment Mode:* ${input.paymentMode}\n` : ''}${input.total !== undefined ? `💰 *Total Amount:* RM ${Number(input.total || 0).toFixed(2)}\n` : ''}
 ${itemsText ? `📦 *ITEMS ORDERED:*\n${itemsText}\n\n` : ''}📄 *View & Download Digital Invoice / PDF:*
 👉 ${invoiceUrl}
 
-💖 Thank you, and we hope to see you again soon!
+🙏 Thank you, and we hope to see you again soon!
 
 Follow us on Instagram:
-https://www.instagram.com/sreejas_bridal_boutique?igsh=b2pqdWE3eGh1cmsw
-
-Review us on Google:
-https://www.google.com/search?sca_esv=2e6c317c12a55098&hl=en-GB&rlz=1CDGOYI_enIN1040IN1042&cs=1&output=search&kgmid=/g/11mkxl_2wy&q=Sreeja%27s+Bridal+Boutique&shem=epsd1,ltae,rimspwouoe&shndl=30&source=sh/x/loc/hdr/m1/3&kgs=2a74f979cbe4d39e&utm_source=epsd1,ltae,rimspwouoe,sh/x/loc/hdr/m1/3#ebo=0&sbfbu=1&pi=Sreeja’s%20Bridal%20Boutique%20Kakinada`
+https://www.instagram.com/thenn_nadu`
 }
 
 export const buildAdvanceDepositWhatsAppMessage = (input: AdvanceDepositWhatsAppInput) => {
@@ -80,7 +77,7 @@ export const buildAdvanceDepositWhatsAppMessage = (input: AdvanceDepositWhatsApp
   const deliveryDateFormatted = input.expectedDeliveryDate
     ? (() => {
         try {
-          return new Date(`${input.expectedDeliveryDate}T00:00:00`).toLocaleDateString('en-IN', {
+          return new Date(`${input.expectedDeliveryDate}T00:00:00`).toLocaleDateString('en-MY', {
             day: '2-digit',
             month: 'short',
             year: 'numeric',
@@ -91,18 +88,18 @@ export const buildAdvanceDepositWhatsAppMessage = (input: AdvanceDepositWhatsApp
       })()
     : '-'
 
-  return `💖 Thank You for Your Advance Order with Sreeja's Bridal Boutique! 💖
+  return `🧵 Thank You for Your Advance Order with Thenn Nadu Tailoring! 🧵
 
 Dear ${customerName},
 
-✨ Thank you for choosing Sreeja's Bridal Boutique. We have successfully received your initial advance payment!
+✨ Thank you for choosing Thenn Nadu Tailoring. We have successfully received your initial advance payment!
 
 🧾 Advance Deposit Details 👇
 📦 Deposit ID: ${input.depositId}
 👗 Product: ${input.productName}
-💵 Total Order Amount: ₹${input.totalAmount}
-💰 Advance Paid: ₹${input.depositAmount}${input.paymentMethod ? ` (${input.paymentMethod.toLowerCase() === 'upi' ? 'QR' : input.paymentMethod.toUpperCase()})` : ''}
-🔴 Balance to Pay on Delivery: ₹${input.remainingBalance}
+💵 Total Order Amount: RM ${input.totalAmount}
+💰 Advance Paid: RM ${input.depositAmount}${input.paymentMethod ? ` (${input.paymentMethod.toLowerCase() === 'upi' ? 'QR' : input.paymentMethod.toUpperCase()})` : ''}
+🔴 Balance to Pay on Delivery: RM ${input.remainingBalance}
 📅 Expected Delivery Date: ${deliveryDateFormatted}
 
 .
@@ -111,7 +108,7 @@ Dear ${customerName},
 
 .
 
-💖 Thank you for paying the initial amount as advance!`
+🙏 Thank you for paying the initial amount as advance!`
 }
 
-export const BUSINESS_PHONE = '917285919381'
+export const BUSINESS_PHONE = '60164091130'

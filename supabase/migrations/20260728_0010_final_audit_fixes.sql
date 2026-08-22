@@ -41,6 +41,7 @@ CREATE INDEX IF NOT EXISTS idx_orders_invoice_no ON public.orders(invoice_no);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON public.orders(created_at DESC);
 
 -- 5. Ensure update_advance_order_status RPC is up to date and handles all statuses
+DROP FUNCTION IF EXISTS public.update_advance_order_status(uuid, text, text);
 CREATE OR REPLACE FUNCTION public.update_advance_order_status(
   p_order_id uuid,
   p_status   text,

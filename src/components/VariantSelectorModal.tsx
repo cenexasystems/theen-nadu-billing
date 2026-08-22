@@ -195,7 +195,7 @@ export default function VariantSelectormodal({
                           ? 'bg-[#111111]/6 ring-2 ring-[#111111]'
                           : outOfStock
                           ? 'cursor-not-allowed opacity-45 ring-1 ring-gray-200'
-                          : 'ring-1 ring-gray-200 hover:ring-[#E8547C] active:bg-gray-50',
+                          : 'ring-1 ring-gray-200 hover:ring-[#E87020] active:bg-gray-50',
                       ].join(' ')}
                     >
                       {/* Radio circle */}

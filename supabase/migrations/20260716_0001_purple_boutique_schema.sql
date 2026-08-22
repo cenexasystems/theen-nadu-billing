@@ -181,11 +181,11 @@ ON CONFLICT (id) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS public.store_settings (
   id SMALLINT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
-  name TEXT NOT NULL DEFAULT 'Purple Boutique',
+  name TEXT NOT NULL DEFAULT 'Thenn Nadu Tailoring',
   owner_name TEXT NOT NULL DEFAULT '',
-  phone TEXT NOT NULL DEFAULT '+60 11-3312 7107',
-  email TEXT NOT NULL DEFAULT 'mypurpleboutique05@gmail.com',
-  address TEXT NOT NULL DEFAULT 'FR-02-05A TAMARIND SUITE, Persiaran Multimedia, CYBER 10, 63000 Cyberjaya, Selangor',
+  phone TEXT NOT NULL DEFAULT '+60 16-409 1130',
+  email TEXT NOT NULL DEFAULT 'thennnadulegacy@gmail.com',
+  address TEXT NOT NULL DEFAULT 'No. 4A 1st Floor & 15, Market Street, 10200 Georgetown, Penang',
   gst_enabled BOOLEAN NOT NULL DEFAULT FALSE,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -193,10 +193,10 @@ CREATE TABLE IF NOT EXISTS public.store_settings (
 INSERT INTO public.store_settings (id, name, phone, email, address)
 VALUES (
   1,
-  'Purple Boutique',
-  '+60 11-3312 7107',
-  'mypurpleboutique05@gmail.com',
-  'FR-02-05A TAMARIND SUITE, Persiaran Multimedia, CYBER 10, 63000 Cyberjaya, Selangor'
+  'Thenn Nadu Tailoring',
+  '+60 16-409 1130',
+  'thennnadulegacy@gmail.com',
+  'No. 4A 1st Floor & 15, Market Street, 10200 Georgetown, Penang'
 )
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,

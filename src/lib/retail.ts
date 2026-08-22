@@ -45,9 +45,9 @@ const DEFAULT_UNIT_LABEL: Record<UnitType, string> = {
   bundle: 'bundle',
 }
 
-const INR_CURRENCY = new Intl.NumberFormat('en-IN', {
+const MYR_CURRENCY = new Intl.NumberFormat('en-MY', {
   style: 'currency',
-  currency: 'INR',
+  currency: 'MYR',
   currencyDisplay: 'symbol',
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
@@ -333,7 +333,7 @@ export const calculateLineTotal = (
 export const variantLineTotal = (price: number, cartQty: number): number =>
   roundTo(price * Math.max(0, Math.round(cartQty)), 2)
 
-export const formatCurrency = (value: number) => INR_CURRENCY.format(roundTo(value, 2)).replace(/\u00a0/g, ' ')
+export const formatCurrency = (value: number) => MYR_CURRENCY.format(roundTo(value, 2)).replace(/\u00a0/g, ' ')
 
 export const formatCompactQuantity = (quantity: number, unitLabel: string) => {
   const q = formatNumber(quantity)

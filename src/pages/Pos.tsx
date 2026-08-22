@@ -495,7 +495,7 @@ export default function Pos(props: PosProps = {}) {
     if (!items.length) { setError('Add at least one product.'); return }
     // Validate required phone
     const normalizedPhone = normalizePhone(customer.phone || '')
-    if (!normalizedPhone) { setError('Please enter a valid Indian mobile number (e.g. 9876543210 or +91 9876543210)'); return }
+    if (!normalizedPhone) { setError('Please enter a valid Malaysian mobile number (e.g. 0123456789 or +60 12-345 6789)'); return }
     // Validate payment amount (only required for cash)
     if (paymentType === 'cash' && !cashReceived.trim()) { setError('Enter the amount received from customer'); return }
     if (paymentType === 'cash' && cashReceivedNum < total) { setError(`Insufficient payment. Customer still owes ${formatCurrency(total - cashReceivedNum)}`); return }
@@ -790,8 +790,8 @@ export default function Pos(props: PosProps = {}) {
       {/* Header */}
       <div className="px-4 pt-4 pb-3 md:px-6 md:pt-6 md:pb-4 shrink-0 flex flex-col gap-4 min-[480px]:flex-row min-[480px]:items-start min-[480px]:justify-between">
         <div className="min-w-0">
-          <h2 className="text-[28px] md:text-[22px] font-black text-[#E8547C] flex items-start gap-2 leading-tight">
-            <div className="w-1.5 h-6 bg-[#E8547C] rounded-full"></div>
+          <h2 className="text-[28px] md:text-[22px] font-black text-[#E87020] flex items-start gap-2 leading-tight">
+            <div className="w-1.5 h-6 bg-[#E87020] rounded-full"></div>
             POS Billing Panel
           </h2>
           <p className="text-[13px] md:text-[12px] text-gray-500 font-medium ml-3.5 mt-1 pr-2">Quick Invoice generator & database synced checkout</p>
@@ -799,16 +799,16 @@ export default function Pos(props: PosProps = {}) {
 
         {/* Online/Offline Toggle & Logout */}
         <div className="flex gap-2 w-full min-[480px]:w-auto">
-          <div className="grid grid-cols-2 bg-white rounded-xl border border-[#FDE2E9]/60 p-1 shadow-sm flex-1 min-[480px]:flex-none">
+          <div className="grid grid-cols-2 bg-white rounded-xl border border-[#FDDBB4]/60 p-1 shadow-sm flex-1 min-[480px]:flex-none">
             <button
               onClick={() => setOrdermode('offline')}
-              className={`min-h-[44px] px-4 py-2 rounded-lg text-[12px] md:text-[11px] font-black tracking-wider uppercase transition-colors ${ordermode === 'offline' ? 'bg-[#E8547C] text-white' : 'text-[#374151] hover:bg-[#F9FAFB]'}`}
+              className={`min-h-[44px] px-4 py-2 rounded-lg text-[12px] md:text-[11px] font-black tracking-wider uppercase transition-colors ${ordermode === 'offline' ? 'bg-[#E87020] text-white' : 'text-[#374151] hover:bg-[#F9FAFB]'}`}
             >
               Offline
             </button>
             <button
               onClick={() => setOrdermode('online')}
-              className={`min-h-[44px] px-4 py-2 rounded-lg text-[12px] md:text-[11px] font-black tracking-wider uppercase transition-colors ${ordermode === 'online' ? 'bg-[#E8547C] text-white' : 'text-[#374151] hover:bg-[#F9FAFB]'}`}
+              className={`min-h-[44px] px-4 py-2 rounded-lg text-[12px] md:text-[11px] font-black tracking-wider uppercase transition-colors ${ordermode === 'online' ? 'bg-[#E87020] text-white' : 'text-[#374151] hover:bg-[#F9FAFB]'}`}
             >
               Online
             </button>
@@ -840,9 +840,9 @@ export default function Pos(props: PosProps = {}) {
         <div className="flex-[2.1] flex flex-col gap-6 lg:overflow-y-auto lg:pb-4 hide-scrollbar">
 
           {/* Customer Details Card */}
-          <div className="bg-white rounded-2xl border border-[#FDE2E9]/40 shadow-sm p-4 md:p-5">
+          <div className="bg-white rounded-2xl border border-[#FDDBB4]/40 shadow-sm p-4 md:p-5">
             <h3 className="text-[18px] md:text-[14px] font-black text-[#111111] flex items-center gap-2 mb-4">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#E8547C]"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#E87020]"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
               Customer Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -853,7 +853,7 @@ export default function Pos(props: PosProps = {}) {
                   value={customer.name}
                   onChange={e => setCustomer({...customer, name: e.target.value})}
                   placeholder="Enter name"
-                  className="w-full h-12 px-4 bg-white border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
@@ -863,7 +863,7 @@ export default function Pos(props: PosProps = {}) {
                   value={customer.phone}
                   onChange={e => setCustomer({...customer, phone: e.target.value})}
                   placeholder="Enter WhatsApp number"
-                  className="w-full h-12 px-4 bg-white border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
@@ -873,7 +873,7 @@ export default function Pos(props: PosProps = {}) {
                   value={remarks}
                   onChange={e => setRemarks(e.target.value)}
                   placeholder="Optional remarks"
-                  className="w-full h-12 px-4 bg-white border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
@@ -883,7 +883,7 @@ export default function Pos(props: PosProps = {}) {
                   value={referenceNumber}
                   onChange={e => setReferenceNumber(e.target.value)}
                   placeholder="Optional ref no."
-                  className="w-full h-12 px-4 bg-white border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
@@ -893,7 +893,7 @@ export default function Pos(props: PosProps = {}) {
                   type="datetime-local"
                   value={billingDate}
                   onChange={e => setBillingDate(e.target.value)}
-                  className="w-full h-12 px-4 bg-white border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[16px] md:text-[13px] font-bold text-[#111111]"
+                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111]"
                 />
                 <p className="mt-1 text-[10px] text-gray-400 font-medium">Leave blank to use today's date &amp; time</p>
               </div>
@@ -901,35 +901,35 @@ export default function Pos(props: PosProps = {}) {
           </div>
 
           {/* Order Items Card */}
-          <div className="bg-white rounded-2xl border border-[#FDE2E9]/40 shadow-sm flex-1 flex flex-col min-h-[400px]">
+          <div className="bg-white rounded-2xl border border-[#FDDBB4]/40 shadow-sm flex-1 flex flex-col min-h-[400px]">
             {/* Card Header */}
-            <div className="flex flex-col gap-4 p-4 md:p-5 border-b border-[#FDE2E9]/40">
+            <div className="flex flex-col gap-4 p-4 md:p-5 border-b border-[#FDDBB4]/40">
               <h3 className="text-[18px] md:text-[14px] font-black text-[#111111] flex items-center gap-2">
-                <Receipt size={16} className="text-[#E8547C]" />
+                <Receipt size={16} className="text-[#E87020]" />
                 Order Items
               </h3>
               <div className="grid grid-cols-2 md:flex md:items-stretch gap-2">
                 <button
                   onClick={clearAll}
-                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg border border-[#FDE2E9]/60 text-[12px] md:text-[11px] font-black text-[#374151] hover:bg-[#F9FAFB] transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
+                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg border border-[#FDDBB4]/60 text-[12px] md:text-[11px] font-black text-[#374151] hover:bg-[#F9FAFB] transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
                 >
                   <Trash2 size={12} /> CLEAR ORDER
                 </button>
                 <button
                   onClick={() => setCatalogOpen(true)}
-                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg border border-[#E8547C] text-[#E8547C] text-[12px] md:text-[11px] font-black hover:bg-[#E8547C]/5 transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
+                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg border border-[#E87020] text-[#E87020] text-[12px] md:text-[11px] font-black hover:bg-[#E87020]/5 transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
                 >
                   <Search size={12} /> SEARCH CATALOG
                 </button>
                 <button
                   onClick={() => setAddProductOpen(true)}
-                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg bg-[#E8547C] text-white text-[12px] md:text-[11px] font-black hover:bg-[#065F46] transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
+                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg bg-[#E87020] text-white text-[12px] md:text-[11px] font-black hover:bg-[#065F46] transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
                 >
                   <Plus size={12} /> ADD TO CATALOG
                 </button>
                 <button
                   onClick={() => setCustomItemOpen(open => !open)}
-                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg border border-[#E8547C] text-[#E8547C] text-[12px] md:text-[11px] font-black hover:bg-[#E8547C]/5 transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
+                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg border border-[#E87020] text-[#E87020] text-[12px] md:text-[11px] font-black hover:bg-[#E87020]/5 transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
                 >
                   + ADD CUSTOM ITEM
                 </button>
@@ -937,7 +937,7 @@ export default function Pos(props: PosProps = {}) {
               {customItemOpen && (
                 <form
                   onSubmit={e => { e.preventDefault(); addManualItem() }}
-                  className="mt-3 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_150px_auto] gap-2 rounded-xl border border-[#FDE2E9]/60 bg-[#FFFDFC] p-3"
+                  className="mt-3 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_150px_auto] gap-2 rounded-xl border border-[#FDDBB4]/60 bg-[#FFFDFC] p-3"
                 >
                   <input
                     autoFocus
@@ -945,19 +945,19 @@ export default function Pos(props: PosProps = {}) {
                     value={manualName}
                     onChange={e => setManualName(e.target.value)}
                     placeholder="Product name"
-                    className="h-10 rounded-lg border border-[#FDE2E9]/70 bg-white px-3 text-[12px] font-bold text-[#111111] outline-none focus:border-[#E8547C]"
+                    className="h-10 rounded-lg border border-[#FDDBB4]/70 bg-white px-3 text-[12px] font-bold text-[#111111] outline-none focus:border-[#E87020]"
                   />
                   <input
                     step="0.01"
                     type="number" onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     value={manualPrice}
                     onChange={e => setManualPrice(e.target.value)}
-                    placeholder="Price (₹, optional)"
-                    className="h-10 rounded-lg border border-[#FDE2E9]/70 bg-white px-3 text-[12px] font-bold text-[#111111] outline-none focus:border-[#E8547C]"
+                    placeholder="Price (RM, optional)"
+                    className="h-10 rounded-lg border border-[#FDDBB4]/70 bg-white px-3 text-[12px] font-bold text-[#111111] outline-none focus:border-[#E87020]"
                   />
                   <button
                     type="submit"
-                    className="h-10 rounded-lg bg-[#E8547C] px-4 text-[11px] font-black text-white hover:bg-[#065F46]"
+                    className="h-10 rounded-lg bg-[#E87020] px-4 text-[11px] font-black text-white hover:bg-[#065F46]"
                   >
                     ADD ITEM
                   </button>
@@ -966,9 +966,9 @@ export default function Pos(props: PosProps = {}) {
             </div>
 
             {/* Table Header */}
-            <div className="hidden md:grid grid-cols-[1fr_100px_120px_40px] gap-3 px-5 py-3 border-b border-[#FDE2E9]/20 bg-[#FAFAFA]">
+            <div className="hidden md:grid grid-cols-[1fr_100px_120px_40px] gap-3 px-5 py-3 border-b border-[#FDDBB4]/20 bg-[#FAFAFA]">
               <span className="text-[10px] font-black text-[#374151] tracking-wider uppercase">Item Name / Description</span>
-              <span className="text-[10px] font-black text-[#374151] tracking-wider uppercase text-right">Price (₹)</span>
+              <span className="text-[10px] font-black text-[#374151] tracking-wider uppercase text-right">Price (RM)</span>
               <span className="text-[10px] font-black text-[#374151] tracking-wider uppercase text-center">Qty</span>
               <span></span>
             </div>
@@ -984,7 +984,7 @@ export default function Pos(props: PosProps = {}) {
 
               {items.map(item => (
                 <div key={item.id}>
-                  <div className="md:hidden border border-[#FDE2E9]/30 rounded-2xl p-4 bg-[#FFFDFC] space-y-3">
+                  <div className="md:hidden border border-[#FDDBB4]/30 rounded-2xl p-4 bg-[#FFFDFC] space-y-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <p className="text-[13px] font-black uppercase tracking-wider text-[#374151] mb-1">Product Name</p>
@@ -994,17 +994,17 @@ export default function Pos(props: PosProps = {}) {
                             value={item.name}
                             onChange={e => updateItem(item.id, 'name', e.target.value)}
                             placeholder="Item name"
-                            className="w-full h-12 px-3 bg-[#FAFAFA] border border-[#FDE2E9]/40 rounded-xl text-[16px] font-bold text-[#111111] focus:outline-none focus:border-[#E8547C]"
+                            className="w-full h-12 px-3 bg-[#FAFAFA] border border-[#FDDBB4]/40 rounded-xl text-[16px] font-bold text-[#111111] focus:outline-none focus:border-[#E87020]"
                           />
                         ) : (
-                          <div className="rounded-xl border border-[#FDE2E9]/30 bg-white px-3 py-3">
+                          <div className="rounded-xl border border-[#FDDBB4]/30 bg-white px-3 py-3">
                             <p className="text-[16px] font-bold text-[#111111] break-words">{item.name} {item.variantName ? `- ${item.variantName}` : ''}</p>
                           </div>
                         )}
                       </div>
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl border border-[#FDE2E9]/60 text-[#374151] hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors"
+                        className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl border border-[#FDDBB4]/60 text-[#374151] hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors"
                         aria-label={`Delete ${item.name}`}
                       >
                         <Trash2 size={16} />
@@ -1019,16 +1019,16 @@ export default function Pos(props: PosProps = {}) {
                           value={item.basePrice === 0 ? '' : item.basePrice}
                           onChange={e => updateItem(item.id, 'basePrice', e.target.value)}
                           placeholder="0"
-                          className={`w-full h-12 px-3 border rounded-xl text-[16px] font-black text-right focus:outline-none focus:border-[#E8547C] ${
+                          className={`w-full h-12 px-3 border rounded-xl text-[16px] font-black text-right focus:outline-none focus:border-[#E87020] ${
                             item.source === 'manual'
-                              ? 'bg-[#FAFAFA] border-[#FDE2E9]/40 text-[#111111]'
+                              ? 'bg-[#FAFAFA] border-[#FDDBB4]/40 text-[#111111]'
                               : 'bg-white border-[#D9E4D7] text-[#111111]'
                           }`}
                         />
                       </div>
                       <div>
                         <p className="text-[13px] font-black uppercase tracking-wider text-[#374151] mb-1">Total</p>
-                        <div className="h-12 rounded-xl border border-[#FDE2E9]/30 bg-white px-3 flex items-center justify-end text-[16px] font-black text-[#E8547C]">
+                        <div className="h-12 rounded-xl border border-[#FDDBB4]/30 bg-white px-3 flex items-center justify-end text-[16px] font-black text-[#E87020]">
                           {formatCurrency(item.lineTotal)}
                         </div>
                       </div>
@@ -1036,7 +1036,7 @@ export default function Pos(props: PosProps = {}) {
 
                     <div>
                       <p className="text-[13px] font-black uppercase tracking-wider text-[#374151] mb-1">Quantity</p>
-                      <div className="grid grid-cols-[48px_1fr_48px] items-center gap-2 border border-[#FDE2E9]/60 rounded-xl px-2 py-2 bg-white">
+                      <div className="grid grid-cols-[48px_1fr_48px] items-center gap-2 border border-[#FDDBB4]/60 rounded-xl px-2 py-2 bg-white">
                         <button
                           onClick={() => bumpQty(item.id, -1)}
                           className="w-11 h-11 rounded-xl hover:bg-[#FAFAFA] flex items-center justify-center text-[#374151] font-bold text-[20px]"
@@ -1050,7 +1050,7 @@ export default function Pos(props: PosProps = {}) {
                     </div>
                   </div>
 
-                  <div className="hidden md:grid grid-cols-[1fr_100px_120px_40px] items-center gap-3 p-2 bg-white border border-[#FDE2E9]/30 rounded-xl hover:border-[#E8547C]/30 transition-colors">
+                  <div className="hidden md:grid grid-cols-[1fr_100px_120px_40px] items-center gap-3 p-2 bg-white border border-[#FDDBB4]/30 rounded-xl hover:border-[#E87020]/30 transition-colors">
                     {/* Item Name */}
                     <div className="min-w-0 flex items-center gap-2">
                       {item.source === 'manual' ? (
@@ -1059,7 +1059,7 @@ export default function Pos(props: PosProps = {}) {
                           value={item.name}
                           onChange={e => updateItem(item.id, 'name', e.target.value)}
                           placeholder="Item name"
-                          className="w-full px-3 py-2 bg-[#FAFAFA] border border-[#FDE2E9]/40 rounded-lg text-[13px] font-bold text-[#111111] focus:outline-none focus:border-[#E8547C]"
+                          className="w-full px-3 py-2 bg-[#FAFAFA] border border-[#FDDBB4]/40 rounded-lg text-[13px] font-bold text-[#111111] focus:outline-none focus:border-[#E87020]"
                         />
                       ) : (
                         <div className="px-3 py-2 w-full truncate border border-transparent flex items-center gap-2">
@@ -1067,7 +1067,7 @@ export default function Pos(props: PosProps = {}) {
                         </div>
                       )}
                       {item.source !== 'manual' && (
-                        <span className="hidden sm:inline-flex px-2 py-0.5 rounded border border-[#E8547C]/20 text-[#E8547C] text-[9px] font-black tracking-wider uppercase shrink-0 bg-[#E8547C]/5">
+                        <span className="hidden sm:inline-flex px-2 py-0.5 rounded border border-[#E87020]/20 text-[#E87020] text-[9px] font-black tracking-wider uppercase shrink-0 bg-[#E87020]/5">
                           CATALOG
                         </span>
                       )}
@@ -1080,16 +1080,16 @@ export default function Pos(props: PosProps = {}) {
                         value={item.basePrice === 0 ? '' : item.basePrice}
                         onChange={e => updateItem(item.id, 'basePrice', e.target.value)}
                         placeholder="0"
-                        className={`w-full px-3 py-2 border rounded-lg text-[13px] font-black text-right focus:outline-none focus:border-[#E8547C] ${
+                        className={`w-full px-3 py-2 border rounded-lg text-[13px] font-black text-right focus:outline-none focus:border-[#E87020] ${
                           item.source === 'manual'
-                            ? 'bg-[#FAFAFA] border-[#FDE2E9]/40 text-[#111111]'
+                            ? 'bg-[#FAFAFA] border-[#FDDBB4]/40 text-[#111111]'
                             : 'bg-white border-[#D9E4D7] text-[#111111]'
                         }`}
                       />
                     </div>
 
                     {/* Quantity Controls */}
-                    <div className="flex items-center justify-between border border-[#FDE2E9]/60 rounded-lg px-2 py-1 bg-white">
+                    <div className="flex items-center justify-between border border-[#FDDBB4]/60 rounded-lg px-2 py-1 bg-white">
                       <button
                         onClick={() => bumpQty(item.id, -1)}
                         className="w-6 h-6 rounded-md hover:bg-[#FAFAFA] flex items-center justify-center text-[#374151] font-bold"
@@ -1104,7 +1104,7 @@ export default function Pos(props: PosProps = {}) {
                     {/* Delete */}
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#FDE2E9]/60 text-[#374151] hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors"
+                      className="w-9 h-9 flex items-center justify-center rounded-lg border border-[#FDDBB4]/60 text-[#374151] hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -1117,12 +1117,12 @@ export default function Pos(props: PosProps = {}) {
 
         {/* RIGHT COLUMN (approx 32%) */}
         <div className="flex-[1] flex min-h-0 flex-col gap-6 sticky top-4 h-[calc(100vh-140px)] max-h-[calc(100vh-140px)]">
-          <div className="flex min-h-0 h-full max-h-full flex-col overflow-hidden rounded-2xl border border-[#FDE2E9]/60 bg-[#FAF9F6] shadow-sm">
+          <div className="flex min-h-0 h-full max-h-full flex-col overflow-hidden rounded-2xl border border-[#FDDBB4]/60 bg-[#FAF9F6] shadow-sm">
 
             {/* Header */}
-            <div className="flex items-center justify-between p-3 border-b border-[#FDE2E9]/60 bg-white shrink-0">
+            <div className="flex items-center justify-between p-3 border-b border-[#FDDBB4]/60 bg-white shrink-0">
               <h3 className="text-[18px] md:text-[14px] font-black text-[#111111] flex items-center gap-2">
-                <Receipt size={16} className="text-[#E8547C]" />
+                <Receipt size={16} className="text-[#E87020]" />
                 Current Order
               </h3>
               <span className={`px-2 py-1 rounded-full border text-[9px] font-black tracking-wider uppercase flex items-center gap-1.5 ${ordermode === 'offline' ? 'border-red-200 text-red-600 bg-red-50' : 'border-green-200 text-green-600 bg-green-50'}`}>
@@ -1135,20 +1135,20 @@ export default function Pos(props: PosProps = {}) {
             <div className="min-h-0 flex-1 overflow-y-auto bg-white p-3 space-y-2 hide-scrollbar">
 
               {/* Info Table */}
-              <div className="border border-[#FDE2E9]/40 rounded-xl overflow-hidden text-[11px] font-bold">
-                <div className="flex justify-between px-3 py-2 border-b border-[#FDE2E9]/40 bg-[#FAFAFA]">
+              <div className="border border-[#FDDBB4]/40 rounded-xl overflow-hidden text-[11px] font-bold">
+                <div className="flex justify-between px-3 py-2 border-b border-[#FDDBB4]/40 bg-[#FAFAFA]">
                   <span className="text-[#374151] uppercase">Source</span>
-                  <span className="text-[#E8547C] border border-[#E8547C]/30 bg-[#E8547C]/5 px-1.5 rounded uppercase">{ordermode.toUpperCase()}</span>
+                  <span className="text-[#E87020] border border-[#E87020]/30 bg-[#E87020]/5 px-1.5 rounded uppercase">{ordermode.toUpperCase()}</span>
                 </div>
-                <div className="grid grid-cols-2 gap-0 border-b border-[#FDE2E9]/40">
-                  <div className="p-2 border-r border-[#FDE2E9]/40">
+                <div className="grid grid-cols-2 gap-0 border-b border-[#FDDBB4]/40">
+                  <div className="p-2 border-r border-[#FDDBB4]/40">
                     <span className="text-[10px] text-[#374151] uppercase block mb-0.5">Customer Name</span>
                     <input
                       type="text"
                       value={customer.name}
                       onChange={e => setCustomer({...customer, name: e.target.value})}
                       placeholder="Enter name"
-                      className="w-full h-8 px-2 bg-white border border-[#FDE2E9]/60 rounded-lg text-[12px] font-bold text-[#111111] focus:outline-none focus:border-[#E8547C]"
+                      className="w-full h-8 px-2 bg-white border border-[#FDDBB4]/60 rounded-lg text-[12px] font-bold text-[#111111] focus:outline-none focus:border-[#E87020]"
                     />
                   </div>
                   <div className="p-2">
@@ -1158,12 +1158,12 @@ export default function Pos(props: PosProps = {}) {
                       value={customer.phone}
                       onChange={e => setCustomer({...customer, phone: e.target.value})}
                       placeholder="Enter WhatsApp number"
-                      className={`w-full h-8 px-2 bg-white border rounded-lg text-[12px] font-bold text-[#111111] focus:outline-none ${customer.phone && !normalizePhone(customer.phone) ? 'border-red-400 bg-red-50' : 'border-[#FDE2E9]/60 focus:border-[#E8547C]'}`}
+                      className={`w-full h-8 px-2 bg-white border rounded-lg text-[12px] font-bold text-[#111111] focus:outline-none ${customer.phone && !normalizePhone(customer.phone) ? 'border-red-400 bg-red-50' : 'border-[#FDDBB4]/60 focus:border-[#E87020]'}`}
                     />
                   </div>
                 </div>
 {items.length > 0 && (
-                  <div className="px-3 py-2 bg-[#FAFAFA] space-y-1 border-b border-[#FDE2E9]/40 max-h-[80px] overflow-y-auto">
+                  <div className="px-3 py-2 bg-[#FAFAFA] space-y-1 border-b border-[#FDDBB4]/40 max-h-[80px] overflow-y-auto">
                     {items.map(item => (
                 <div key={item.id} className="flex justify-between text-[#111111] text-[11px]">
                         <span className="truncate pr-2">{item.qty}x {item.name}</span>
@@ -1191,7 +1191,7 @@ export default function Pos(props: PosProps = {}) {
                     placeholder="Enter code"
                     disabled={appliedCoupon !== null}
                     list="pos-coupons"
-                    className="w-full h-9 px-3 bg-white border border-[#FDE2E9]/60 rounded-xl text-[12px] font-bold text-[#111111] focus:outline-none focus:border-[#E8547C] uppercase disabled:bg-gray-100"
+                    className="w-full h-9 px-3 bg-white border border-[#FDDBB4]/60 rounded-xl text-[12px] font-bold text-[#111111] focus:outline-none focus:border-[#E87020] uppercase disabled:bg-gray-100"
                   />
                   <datalist id="pos-coupons">
                     {availableCoupons.map(c => (
@@ -1229,9 +1229,9 @@ export default function Pos(props: PosProps = {}) {
                     <select
                       value={manualDiscountType}
                       onChange={e => setManualDiscountType(e.target.value as 'flat'|'percent')}
-                      className="appearance-none h-9 bg-white border border-[#FDE2E9]/60 rounded-xl pl-2 pr-7 text-[12px] font-black text-[#111111] focus:outline-none focus:border-[#E8547C]"
+                      className="appearance-none h-9 bg-white border border-[#FDDBB4]/60 rounded-xl pl-2 pr-7 text-[12px] font-black text-[#111111] focus:outline-none focus:border-[#E87020]"
                     >
-                      <option value="flat">₹</option>
+                      <option value="flat">RM </option>
                       <option value="percent">%</option>
                     </select>
                     <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#374151] pointer-events-none" />
@@ -1241,18 +1241,18 @@ export default function Pos(props: PosProps = {}) {
                     value={manualDiscountValue}
                     onChange={e => setManualDiscountValue(e.target.value)}
                     placeholder="0"
-                    className="w-full h-9 px-3 bg-white border border-[#FDE2E9]/60 rounded-xl text-[12px] font-black text-[#111111] text-right focus:outline-none focus:border-[#E8547C]"
+                    className="w-full h-9 px-3 bg-white border border-[#FDDBB4]/60 rounded-xl text-[12px] font-black text-[#111111] text-right focus:outline-none focus:border-[#E87020]"
                   />
                 </div>
               </div>
 
               {/* GST Toggle */}
-              <div className="flex items-center justify-between py-1 border-b border-[#FDE2E9]/40">
-                <span className="text-[11px] font-black text-[#374151]">Enable GST on Bill</span>
+              <div className="flex items-center justify-between py-1 border-b border-[#FDDBB4]/40">
+                <span className="text-[11px] font-black text-[#374151]">Enable SST on Bill</span>
                 <button
                   type="button"
                   onClick={() => setBillGstEnabled(!billGstEnabled)}
-                  className={`w-9 h-5 rounded-full p-0.5 transition-colors ${billGstEnabled ? 'bg-[#E8547C]' : 'bg-[#FDE2E9]/60'}`}
+                  className={`w-9 h-5 rounded-full p-0.5 transition-colors ${billGstEnabled ? 'bg-[#E87020]' : 'bg-[#FDDBB4]/60'}`}
                 >
                   <div className={`w-4 h-4 rounded-full bg-white transition-transform ${billGstEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
                 </button>
@@ -1264,10 +1264,10 @@ export default function Pos(props: PosProps = {}) {
                     <select
                       value={gstType}
                       onChange={e => setGstType(e.target.value as 'flat'|'percent')}
-                      className="appearance-none h-9 bg-white border border-[#FDE2E9]/60 rounded-xl pl-2 pr-7 text-[12px] font-black text-[#111111] focus:outline-none focus:border-[#E8547C]"
+                      className="appearance-none h-9 bg-white border border-[#FDDBB4]/60 rounded-xl pl-2 pr-7 text-[12px] font-black text-[#111111] focus:outline-none focus:border-[#E87020]"
                     >
                       <option value="percent">%</option>
-                      <option value="flat">₹</option>
+                      <option value="flat">RM </option>
                     </select>
                     <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#374151] pointer-events-none" />
                   </div>
@@ -1276,13 +1276,13 @@ export default function Pos(props: PosProps = {}) {
                     value={gstInput}
                     onChange={e => setGstInput(e.target.value)}
                     placeholder={gstType === 'percent' ? "e.g. 6" : "0"}
-                    className="w-full h-9 px-3 bg-white border border-[#FDE2E9]/60 rounded-xl text-[12px] font-black text-[#111111] text-right focus:outline-none focus:border-[#E8547C]"
+                    className="w-full h-9 px-3 bg-white border border-[#FDDBB4]/60 rounded-xl text-[12px] font-black text-[#111111] text-right focus:outline-none focus:border-[#E87020]"
                   />
                 </div>
               )}
 
               {/* Summary calculations */}
-              <div className="bg-[#FAFAF8] rounded-xl border border-[#FDE2E9]/40 p-2.5 space-y-1.5">
+              <div className="bg-[#FAFAF8] rounded-xl border border-[#FDDBB4]/40 p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-black text-[#374151]">Subtotal ({items.length} items)</span>
                   <span className="text-[12px] font-black text-[#111111]">{formatCurrency(subtotal)}</span>
@@ -1301,16 +1301,16 @@ export default function Pos(props: PosProps = {}) {
                     type="number" onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     value={shipping}
                     onChange={e => setShipping(e.target.value)}
-                    className="w-20 h-8 px-2 bg-white border border-[#FDE2E9]/60 rounded-lg text-[12px] font-black text-[#111111] text-right focus:outline-none focus:border-[#E8547C]"
+                    className="w-20 h-8 px-2 bg-white border border-[#FDDBB4]/60 rounded-lg text-[12px] font-black text-[#111111] text-right focus:outline-none focus:border-[#E87020]"
                   />
                 </div>
 
-                <div className="h-px bg-[#FDE2E9]/60"></div>
+                <div className="h-px bg-[#FDDBB4]/60"></div>
 
                 {/* Grand Total */}
                 <div className="flex items-center justify-between pt-0.5">
                   <span className="text-[12px] font-black text-[#111111] uppercase tracking-wider">Grand Total</span>
-                  <span className="text-[20px] font-black text-[#E8547C] tracking-tight">{formatCurrency(total)}</span>
+                  <span className="text-[20px] font-black text-[#E87020] tracking-tight">{formatCurrency(total)}</span>
                 </div>
               </div>
 
@@ -1325,8 +1325,8 @@ export default function Pos(props: PosProps = {}) {
                       onClick={() => setPaymentType(mode)}
                       className={`py-2 rounded-xl text-[11px] font-black uppercase tracking-wide border-2 transition-colors ${
                         paymentType === mode
-                          ? 'bg-[#E8547C] text-white border-[#E8547C]'
-                          : 'bg-white text-[#374151] border-[#FDE2E9]/60 hover:border-[#E8547C]/40'
+                          ? 'bg-[#E87020] text-white border-[#E87020]'
+                          : 'bg-white text-[#374151] border-[#FDDBB4]/60 hover:border-[#E87020]/40'
                       }`}
                     >
                       {mode === 'qr' ? 'QR' : mode === 'card' ? 'Card' : 'Cash'}
@@ -1338,19 +1338,19 @@ export default function Pos(props: PosProps = {}) {
               {/* Amount Received (shown for all payment modes) */}
               {ordermode !== 'online' && (
               <div>
-                <div className="border border-[#FDE2E9]/60 rounded-xl p-2.5 bg-white">
+                <div className="border border-[#FDDBB4]/60 rounded-xl p-2.5 bg-white">
                   <label className="block text-[10px] font-black text-[#374151] tracking-wider uppercase mb-0.5">
-                    {paymentType === 'qr' ? 'QR' : paymentType === 'card' ? 'Card' : 'Cash'} — Amount Received (₹)
+                    {paymentType === 'qr' ? 'QR' : paymentType === 'card' ? 'Card' : 'Cash'} — Amount Received (RM)
                   </label>
                   <input
                     type="number" onWheel={(e) => (e.target as HTMLInputElement).blur()}
                     value={cashReceived}
                     onChange={e => setCashReceived(e.target.value)}
                     placeholder="0.00"
-                    className="w-full h-9 px-3 bg-[#FAFAFA] border border-[#FDE2E9]/40 rounded-xl text-[13px] font-black text-[#111111] focus:outline-none focus:border-[#E8547C]"
+                    className="w-full h-9 px-3 bg-[#FAFAFA] border border-[#FDDBB4]/40 rounded-xl text-[13px] font-black text-[#111111] focus:outline-none focus:border-[#E87020]"
                   />
                   {cashReceivedNum > 0 && (
-                    <div className="mt-2 flex justify-between items-center bg-[#F9FAFB] px-3 py-1.5 rounded-lg border border-[#FDE2E9]/40">
+                    <div className="mt-2 flex justify-between items-center bg-[#F9FAFB] px-3 py-1.5 rounded-lg border border-[#FDDBB4]/40">
                       <span className="text-[10px] font-bold text-[#374151]">Return Balance:</span>
                       <span className="text-[12px] font-black text-[#111111]">{formatCurrency(balanceToReturn)}</span>
                     </div>
@@ -1367,7 +1367,7 @@ export default function Pos(props: PosProps = {}) {
             </div>
 
             {/* Action Buttons Fixed Footer */}
-            <div className="shrink-0 border-t border-[#FDE2E9]/60 bg-white p-3 shadow-[0_-8px_20px_rgba(44,57,42,0.06)]">
+            <div className="shrink-0 border-t border-[#FDDBB4]/60 bg-white p-3 shadow-[0_-8px_20px_rgba(44,57,42,0.06)]">
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <button
                   type="button"

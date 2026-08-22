@@ -39,8 +39,8 @@ export function printThermalReceipt(data: ThermalReceiptData) {
   if (!doc) return
 
   const dateStr = (() => {
-    try { return new Date(data.date).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }
-    catch { return new Date().toLocaleString('en-IN') }
+    try { return new Date(data.date).toLocaleString('en-MY', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }
+    catch { return new Date().toLocaleString('en-MY') }
   })()
 
   const html = `
@@ -139,7 +139,7 @@ export function printThermalReceipt(data: ThermalReceiptData) {
             ` : ''}
             ${(data.totalGst || 0) > 0 ? `
               <tr>
-                <td class="text-left">GST</td>
+                <td class="text-left">SST</td>
                 <td class="text-right">+${formatCurrency(data.totalGst || 0)}</td>
               </tr>
             ` : ''}

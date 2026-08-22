@@ -115,7 +115,7 @@ export function FavoritesDrawer({ open, onClose }: { open: boolean; onClose: () 
               ) : (
                 <AnimatePresence>
                   {items.map(item => (
-                    <motion.div key={item.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -20 }} className="flex gap-3 p-3 bg-[#FFF8E7] rounded-xl border border-[#FDE2E9]/50">
+                    <motion.div key={item.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -20 }} className="flex gap-3 p-3 bg-[#FFF8E7] rounded-xl border border-[#FDDBB4]/50">
                       <img src={item.image} alt={item.name} onError={(e) => { (e.target as HTMLImageElement).src = PRODUCT_PLACEHOLDER }} className="w-14 h-14 object-cover rounded-lg shrink-0" loading="lazy" />
                       <div className="flex-grow min-w-0">
                         <h4 className="font-bold text-sm text-textMain truncate">

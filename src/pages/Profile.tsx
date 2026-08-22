@@ -40,7 +40,7 @@ interface ProfileOrder {
 const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   pending: { bg: '#FEF3C7', text: '#92400E', label: 'Pending' },
   processing: { bg: '#DBEAFE', text: '#1E40AF', label: 'Processing' },
-  completed: { bg: '#FDE2E9', text: '#065F46', label: 'Completed' },
+  completed: { bg: '#FDDBB4', text: '#065F46', label: 'Completed' },
   responded: { bg: '#DBEAFE', text: '#1E40AF', label: 'Responded' },
   cancelled: { bg: '#FEE2E2', text: '#991B1B', label: 'Cancelled' },
 }
@@ -110,7 +110,7 @@ export default function Profile() {
     const trimName  = editName.trim()
     const trimPhone = editPhone.replace(/\D/g, '')
     if (!trimName || trimName.length < 2) { setSaveErr('Name must be at least 2 characters.'); return }
-    if (trimPhone && !isValidPhone(trimPhone)) { setSaveErr('Enter a valid Indian mobile number.'); return }
+    if (trimPhone && !isValidPhone(trimPhone)) { setSaveErr('Enter a valid Malaysian mobile number (e.g. 0123456789 or +60 12-345 6789).'); return }
     if (!user) return
 
     setSaving(true); setSaveErr('')
@@ -362,7 +362,7 @@ export default function Profile() {
                     <div>
                       <label className="block text-[11px] font-bold text-textMuted uppercase tracking-wide mb-1.5">
                         Mobile Number
-                        <span className="ml-1 font-normal normal-case text-[10px] text-gray-400">10-digit Indian mobile</span>
+                        <span className="ml-1 font-normal normal-case text-[10px] text-gray-400">Malaysian mobile (+60)</span>
                       </label>
                       <div className="flex gap-2">
                         <span className="flex items-center px-3 py-3 bg-[#F9FAFB] border-2 border-sand rounded-xl text-[13px] font-bold text-textMuted shrink-0 select-none">
@@ -374,7 +374,7 @@ export default function Profile() {
                           className="flex-1 px-4 py-3 rounded-xl border-2 border-sand focus:border-sageDark outline-none text-[13px]"
                           value={editPhone}
                           onChange={e => { setEditPhone(e.target.value.replace(/\D/g, '')); setSaveErr('') }}
-                          placeholder="9876543210"
+                          placeholder="0123456789"
                         />
                       </div>
                     </div>
@@ -455,7 +455,7 @@ export default function Profile() {
                               <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: statusInfo.bg, color: statusInfo.text }}>
                                 {statusInfo.label}
                               </span>
-                              <span className="font-bold text-textMain">₹{o.total}</span>
+                              <span className="font-bold text-textMain">RM {o.total}</span>
                               {isExpanded ? <ChevronUp size={16} className="text-textMuted" /> : <ChevronDown size={16} className="text-textMuted" />}
                             </div>
                           </div>

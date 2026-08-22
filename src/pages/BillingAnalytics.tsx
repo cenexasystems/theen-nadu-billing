@@ -36,7 +36,7 @@ const RMIcon = ({ size = 16, className = '' }: { size?: number; className?: stri
       stroke="none"
       fill="currentColor"
       fontFamily="Arial, sans-serif"
-    >₹</text>
+    >RM </text>
   </svg>
 )
 import { useAuthStore, useProductStore, type Product } from '../store/store'
@@ -154,7 +154,7 @@ const exportCSV = (orders: BillingOrder[]) => {
       toNumber(order.discount_amount, 0).toFixed(2),
       toNumber(order.delivery_charge, 0).toFixed(2),
       toNumber(order.total, 0).toFixed(2),
-      new Date(order.created_at).toLocaleDateString('en-IN'),
+      new Date(order.created_at).toLocaleDateString('en-MY'),
       order.status,
     ]
   })
@@ -188,7 +188,7 @@ function StatCard({
   color: string
 }) {
   return (
-    <div className="rounded-2xl border border-[#FDE2E9]/30 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-[#FDDBB4]/30 bg-white p-4 shadow-sm">
       <div className="mb-2 flex items-start justify-between gap-2">
         <p className="text-[10px] font-black uppercase tracking-wider text-[#374151]">{label}</p>
         <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${bg} ${color}`}>{icon}</div>
@@ -420,7 +420,7 @@ export default function BillingAnalytics() {
       const key = date.toISOString().slice(0, 7)
       return {
         key,
-        month: date.toLocaleDateString('en-IN', { month: 'short' }),
+        month: date.toLocaleDateString('en-MY', { month: 'short' }),
         revenue: monthlyRevenueMap.get(key) || 0,
       }
     })
@@ -437,7 +437,7 @@ export default function BillingAnalytics() {
       date.setDate(weekStart.getDate() + index)
       const key = date.toISOString().slice(0, 10)
       return {
-        day: date.toLocaleDateString('en-IN', { weekday: 'long' }),
+        day: date.toLocaleDateString('en-MY', { weekday: 'long' }),
         date: key,
         revenue: weeklyRevenueMap.get(key) || 0,
       }
@@ -573,7 +573,7 @@ export default function BillingAnalytics() {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
-        <span className="h-10 w-10 animate-spin rounded-full border-4 border-[#FDE2E9] border-t-[#111111]" />
+        <span className="h-10 w-10 animate-spin rounded-full border-4 border-[#FDDBB4] border-t-[#111111]" />
       </div>
     )
   }
@@ -610,7 +610,7 @@ export default function BillingAnalytics() {
           <div className="flex flex-wrap items-center gap-2">
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl border border-[#FDE2E9]/60 bg-white px-4 py-2 text-[13px] font-bold text-[#374151] hover:bg-[#F9FAFB]"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#FDDBB4]/60 bg-white px-4 py-2 text-[13px] font-bold text-[#374151] hover:bg-[#F9FAFB]"
             >
               <LayoutDashboard size={14} />
               Dashboard
@@ -625,7 +625,7 @@ export default function BillingAnalytics() {
             <button
               type="button"
               onClick={() => void loadData()}
-              className="inline-flex items-center gap-2 rounded-xl border border-[#FDE2E9]/60 bg-white px-4 py-2 text-[13px] font-bold text-[#374151] hover:bg-[#F9FAFB]"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#FDDBB4]/60 bg-white px-4 py-2 text-[13px] font-bold text-[#374151] hover:bg-[#F9FAFB]"
             >
               <RefreshCw size={14} />
               Refresh
@@ -633,7 +633,7 @@ export default function BillingAnalytics() {
           </div>
         </div>
 
-        <div className="mb-4 rounded-2xl border border-[#FDE2E9]/30 bg-white p-4 shadow-sm">
+        <div className="mb-4 rounded-2xl border border-[#FDDBB4]/30 bg-white p-4 shadow-sm">
           <div className="flex flex-wrap gap-2 items-center">
             <span className="text-[11px] font-black uppercase tracking-wider text-[#374151] mr-1">Period:</span>
             {(['all', 'today', 'week', 'month', 'year', 'custom'] as const).map((preset) => (
@@ -644,7 +644,7 @@ export default function BillingAnalytics() {
                 className={`rounded-xl px-3 py-1.5 text-[12px] font-black transition-colors ${
                   analyticsDatePreset === preset
                     ? 'bg-[#111111] text-white'
-                    : 'bg-[#F9FAFB] text-[#374151] hover:bg-[#FDE2E9]/40'
+                    : 'bg-[#F9FAFB] text-[#374151] hover:bg-[#FDDBB4]/40'
                 }`}
               >
                 {preset === 'all'
@@ -699,7 +699,7 @@ export default function BillingAnalytics() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-3">
-          <div className="rounded-2xl border border-[#FDE2E9]/30 bg-white p-5 shadow-sm xl:col-span-2">
+          <div className="rounded-2xl border border-[#FDDBB4]/30 bg-white p-5 shadow-sm xl:col-span-2">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-black text-[#223126]">{l('Billing Search', 'பில் தேடல்')}</h2>
@@ -709,7 +709,7 @@ export default function BillingAnalytics() {
                 type="button"
                 onClick={() => exportCSV(filteredBills)}
                 disabled={filteredBills.length === 0}
-                className="inline-flex items-center gap-2 rounded-xl border border-[#FDE2E9]/60 bg-[#F9FAFB] px-3 py-2 text-[12px] font-bold text-[#374151] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl border border-[#FDDBB4]/60 bg-[#F9FAFB] px-3 py-2 text-[12px] font-bold text-[#374151] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Download size={13} />
                 Export CSV
@@ -730,7 +730,7 @@ export default function BillingAnalytics() {
                   className={`rounded-xl px-3 py-1.5 text-[12px] font-black transition-colors ${
                     billTypeFilter === v
                       ? 'bg-[#111111] text-white'
-                      : 'bg-[#F9FAFB] text-[#374151] hover:bg-[#FDE2E9]/40'
+                      : 'bg-[#F9FAFB] text-[#374151] hover:bg-[#FDDBB4]/40'
                   }`}
                 >
                   {label}
@@ -775,7 +775,7 @@ export default function BillingAnalytics() {
               />
             </div>
 
-            <div className="mt-4 overflow-x-auto rounded-xl border border-[#FDE2E9]/30">
+            <div className="mt-4 overflow-x-auto rounded-xl border border-[#FDDBB4]/30">
               <table className="min-w-[980px] w-full text-left text-[13px]">
                 <thead className="bg-[#F9FAFB] text-[10px] uppercase tracking-wider text-[#374151]">
                   <tr>
@@ -791,7 +791,7 @@ export default function BillingAnalytics() {
                     <th className="px-3 py-3 font-black">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#FDE2E9]/20">
+                <tbody className="divide-y divide-[#FDDBB4]/20">
                   {filteredBills.slice(0, 50).map((order) => {
                     const billTypeLabel = normalizeOrderType(order.order_type) === 'manual_sale'
                       ? 'MANUAL'
@@ -815,7 +815,7 @@ export default function BillingAnalytics() {
                         <td className="px-3 py-3">{order.discount_amount > 0 ? <span className="font-bold text-green-700">-{formatCurrency(order.discount_amount)}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
                         <td className="px-3 py-3">{order.delivery_charge > 0 ? <span className="font-bold">{formatCurrency(order.delivery_charge)}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
                         <td className="whitespace-nowrap px-3 py-3 font-bold">{formatCurrency(toNumber(order.total, 0))}</td>
-                        <td className="whitespace-nowrap px-3 py-3 text-[#374151]">{new Date(order.created_at).toLocaleDateString('en-IN')}</td>
+                        <td className="whitespace-nowrap px-3 py-3 text-[#374151]">{new Date(order.created_at).toLocaleDateString('en-MY')}</td>
                         <td className="px-3 py-3">
                           <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${normalizeStatus(order.status) === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                             {normalizeStatus(order.status) || 'pending'}
@@ -837,7 +837,7 @@ export default function BillingAnalytics() {
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-2xl border border-[#FDE2E9]/30 bg-white p-5 shadow-sm">
+            <div className="rounded-2xl border border-[#FDDBB4]/30 bg-white p-5 shadow-sm">
               <h2 className="mb-4 text-base font-black text-[#223126]">{l('Top Products', 'சிறந்த பொருட்கள்')}</h2>
               {analytics.topProducts.length > 0 ? (
                 <div className="space-y-3">
@@ -862,7 +862,7 @@ export default function BillingAnalytics() {
               )}
             </div>
 
-            <div className="rounded-2xl border border-[#FDE2E9]/30 bg-white p-5 shadow-sm">
+            <div className="rounded-2xl border border-[#FDDBB4]/30 bg-white p-5 shadow-sm">
               <h2 className="mb-4 text-base font-black text-[#223126]">{l('Top Categories', 'சிறந்த வகைகள்')}</h2>
               {analytics.topCategories.length > 0 ? (
                 <div className="space-y-3">
@@ -883,7 +883,7 @@ export default function BillingAnalytics() {
               )}
             </div>
 
-            <div className="rounded-2xl border border-[#FDE2E9]/30 bg-white p-5 shadow-sm">
+            <div className="rounded-2xl border border-[#FDDBB4]/30 bg-white p-5 shadow-sm">
               <h2 className="mb-4 text-base font-black text-[#223126]">{l('Coupon Analytics', 'கூப்பன் பகுப்பாய்வு')}</h2>
               {analytics.topCoupons.length > 0 ? (
                 <div className="space-y-3">

@@ -38,8 +38,8 @@ export default function AdminLogin() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#F9FAFB] px-4 py-8 font-sans text-[#111111] sm:px-6 lg:flex lg:items-center lg:justify-center">
-      <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-[#E8547C]/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-40 -right-24 h-96 w-96 rounded-full bg-[#E8547C]/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-[#E87020]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 -right-24 h-96 w-96 rounded-full bg-[#E87020]/20 blur-3xl" />
       <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[32px] border border-[#A7F3D0] bg-white shadow-[0_24px_80px_rgba(44,57,42,0.14)] lg:grid-cols-[0.9fr_1.1fr]">
         <div className="hidden flex-col justify-between bg-[#111111] p-10 text-white lg:flex">
           <div>
@@ -54,10 +54,10 @@ export default function AdminLogin() {
         {/* Brand */}
         <div className="mb-8 flex flex-col items-center text-center lg:items-start lg:text-left">
           <div className="mb-5 inline-flex items-center justify-center rounded-2xl bg-white border border-emerald-900/30 p-2 shadow-xl lg:hidden"><img src={BRAND_LOGO} alt={`${BRAND_EN} logo`} className="h-12 w-auto max-w-[150px] rounded-xl object-contain" /></div>
-          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#E8547C]">{BRAND_SUBTITLE}</p>
+          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#E87020]">{BRAND_SUBTITLE}</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight text-[#111111]">{BRAND_EN}</h1>
           <p className="mt-1 text-sm font-semibold text-[#7A786F]">{BRAND_TA}</p>
-          <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#A7F3D0] bg-[#FBFAF6] px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-[#E8547C]">
+          <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#A7F3D0] bg-[#FBFAF6] px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-[#E87020]">
             <ShieldCheck size={13} />
             {l('Admin Access', 'நிர்வாக அணுகல்')}
           </p>
@@ -85,7 +85,7 @@ export default function AdminLogin() {
               type="text"
               autoComplete="username"
               placeholder="Enter portal ID"
-              className="w-full rounded-2xl border-2 border-[#A7F3D0] bg-[#FBFAF6] px-4 py-3.5 text-sm font-semibold outline-none transition-colors placeholder:text-[#AAA69C] focus:border-[#E8547C] focus:bg-white"
+              className="w-full rounded-2xl border-2 border-[#A7F3D0] bg-[#FBFAF6] px-4 py-3.5 text-sm font-semibold outline-none transition-colors placeholder:text-[#AAA69C] focus:border-[#E87020] focus:bg-white"
               value={portalId}
               onChange={(e) => { setPortalId(e.target.value); setError('') }}
               disabled={loading}
@@ -104,7 +104,7 @@ export default function AdminLogin() {
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 placeholder="Enter portal password"
-                className="w-full rounded-2xl border-2 border-[#A7F3D0] bg-[#FBFAF6] px-4 py-3.5 pr-12 text-sm font-semibold outline-none transition-colors placeholder:text-[#AAA69C] focus:border-[#E8547C] focus:bg-white"
+                className="w-full rounded-2xl border-2 border-[#A7F3D0] bg-[#FBFAF6] px-4 py-3.5 pr-12 text-sm font-semibold outline-none transition-colors placeholder:text-[#AAA69C] focus:border-[#E87020] focus:bg-white"
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setError('') }}
                 disabled={loading}
@@ -124,7 +124,7 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-[#E8547C] py-3.5 font-black text-white shadow-lg shadow-[#E8547C]/20 transition-colors hover:bg-[#065F46] disabled:opacity-60"
+            className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-[#E87020] py-3.5 font-black text-white shadow-lg shadow-[#E87020]/20 transition-colors hover:bg-[#065F46] disabled:opacity-60"
           >
             {loading ? (
               <>

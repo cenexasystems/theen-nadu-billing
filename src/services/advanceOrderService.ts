@@ -212,7 +212,7 @@ export async function createAdvanceOrder(input: {
     const currentTimeline = loadLocalTimeline()
     currentTimeline.push(
       { id: Date.now(), advance_order_id: orderId, event_type: 'created', label: 'Deposit Created', remarks: input.remarks, created_at: now.toISOString() },
-      { id: Date.now() + 1, advance_order_id: orderId, event_type: 'deposit_received', label: 'Deposit Received', remarks: `Received INR ${input.depositAmount} via ${input.paymentMethod.toLowerCase() === 'upi' ? 'QR' : input.paymentMethod.toUpperCase()}`, created_at: now.toISOString() }
+      { id: Date.now() + 1, advance_order_id: orderId, event_type: 'deposit_received', label: 'Deposit Received', remarks: `Received RM ${input.depositAmount} via ${input.paymentMethod.toLowerCase() === 'upi' ? 'QR' : input.paymentMethod.toUpperCase()}`, created_at: now.toISOString() }
     )
     saveLocalTimeline(currentTimeline)
 
@@ -342,7 +342,7 @@ export async function completeAdvanceOrder(
     timeline.push(
       { id: Date.now(), advance_order_id: orderId, event_type: 'remaining_payment_received', label: 'Final Payment Received', remarks, created_at: now },
       { id: Date.now() + 1, advance_order_id: orderId, event_type: 'delivered', label: 'Delivered', remarks, created_at: now },
-      { id: Date.now() + 2, advance_order_id: orderId, event_type: 'revenue_posted', label: `Revenue Posted (INR ${order.total_amount})`, remarks, created_at: now },
+      { id: Date.now() + 2, advance_order_id: orderId, event_type: 'revenue_posted', label: `Revenue Posted (RM ${order.total_amount})`, remarks, created_at: now },
       { id: Date.now() + 3, advance_order_id: orderId, event_type: 'invoice_generated', label: `Invoice Generated (${result.invoice_no})`, remarks, created_at: now }
     )
     saveLocalTimeline(timeline)

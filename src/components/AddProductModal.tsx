@@ -95,9 +95,9 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-3xl w-full max-w-md flex flex-col shadow-2xl overflow-hidden border border-[#FDE2E9]/40">
+      <div className="bg-white rounded-3xl w-full max-w-md flex flex-col shadow-2xl overflow-hidden border border-[#FDDBB4]/40">
 
-        <div className="flex items-center justify-between p-6 border-b border-[#FDE2E9]/40 bg-[#F9FAFB]">
+        <div className="flex items-center justify-between p-6 border-b border-[#FDDBB4]/40 bg-[#F9FAFB]">
           <h2 className="text-xl font-black text-[#111111]">Add to Catalog</h2>
           <button onClick={onClose} className="p-2 rounded-xl hover:bg-black/5 text-[#374151]">
             <X size={20} />
@@ -113,7 +113,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
               type="text"
               value={formData.name}
               onChange={e => setFormData({...formData, name: e.target.value})}
-              className="w-full px-4 py-3 bg-[#F9FAFB] border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[13px] font-bold"
+              className="w-full px-4 py-3 bg-[#F9FAFB] border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[13px] font-bold"
               placeholder="E.g. Premium Shawl"
             />
           </div>
@@ -126,7 +126,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                   <select
                     value={formData.category}
                     onChange={e => setFormData({...formData, category: e.target.value})}
-                    className="flex-1 w-full px-4 py-3 bg-[#F9FAFB] border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[13px] font-bold appearance-none"
+                    className="flex-1 w-full px-4 py-3 bg-[#F9FAFB] border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[13px] font-bold appearance-none"
                   >
                     <option value="">Select category</option>
                     {existingCategories.map(cat => (
@@ -136,7 +136,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                   <button
                     type="button"
                     onClick={() => { setCategoryMode('new'); setFormData(f => ({...f, category: ''})) }}
-                    className="px-2 py-3 text-[10px] font-black text-[#E8547C] bg-[#F9FAFB] border border-[#FDE2E9]/60 rounded-xl hover:bg-[#FDE2E9]/40 transition-colors shrink-0"
+                    className="px-2 py-3 text-[10px] font-black text-[#E87020] bg-[#F9FAFB] border border-[#FDDBB4]/60 rounded-xl hover:bg-[#FDDBB4]/40 transition-colors shrink-0"
                     title="Add new category"
                   >+</button>
                 </div>
@@ -146,25 +146,25 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                     type="text"
                     value={formData.category}
                     onChange={e => setFormData({...formData, category: e.target.value})}
-                    className="flex-1 w-full px-4 py-3 bg-[#F9FAFB] border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[13px] font-bold"
+                    className="flex-1 w-full px-4 py-3 bg-[#F9FAFB] border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[13px] font-bold"
                     placeholder="Type new category"
                   />
                   <button
                     type="button"
                     onClick={() => { setCategoryMode('select'); setFormData(f => ({...f, category: ''})) }}
-                    className="px-2 py-3 text-[10px] font-black text-[#374151] bg-[#F9FAFB] border border-[#FDE2E9]/60 rounded-xl hover:bg-[#FDE2E9]/40 transition-colors shrink-0"
+                    className="px-2 py-3 text-[10px] font-black text-[#374151] bg-[#F9FAFB] border border-[#FDDBB4]/60 rounded-xl hover:bg-[#FDDBB4]/40 transition-colors shrink-0"
                     title="Pick from existing"
                   >↩</button>
                 </div>
               )}
             </div>
             <div>
-              <label className="block text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Price (₹)</label>
+              <label className="block text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Price (RM )</label>
               <input
                 type="number"
                 value={formData.price}
                 onChange={e => setFormData({...formData, price: e.target.value})}
-                className="w-full px-4 py-3 bg-[#F9FAFB] border border-[#FDE2E9]/60 rounded-xl focus:outline-none focus:border-[#E8547C] text-[13px] font-bold text-right"
+                className="w-full px-4 py-3 bg-[#F9FAFB] border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[13px] font-bold text-right"
                 placeholder="0"
               />
             </div>
@@ -173,7 +173,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
           <button
             type="submit"
             disabled={loading}
-            className="mt-4 w-full py-3.5 bg-[#E8547C] hover:bg-[#065F46] text-white rounded-xl text-[13px] font-black uppercase tracking-wider transition-colors disabled:opacity-50"
+            className="mt-4 w-full py-3.5 bg-[#E87020] hover:bg-[#065F46] text-white rounded-xl text-[13px] font-black uppercase tracking-wider transition-colors disabled:opacity-50"
           >
             {loading ? 'Adding...' : 'Save Product'}
           </button>

@@ -42,7 +42,7 @@ interface CustomerReview {
 }
 
 // localStorage fallback (only used when Supabase is not configured)
-const LS_KEY = 'sreeja_bridal_customer_reviews'
+const LS_KEY = 'thenn_nadu_customer_reviews'
 function lsGetReviews(): CustomerReview[] {
   try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]') } catch { return [] }
 }
@@ -88,14 +88,14 @@ const TESTIMONIALS = [
     rating: 5,
     text: 'Exceptional quality and friendly service. The tailoring and boutique experience was smooth from start to finish.',
     initials: 'PK',
-    color: '#E8547C',
+    color: '#E87020',
   },
   {
     name: 'Ramesh Murugan',
     location: 'Coimbatore',
     rating: 5,
     text: 'The herbal oils are absolutely pure and give real results. Ordered multiple times and every batch smells fresh and aromatic. Best nattu marundhu shop online!',
-    initials: '₹',
+    initials: 'RM ',
     color: '#8B7355',
   },
   {
@@ -253,9 +253,9 @@ export default function Home() {
         {/* Ambient background glows — very subtle, premium feel */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block">
           <div className="absolute -top-24 -right-12 w-[480px] h-[480px] rounded-full blur-[140px] opacity-[0.055]"
-            style={{ background: '#E8547C' }} />
+            style={{ background: '#E87020' }} />
           <div className="absolute -bottom-16 -left-16 w-[380px] h-[380px] rounded-full blur-[120px] opacity-[0.04]"
-            style={{ background: '#FDE2E9' }} />
+            style={{ background: '#FDDBB4' }} />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
@@ -268,7 +268,7 @@ export default function Home() {
           >
             {/* Eyebrow badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-6
-              bg-[#E8547C]/10 border border-[#E8547C]/20">
+              bg-[#E87020]/10 border border-[#E87020]/20">
               <Sparkles size={11} className="text-[#5e8c72]" />
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#5e8c72]">
                 {t('hero.badge')}
@@ -284,7 +284,7 @@ export default function Home() {
                 : 'font-headline text-[40px] sm:text-[54px] lg:text-[66px] leading-[1.0] tracking-[-0.02em]'
             }`}>
               <span className="block text-[#111111]">{t('hero.title1')}</span>
-              <span className="block text-[#E8547C]">{t('hero.title2')}</span>
+              <span className="block text-[#E87020]">{t('hero.title2')}</span>
             </h1>
 
             {/* Subtitle */}
@@ -295,7 +295,7 @@ export default function Home() {
             </p>
 
             {/* Tamil brand name — hardcoded, not a translation key, styled as elegant accent */}
-            <p className="text-[13px] sm:text-[14px] font-semibold text-[#E8547C]/75
+            <p className="text-[13px] sm:text-[14px] font-semibold text-[#E87020]/75
               tracking-[0.03em] mb-8 sm:mb-10">
               {BRAND_TA}
             </p>
@@ -328,7 +328,7 @@ export default function Home() {
                   hover:bg-[#F9FAFB] hover:border-[#111111]/20
                   transition-all duration-200"
               >
-                <Leaf size={13} className="text-[#E8547C]" />
+                <Leaf size={13} className="text-[#E87020]" />
                 {t('remedy.title')}
               </a>
             </div>
@@ -363,9 +363,9 @@ export default function Home() {
             >
               <div className="bg-white rounded-2xl px-4 py-3.5
                 shadow-[0_6px_28px_rgba(44,57,42,0.11)]
-                border border-[#FDE2E9]/50
+                border border-[#FDDBB4]/50
                 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#E8547C] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-[#E87020] flex items-center justify-center shrink-0">
                   <Leaf size={14} className="text-white" />
                 </div>
                 <div>
@@ -383,7 +383,7 @@ export default function Home() {
             >
               <div className="bg-white rounded-2xl px-4 py-3.5
                 shadow-[0_6px_28px_rgba(44,57,42,0.11)]
-                border border-[#FDE2E9]/50">
+                border border-[#FDDBB4]/50">
                 <div className="flex items-center gap-0.5 mb-1.5">
                   {[1, 2, 3, 4, 5].map(i => (
                     <Star key={i} size={11} className="text-amber-400 fill-amber-400" />
@@ -410,11 +410,11 @@ export default function Home() {
             <div key={idx}
               className="flex items-center gap-3.5 p-4 sm:p-5
                 bg-white rounded-2xl
-                border border-[#FDE2E9]/35
+                border border-[#FDDBB4]/35
                 shadow-sm
                 hover:-translate-y-0.5 transition-transform duration-200"
             >
-              <div className="w-9 h-9 rounded-xl bg-[#E8547C]/12 flex items-center justify-center shrink-0 text-[#E8547C]">
+              <div className="w-9 h-9 rounded-xl bg-[#E87020]/12 flex items-center justify-center shrink-0 text-[#E87020]">
                 {item.icon}
               </div>
               <div className="min-w-0">
@@ -430,11 +430,11 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
         <div className="flex justify-between items-end mb-10">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E8547C] mb-2">Browse Collection</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E87020] mb-2">Browse Collection</p>
             <h2 className={`font-black text-[#111111] break-words ${lang === 'ta' ? 'text-2xl sm:text-[30px] leading-[1.4] tracking-[0] ta-text' : 'text-3xl sm:text-[38px] tracking-tight'}`}>{t('cat.title')}</h2>
           </div>
           <Link to="/products"
-            className="text-[13px] font-bold text-[#E8547C] flex items-center gap-1 group hover:text-[#5e8c72] transition-colors">
+            className="text-[13px] font-bold text-[#E87020] flex items-center gap-1 group hover:text-[#5e8c72] transition-colors">
             {t('cat.view_all')}
             <ChevronRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
           </Link>
@@ -456,7 +456,7 @@ export default function Home() {
               <Link to={`/products?cat=${encodeURIComponent(c.name)}`} className="flex flex-col items-center group">
                 {/* Collage: large left image + two stacked right images */}
                 <div className="w-full aspect-square rounded-2xl overflow-hidden relative
-                  border border-[#FDE2E9]/30 shadow-sm
+                  border border-[#FDDBB4]/30 shadow-sm
                   group-hover:shadow-[0_8px_28px_rgba(44,57,42,0.16)]
                   transition-shadow duration-300 mb-2.5">
                   <div className="grid h-full gap-px" style={{ gridTemplateColumns: '60% 40%' }}>
@@ -486,7 +486,7 @@ export default function Home() {
                   </div>
                 </div>
                 <span className="text-[10px] sm:text-[11px] font-bold text-[#111111] text-center leading-tight
-                  group-hover:text-[#E8547C] transition-colors duration-200">
+                  group-hover:text-[#E87020] transition-colors duration-200">
                   {c.name}
                 </span>
               </Link>
@@ -508,7 +508,7 @@ export default function Home() {
                 </div>
               </div>
               <span className="text-[10px] sm:text-[11px] font-bold text-[#111111] text-center leading-tight
-                group-hover:text-[#E8547C] transition-colors duration-200">
+                group-hover:text-[#E87020] transition-colors duration-200">
                 All Products
               </span>
             </Link>
@@ -520,10 +520,10 @@ export default function Home() {
       <InsideOurStore />
 
       {/* ═══ HEALTH CONCERNS ═══ */}
-      <section id="concerns" className="bg-white py-16 sm:py-24 border-y border-[#FDE2E9]/30 scroll-mt-20">
+      <section id="concerns" className="bg-white py-16 sm:py-24 border-y border-[#FDDBB4]/30 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <div className="mb-12">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E8547C]">{t('remedy.badge')}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E87020]">{t('remedy.badge')}</p>
             <h2 className={`font-black mt-3 mb-3 text-[#111111] break-words ${lang === 'ta' ? 'text-2xl sm:text-[30px] leading-[1.4] tracking-[0] ta-text' : 'text-3xl sm:text-[38px] tracking-tight'}`}>{t('remedy.title')}</h2>
             <p className={`text-[15px] text-[#374151] mx-auto font-medium leading-relaxed ${lang === 'ta' ? 'max-w-full ta-text' : 'max-w-xl'}`}>{t('remedy.sub')}</p>
           </div>
@@ -554,12 +554,12 @@ export default function Home() {
               <TrendingUp size={19} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#E8547C]">Customer Favourites</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#E87020]">Customer Favourites</p>
               <h2 className={`font-black text-[#111111] break-words ${lang === 'ta' ? 'text-xl sm:text-2xl leading-[1.4] tracking-[0] ta-text' : 'text-2xl sm:text-3xl tracking-tight'}`}>{t('top.title')}</h2>
             </div>
           </div>
           <Link to="/products"
-            className="text-[13px] font-bold text-[#E8547C] hover:text-[#5e8c72] flex items-center gap-1 transition-colors">
+            className="text-[13px] font-bold text-[#E87020] hover:text-[#5e8c72] flex items-center gap-1 transition-colors">
             {t('cat.view_all')} <ChevronRight size={15} />
           </Link>
         </div>
@@ -569,11 +569,11 @@ export default function Home() {
       </section>
 
       {/* ═══ TESTIMONIALS + CUSTOMER REVIEWS ═══ */}
-      <section className="bg-white py-16 sm:py-24 border-y border-[#FDE2E9]/30">
+      <section className="bg-white py-16 sm:py-24 border-y border-[#FDDBB4]/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E8547C]">Customer Reviews</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E87020]">Customer Reviews</p>
               <h2 className="text-3xl sm:text-[38px] font-black mt-3 mb-2 tracking-tight text-[#111111]">
                 Trusted by Thousands
               </h2>
@@ -614,7 +614,7 @@ export default function Home() {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 onSubmit={handleReviewSubmit}
-                className="mb-10 bg-[#F9FAFB] rounded-2xl p-6 border border-[#FDE2E9]/40 overflow-hidden"
+                className="mb-10 bg-[#F9FAFB] rounded-2xl p-6 border border-[#FDDBB4]/40 overflow-hidden"
               >
                 <h3 className="font-bold text-[#111111] mb-5 text-[15px]">Share Your Experience</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -623,7 +623,7 @@ export default function Home() {
                     <input
                       required
                       placeholder="e.g. Priya S."
-                      className="w-full px-4 py-2.5 rounded-xl border-2 border-[#FDE2E9] focus:border-[#E8547C] outline-none bg-white text-[13px]"
+                      className="w-full px-4 py-2.5 rounded-xl border-2 border-[#FDDBB4] focus:border-[#E87020] outline-none bg-white text-[13px]"
                       value={reviewForm.name}
                       onChange={e => setReviewForm(f => ({ ...f, name: e.target.value }))}
                     />
@@ -632,7 +632,7 @@ export default function Home() {
                     <label className="block text-xs font-bold text-[#374151] mb-1.5 uppercase tracking-wide">City / Location</label>
                     <input
                       placeholder="e.g. Chennai"
-                      className="w-full px-4 py-2.5 rounded-xl border-2 border-[#FDE2E9] focus:border-[#E8547C] outline-none bg-white text-[13px]"
+                      className="w-full px-4 py-2.5 rounded-xl border-2 border-[#FDDBB4] focus:border-[#E87020] outline-none bg-white text-[13px]"
                       value={reviewForm.location}
                       onChange={e => setReviewForm(f => ({ ...f, location: e.target.value }))}
                     />
@@ -664,7 +664,7 @@ export default function Home() {
                     required
                     rows={3}
                     placeholder="Tell others about your experience with our products..."
-                    className="w-full px-4 py-2.5 rounded-xl border-2 border-[#FDE2E9] focus:border-[#E8547C] outline-none bg-white text-[13px] resize-none"
+                    className="w-full px-4 py-2.5 rounded-xl border-2 border-[#FDDBB4] focus:border-[#E87020] outline-none bg-white text-[13px] resize-none"
                     value={reviewForm.text}
                     onChange={e => setReviewForm(f => ({ ...f, text: e.target.value }))}
                   />
@@ -676,14 +676,14 @@ export default function Home() {
 
                 <div className="flex gap-3">
                   <button type="submit" disabled={submitting}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#E8547C] hover:bg-[#5e8c72] text-white font-bold text-[13px] transition-colors disabled:opacity-60">
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#E87020] hover:bg-[#5e8c72] text-white font-bold text-[13px] transition-colors disabled:opacity-60">
                     {submitting
                       ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Posting…</>
                       : <><Send size={14} /> Post Review</>
                     }
                   </button>
                   <button type="button" onClick={() => { setShowForm(false); setReviewError('') }}
-                    className="px-5 py-2.5 rounded-xl border-2 border-[#FDE2E9] text-[#374151] font-bold text-[13px] hover:bg-[#F9FAFB] transition-colors">
+                    className="px-5 py-2.5 rounded-xl border-2 border-[#FDDBB4] text-[#374151] font-bold text-[13px] hover:bg-[#F9FAFB] transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -695,11 +695,11 @@ export default function Home() {
           {reviewsLoading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
               {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-[#F9FAFB] rounded-2xl p-5 border border-[#FDE2E9]/30 animate-pulse">
-                  <div className="h-3 bg-[#FDE2E9] rounded w-24 mb-4" />
-                  <div className="h-2.5 bg-[#FDE2E9] rounded w-full mb-2" />
-                  <div className="h-2.5 bg-[#FDE2E9] rounded w-4/5 mb-2" />
-                  <div className="h-2.5 bg-[#FDE2E9] rounded w-3/5" />
+                <div key={i} className="bg-[#F9FAFB] rounded-2xl p-5 border border-[#FDDBB4]/30 animate-pulse">
+                  <div className="h-3 bg-[#FDDBB4] rounded w-24 mb-4" />
+                  <div className="h-2.5 bg-[#FDDBB4] rounded w-full mb-2" />
+                  <div className="h-2.5 bg-[#FDDBB4] rounded w-4/5 mb-2" />
+                  <div className="h-2.5 bg-[#FDDBB4] rounded w-3/5" />
                 </div>
               ))}
             </div>
@@ -715,7 +715,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.45, delay: idx * 0.08 }}
-                className="bg-[#F9FAFB] rounded-2xl p-5 sm:p-6 border border-[#FDE2E9]/30 flex flex-col gap-3.5 hover:shadow-md transition-shadow duration-300"
+                className="bg-[#F9FAFB] rounded-2xl p-5 sm:p-6 border border-[#FDDBB4]/30 flex flex-col gap-3.5 hover:shadow-md transition-shadow duration-300"
               >
                 <div className="flex items-center gap-0.5">
                   {Array.from({ length: review.rating }).map((_, i) => (
@@ -723,7 +723,7 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="text-[13px] text-[#374151] leading-[1.65] flex-grow">&ldquo;{review.text}&rdquo;</p>
-                <div className="flex items-center gap-2.5 pt-3 border-t border-[#FDE2E9]/40">
+                <div className="flex items-center gap-2.5 pt-3 border-t border-[#FDDBB4]/40">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0"
                     style={{ backgroundColor: review.color }}>
                     {review.initials}
@@ -738,14 +738,14 @@ export default function Home() {
 
             {/* Customer-submitted reviews from Supabase */}
             {customerReviews.slice(0, 8).map((review) => {
-              const colors = ['#E8547C', '#C4845C', '#8B7355', '#5e8c72']
+              const colors = ['#E87020', '#C4845C', '#8B7355', '#5e8c72']
               const color = colors[review.name.charCodeAt(0) % colors.length]
               return (
                 <motion.div
                   key={review.id}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-[#F9FAFB] rounded-2xl p-5 sm:p-6 border border-[#E8547C]/20 flex flex-col gap-3.5 hover:shadow-md transition-shadow duration-300"
+                  className="bg-[#F9FAFB] rounded-2xl p-5 sm:p-6 border border-[#E87020]/20 flex flex-col gap-3.5 hover:shadow-md transition-shadow duration-300"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-0.5">
@@ -753,10 +753,10 @@ export default function Home() {
                         <Star key={i} size={13} className="text-amber-400 fill-amber-400" />
                       ))}
                     </div>
-                    <span className="text-[9px] font-bold text-[#E8547C] bg-[#E8547C]/10 px-2 py-0.5 rounded-full">Verified</span>
+                    <span className="text-[9px] font-bold text-[#E87020] bg-[#E87020]/10 px-2 py-0.5 rounded-full">Verified</span>
                   </div>
                   <p className="text-[13px] text-[#374151] leading-[1.65] flex-grow">&ldquo;{review.text}&rdquo;</p>
-                  <div className="flex items-center gap-2.5 pt-3 border-t border-[#FDE2E9]/40">
+                  <div className="flex items-center gap-2.5 pt-3 border-t border-[#FDDBB4]/40">
                     <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-black shrink-0"
                       style={{ backgroundColor: color }}>
                       {review.name.charAt(0).toUpperCase()}
@@ -832,7 +832,7 @@ export default function Home() {
             target="_blank"
             rel="noreferrer"
             className="group relative rounded-[2rem] overflow-hidden
-              border border-[#FDE2E9]/40 shadow-sm
+              border border-[#FDDBB4]/40 shadow-sm
               min-h-[280px] sm:min-h-[340px] block
               bg-gradient-to-br from-[#eaf2e5] to-[#d4e8d0]"
           >
@@ -851,7 +851,7 @@ export default function Home() {
               </div>
               <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl
                 bg-[#111111] text-white text-[12px] font-bold
-                group-hover:bg-[#E8547C] transition-colors duration-300">
+                group-hover:bg-[#E87020] transition-colors duration-300">
                 <ExternalLink size={12} /> Open in Google Maps
               </div>
             </div>
@@ -859,21 +859,21 @@ export default function Home() {
 
           {/* Info card */}
           <div className="bg-white rounded-[2rem] p-8 sm:p-10
-            border border-[#FDE2E9]/40 shadow-sm
+            border border-[#FDDBB4]/40 shadow-sm
             flex flex-col justify-between gap-6">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E8547C]">Find Us</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#E87020]">Find Us</p>
               <h2 className="text-2xl sm:text-3xl font-black mt-2.5 mb-4 text-[#111111] tracking-tight">
                 Visit Our Store
               </h2>
               <p className="text-[#374151] text-[14px] leading-[1.7] font-medium mb-6">
-                Visit Sreeja's Bridal Boutique for tailoring, jewellery, accessories, perfume, and parcel services. Our team will help you find the right option for your needs.
+                Visit Thenn Nadu Tailoring for tailoring, jewellery, accessories, perfume, and parcel services. Our team will help you find the right option for your needs.
               </p>
 
               <div className="space-y-3.5">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#E8547C]/12 flex items-center justify-center shrink-0">
-                    <MapPin size={16} className="text-[#E8547C]" />
+                  <div className="w-9 h-9 rounded-xl bg-[#E87020]/12 flex items-center justify-center shrink-0">
+                    <MapPin size={16} className="text-[#E87020]" />
                   </div>
                   <div>
                     <p className="font-bold text-[13px] text-[#111111] leading-tight">Store Location</p>
@@ -881,8 +881,8 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#E8547C]/12 flex items-center justify-center shrink-0">
-                    <Phone size={16} className="text-[#E8547C]" />
+                  <div className="w-9 h-9 rounded-xl bg-[#E87020]/12 flex items-center justify-center shrink-0">
+                    <Phone size={16} className="text-[#E87020]" />
                   </div>
                   <div>
                     <p className="font-bold text-[13px] text-[#111111] leading-tight">Call / WhatsApp</p>
@@ -933,7 +933,7 @@ export default function Home() {
         <Link
           to="/products"
           className="inline-flex items-center gap-2.5 px-10 py-4 rounded-full
-            bg-[#E8547C] text-white font-black
+            bg-[#E87020] text-white font-black
             shadow-[0_4px_20px_rgba(125,170,143,0.35)]
             hover:bg-[#5e8c72] hover:scale-[1.02] hover:shadow-[0_6px_28px_rgba(125,170,143,0.45)]
             transition-all duration-200

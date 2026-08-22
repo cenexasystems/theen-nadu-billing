@@ -7,15 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        bgMain:    '#FFF8F9',
+        bgMain:    '#FFF8F2',
         cardBg:    '#FFFFFF',
         maroon: {
-          DEFAULT: '#E8547C', // Flamingo Pink
-          dark: '#C73660', // Deep Flamingo
+          DEFAULT: '#E87020', // Thenn Nadu Orange
+          dark: '#C85C10', // Thenn Nadu Deep Orange
         },
         textMain:  '#111111',
         textMuted: '#6B7280',
-        borderLight: '#FDE2E9', // Light Pink
+        borderLight: '#FDDBB4', // Light Orange
       },
       fontFamily: {
         sans:      ['Inter', 'sans-serif'],

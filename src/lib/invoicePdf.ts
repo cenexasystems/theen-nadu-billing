@@ -30,7 +30,7 @@ export function createInvoicePdf(data: InvoicePdfData): Blob {
   const pageWidth = 210
   const left = 16
   const right = 194
-  const primaryColor = '#E8547C' // Flamingo Pink
+  const primaryColor = '#E87020' // Thenn Nadu Orange
   const ink = '#18202a'
   const muted = '#68717c'
   let y = 16
@@ -61,7 +61,7 @@ export function createInvoicePdf(data: InvoicePdfData): Blob {
   doc.setFont('helvetica', 'normal')
   doc.text(BRAND_ADDRESS, left + 24, y + 10, { maxWidth: 85 })
   doc.text(`Phone: ${BRAND_PHONE_DISPLAY}`, left + 24, y + 18)
-  doc.text(`Date: ${new Date(data.date).toLocaleDateString('en-IN')}`, right, y + 2, { align: 'right' })
+  doc.text(`Date: ${new Date(data.date).toLocaleDateString('en-MY')}`, right, y + 2, { align: 'right' })
   doc.text(`Payment: ${data.paymentMode || 'POS'}`, right, y + 7, { align: 'right' })
   y += 28
 
@@ -74,7 +74,7 @@ export function createInvoicePdf(data: InvoicePdfData): Blob {
     : []
   const customerBoxHeight = 19 + customerNameLines.length * 4 + customerAddressLines.length * 4
 
-  doc.setFillColor('#FFF0F3')
+  doc.setFillColor('#FFF3E8')
   doc.roundedRect(left, y, right - left, customerBoxHeight, 2, 2, 'F')
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(7)
@@ -131,9 +131,9 @@ export function createInvoicePdf(data: InvoicePdfData): Blob {
 
   y = Math.max(y + 6, 150)
   const rows: Array<[string, string, string]> = [['Subtotal', money(data.subtotal), ink]]
-  if ((data.discountAmount || 0) > 0) rows.push([`Coupon${data.couponCode ? ` (${data.couponCode})` : ''}`, `-${money(data.discountAmount || 0)}`, '#E8547C'])
-  if ((data.manualDiscountAmount || 0) > 0) rows.push(['Discount', `-${money(data.manualDiscountAmount || 0)}`, '#E8547C'])
-  if ((data.gstAmount || 0) > 0) rows.push(['GST', money(data.gstAmount || 0), ink])
+  if ((data.discountAmount || 0) > 0) rows.push([`Coupon${data.couponCode ? ` (${data.couponCode})` : ''}`, `-${money(data.discountAmount || 0)}`, '#E87020'])
+  if ((data.manualDiscountAmount || 0) > 0) rows.push(['Discount', `-${money(data.manualDiscountAmount || 0)}`, '#E87020'])
+  if ((data.gstAmount || 0) > 0) rows.push(['SST', money(data.gstAmount || 0), ink])
   rows.push(['Delivery', (data.shipping || 0) > 0 ? money(data.shipping) : 'FREE', ink])
   doc.setFontSize(9)
   rows.forEach(([label, value, color]) => { doc.setFont('helvetica', 'normal'); doc.setTextColor(color); doc.text(label, 143, y, { align: 'right' }); doc.text(value, right - 4, y, { align: 'right' }); y += 7 })
