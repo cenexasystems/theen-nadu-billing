@@ -43,6 +43,7 @@ import { normalizeStructuredOrderItem, formatInvoiceNo } from '../lib/retail'
 import { Invoice } from '../components/Invoice'
 import Expenses from './Expenses'
 import Attendance from './Attendance'
+import Inventory from './Inventory'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
 import { invoicePdfFile } from '../lib/invoicePdf'
@@ -81,7 +82,7 @@ type DashboardCoupon = {
   usage_count: number
   min_order_value: number
 }
-type TabKey = 'overview' | 'whatsapp' | 'pos_analytics' | 'billing' | 'advance_orders' | 'products' | 'categories' | 'coupons' | 'users' | 'history' | 'expenses' | 'attendance'
+type TabKey = 'overview' | 'whatsapp' | 'pos_analytics' | 'billing' | 'advance_orders' | 'products' | 'categories' | 'coupons' | 'users' | 'history' | 'expenses' | 'attendance' | 'inventory'
 type PosAnalyticsTab = 'revenue' | 'today' | 'products' | 'categories' | 'coupons'
 type ProfileUser = { id: string; email: string; name: string; mobile: string; role: string; created_at: string }
 
@@ -1444,7 +1445,8 @@ export default function Dashboard() {
   const allNavItems: Array<{ id: TabKey; icon: React.ReactNode; label: string }> = [
     { id: 'billing',       icon: <ShoppingCart size={20} />,     label: 'Billing Panel' },
     { id: 'advance_orders',icon: <FileText size={20} />,         label: 'Advance Orders' },
-    { id: 'products',      icon: <Package size={20} />,           label: 'Inventory' },
+    { id: 'inventory',     icon: <Package size={20} />,           label: 'Inventory' },
+    { id: 'products',      icon: <Box size={20} />,               label: 'Products' },
       { id: 'categories',    icon: <Grid size={20} />,              label: 'Categories' },
     { id: 'history',       icon: <List size={20} />,             label: 'Order History' },
     { id: 'pos_analytics', icon: <BarChart2 size={20} />,        label: 'Analytics Dashboard' },
@@ -3767,6 +3769,12 @@ export default function Dashboard() {
           </div>
         )}
         
+                {tab === 'inventory' && (
+          <div className="flex flex-col h-full overflow-y-auto">
+            <Inventory />
+          </div>
+        )}
+
         {tab === 'expenses' && (
           <div className="flex flex-col h-full overflow-y-auto">
             <Expenses />

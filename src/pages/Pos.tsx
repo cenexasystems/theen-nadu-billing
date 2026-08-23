@@ -585,6 +585,18 @@ export default function Pos(props: PosProps = {}) {
       }
       setInvoice(createdInvoice)
       play('success')
+
+      // Low stock check
+      const lowStockItems = items.filter(item => {
+        const product = products.find(p => p.id.toString() === item.id?.toString())
+        if (!product) return false
+        const newStock = (product.stockQuantity || 0) - item.qty
+        return newStock <= (product.lowStockAlert || 5)
+      })
+      if (lowStockItems.length > 0) {
+        setTimeout(() => play('alert'), 500)
+      }
+
       void persistInvoicePdf(createdInvoice)
       setItems([])
       setCustomer({ name: '', phone: '', address: '' })
