@@ -1,5 +1,5 @@
 -- ==========================================
--- 1. INVENTORY LOGS
+-- 1. INVENTORY ENHANCEMENTS
 -- ==========================================
 CREATE TABLE IF NOT EXISTS public.inventory_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS public.inventory_logs (
 
 -- Trigger function to automatically deduct stock and log it on order completion
 CREATE OR REPLACE FUNCTION public.handle_order_inventory_deduction()
-RETURNS TRIGGER AS $
+RETURNS TRIGGER AS $function$
 DECLARE
     item RECORD;
     current_stock NUMERIC(12,3);
@@ -47,7 +47,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$function$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS trigger_order_inventory_deduction ON public.orders;
 CREATE TRIGGER trigger_order_inventory_deduction
@@ -57,7 +57,7 @@ CREATE TRIGGER trigger_order_inventory_deduction
 
 -- Also handle advance order completion (tailoring/custom) if they contain product items
 CREATE OR REPLACE FUNCTION public.handle_advance_order_inventory_deduction()
-RETURNS TRIGGER AS $
+RETURNS TRIGGER AS $function$
 DECLARE
     item RECORD;
     current_stock NUMERIC(12,3);
@@ -92,7 +92,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$function$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS trigger_advance_order_inventory_deduction ON public.advance_orders;
 CREATE TRIGGER trigger_advance_order_inventory_deduction
@@ -181,6 +181,7 @@ CREATE POLICY "Enable read access for all authenticated users" ON public.invento
 CREATE POLICY "Enable insert access for all authenticated users" ON public.inventory_logs FOR INSERT TO authenticated WITH CHECK (true);
 
 CREATE POLICY "Enable read access for all authenticated users" ON public.expense_categories FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Enable all access for all authenticated users" ON public.expense_categories FOR ALL TO authenticated USING (true);
 CREATE POLICY "Enable all access for all authenticated users" ON public.expenses FOR ALL TO authenticated USING (true);
 CREATE POLICY "Enable all access for all authenticated users" ON public.staff FOR ALL TO authenticated USING (true);
 CREATE POLICY "Enable all access for all authenticated users" ON public.attendance FOR ALL TO authenticated USING (true);
