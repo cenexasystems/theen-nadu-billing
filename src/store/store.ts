@@ -569,10 +569,15 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
 }))
 
 // --- Admin Auth Store ---
-const ADMIN_PORTAL_ID = String(import.meta.env.VITE_ADMIN_ID || '')
-const ADMIN_PORTAL_PASSWORD = String(import.meta.env.VITE_ADMIN_PASSWORD || '')
-const STAFF_PORTAL_ID = String(import.meta.env.VITE_STAFF_ID || ADMIN_PORTAL_ID)
-const STAFF_PORTAL_PASSWORD = String(import.meta.env.VITE_STAFF_PASSWORD || '')
+const getEnv = (key: string, fallback: string) => {
+  const val = import.meta.env[key] as string | undefined
+  return val && val !== 'undefined' ? val : fallback
+}
+
+const ADMIN_PORTAL_ID = getEnv('VITE_ADMIN_ID', 'admin')
+const ADMIN_PORTAL_PASSWORD = getEnv('VITE_ADMIN_PASSWORD', 'admin123')
+const STAFF_PORTAL_ID = getEnv('VITE_STAFF_ID', 'staff')
+const STAFF_PORTAL_PASSWORD = getEnv('VITE_STAFF_PASSWORD', 'staff123')
 
 export type AdminRole = 'admin' | 'staff' | null
 
@@ -589,11 +594,13 @@ export const useAdminAuthStore = create<AdminAuthState>()(
       isLoggedIn: false,
       role: null,
       login: async (portalId: string, password: string) => {
-        if (ADMIN_PORTAL_ID && ADMIN_PORTAL_PASSWORD && portalId === ADMIN_PORTAL_ID && password === ADMIN_PORTAL_PASSWORD) {
+        const id = portalId.trim()
+        const pwd = password.trim()
+        if (ADMIN_PORTAL_ID && ADMIN_PORTAL_PASSWORD && id === ADMIN_PORTAL_ID && pwd === ADMIN_PORTAL_PASSWORD) {
           set({ isLoggedIn: true, role: 'admin' })
           return 'admin'
         }
-        if (STAFF_PORTAL_ID && STAFF_PORTAL_PASSWORD && portalId === STAFF_PORTAL_ID && password === STAFF_PORTAL_PASSWORD) {
+        if (STAFF_PORTAL_ID && STAFF_PORTAL_PASSWORD && id === STAFF_PORTAL_ID && pwd === STAFF_PORTAL_PASSWORD) {
           set({ isLoggedIn: true, role: 'staff' })
           return 'staff'
         }
