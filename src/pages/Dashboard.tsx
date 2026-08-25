@@ -665,8 +665,12 @@ export default function Dashboard() {
       waCompleted,
       topWAProducts,
       topWACategories,
+      productRevenue: posRevenue + onlinePosRevenue,
+      serviceRevenue: manualRevenue || totalManualRevenue,
+      totalExpenses: expensesList.reduce((s, e) => s + toNumber(e.amount, 0), 0),
+      netProfit: completedRevenue - expensesList.reduce((s, e) => s + toNumber(e.amount, 0), 0),
     }
-  }, [orders, orderItems, products, analyticsDateFrom, analyticsDateTo])
+  }, [orders, orderItems, products, analyticsDateFrom, analyticsDateTo, expensesList])
 
   // Bill-type filtered results for Order Management table (client-side, instant)
   const filteredSearchResults = useMemo(() => {
@@ -687,7 +691,7 @@ export default function Dashboard() {
     setLoading(true)
     try {
       const productsPromise = fetchProducts(true)
-      const [cRes, oRes, couponRes] = await Promise.all([
+      const [cRes, oRes, couponRes, eRes] = await Promise.all([
         supabase.from('categories').select('id, name_en, name_ta, is_active, sort_order').order('sort_order'),
         supabase.from('orders')
           .select('id, invoice_no, customer_name, phone, address, created_at, total, status, order_mode, order_type, user_id, items, coupon_code, discount_amount, manual_discount_amount, delivery_charge, total_gst, gst_amount, payment_mode, payment_method, invoice_pdf_url, remarks, reference_number')
@@ -696,6 +700,7 @@ export default function Dashboard() {
         supabase.from('coupons')
           .select('id, code, percentage, is_active, expiry_date, usage_limit, usage_count, min_order_value')
           .order('created_at', { ascending: false }),
+        supabase.from('expenses').select('amount')
       ])
       if (cRes.error) throw cRes.error
       if (oRes.error) throw oRes.error
@@ -704,6 +709,7 @@ export default function Dashboard() {
       setOrders(mappedOrders)
       setSearchResults(mappedOrders.filter(o => normalizeOrderType(o.order_type) !== 'online_request').slice(0, 100))
       setCoupons((couponRes.data || []) as DashboardCoupon[])
+      setExpensesList((eRes.data || []) as any[])
 
       const orderIds = mappedOrders.map(o => o.id).filter(Boolean)
       if (orderIds.length > 0) {
@@ -1226,7 +1232,7 @@ export default function Dashboard() {
     setVariantNotice('')
     setEditingVariantId(null)
     setVariantForm({ name: '', sizeLabel: '', price: '', purchasePrice: '', mrp: '', sku: '', barcode: '', stock: '50', weightValue: '', weightUnit: '', isDefault: false })
-    setTab('products')
+    setTab('inventory')
   }
 
   const handleToggleActive = async (p: Product) => {

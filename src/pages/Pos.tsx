@@ -5,8 +5,9 @@ import {
   Search, Trash2, Plus, Receipt, Printer,
   RefreshCw, ShoppingBag, MessageCircle,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Wifi, WifiOff, Layers, X, ChevronDown, Power
+  Wifi, WifiOff, Layers, X, ChevronDown, Power, LogOut, Volume2, VolumeX
 } from 'lucide-react'
+import { useSound } from '../context/SoundContext'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { useProductStore, useVariantStore, useAdminAuthStore, type Product } from '../store/store'
 import { Invoice } from '../components/Invoice'
@@ -111,12 +112,13 @@ type PosProps = {
 }
 
 export default function Pos(props: PosProps = {}) {
+  const { play } = useSound()
   const { products, fetchProducts } = useProductStore()
   const { getVariants, fetchVariants } = useVariantStore()
   const { lang } = useLangStore()
   const l = (en: string, ta: string) => lang === 'ta' ? ta : en
   const navigate = useNavigate()
-  const { LogOut, Volume2, VolumeX, role } = useAdminAuthStore()
+  const { logout, role } = useAdminAuthStore()
   const embeddedMode = Boolean(props.isEmbedded)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [billingAdjOpen, setBillingAdjOpen] = useState(false)

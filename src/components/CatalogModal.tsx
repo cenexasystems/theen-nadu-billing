@@ -75,7 +75,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
 
   const startEdit = (p: Product) => {
     setEditingProduct(p)
-    setEditForm({ name: p.name, category: p.category, price: String(p.price) })
+    setEditForm({ name: p.name, category: p.category, price: String(p.price), stockQuantity: String(p.stockQuantity) })
     setEditError('')
   }
 
