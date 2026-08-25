@@ -569,15 +569,10 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
 }))
 
 // --- Admin Auth Store ---
-const getEnv = (key: string, fallback: string) => {
-  const val = import.meta.env[key] as string | undefined
-  return val && val !== 'undefined' ? val : fallback
-}
-
-const ADMIN_PORTAL_ID = getEnv('VITE_ADMIN_ID', 'admin')
-const ADMIN_PORTAL_PASSWORD = getEnv('VITE_ADMIN_PASSWORD', 'admin123')
-const STAFF_PORTAL_ID = getEnv('VITE_STAFF_ID', 'staff')
-const STAFF_PORTAL_PASSWORD = getEnv('VITE_STAFF_PASSWORD', 'staff123')
+const ADMIN_PORTAL_ID = 'admin'
+const ADMIN_PORTAL_PASSWORD = 'admin123'
+const STAFF_PORTAL_ID = 'staff'
+const STAFF_PORTAL_PASSWORD = 'staff123'
 
 export type AdminRole = 'admin' | 'staff' | null
 
