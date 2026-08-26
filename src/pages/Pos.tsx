@@ -907,7 +907,7 @@ export default function Pos(props: PosProps = {}) {
                 <label className="block text-[13px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Billing Date (Optional)</label>
                 <input
                   id="pos-billing-date"
-                  type="datetime-local"
+                  type="date"
                   value={billingDate}
                   onChange={e => setBillingDate(e.target.value)}
                   className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111]"
