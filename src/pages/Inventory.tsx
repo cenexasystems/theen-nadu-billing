@@ -91,7 +91,7 @@ export default function Inventory() {
     setLoading(true)
     const { data, error } = await supabase
       .from('products')
-      .select('id, name, category, stock_quantity, low_stock_alert, price, purchase_price, is_active, updated_at, image_url')
+      .select('id, name, category, stock_quantity, low_stock_alert, price, purchase_price, is_active, updated_at, image_url, item_type')
       .order('name')
     if (!error && data) setProducts(data as InventoryProduct[])
     setLoading(false)
