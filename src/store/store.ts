@@ -569,10 +569,16 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
 }))
 
 // --- Admin Auth Store ---
-const ADMIN_PORTAL_ID = import.meta.env.VITE_ADMIN_ID as string
-const ADMIN_PORTAL_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD as string
-const STAFF_PORTAL_ID = import.meta.env.VITE_STAFF_ID as string
-const STAFF_PORTAL_PASSWORD = import.meta.env.VITE_STAFF_PASSWORD as string
+const getEnv = (key: string, fallback: string) => {
+  const val = import.meta.env[key] as string | undefined
+  // If it's missing, empty, or the literal string 'undefined' (Vercel bug)
+  return val && val.trim() !== '' && val !== 'undefined' ? val : fallback
+}
+
+const ADMIN_PORTAL_ID = getEnv('VITE_ADMIN_ID', 'admin')
+const ADMIN_PORTAL_PASSWORD = getEnv('VITE_ADMIN_PASSWORD', 'admin123')
+const STAFF_PORTAL_ID = getEnv('VITE_STAFF_ID', 'staff')
+const STAFF_PORTAL_PASSWORD = getEnv('VITE_STAFF_PASSWORD', 'staff123')
 
 export type AdminRole = 'admin' | 'staff' | null
 
