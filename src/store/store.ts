@@ -48,6 +48,7 @@ export interface Product {
   image: string
   imageUrl?: string
   source?: 'catalogue' | 'manual'
+  itemType?: 'product' | 'service'
   note?: string | null
   hasVariants?: boolean
 
@@ -248,6 +249,7 @@ const mapDbProduct = (input: unknown, categoriesById: Record<string, string> = {
     image,
     imageUrl: image,
     hasVariants: Boolean(p.has_variants),
+    itemType: (p.item_type === 'service' ? 'service' : 'product') as 'product' | 'service',
 
     // POS inventory mapping
     sku: readString(p.sku),

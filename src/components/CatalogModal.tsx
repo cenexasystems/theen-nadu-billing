@@ -226,12 +226,15 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                       <div onClick={() => onAdd(product)} className="cursor-pointer">
                         <div className="flex items-end justify-between mt-2 pt-2 border-t border-[#FDDBB4]/30">
                           <span className="text-[14px] font-black text-[#111111]">RM {product.price}</span>
-                          <div className="flex items-center gap-1.5">
-                            {product.stockQuantity <= (product.lowStockAlert || 5) && (
-                               <span className="text-[9px] font-black text-red-600 bg-red-50 border border-red-200 uppercase tracking-wider px-2 py-1 rounded" title={`Stock: ${product.stockQuantity}`}>Low Stock</span>
-                            )}
-                            <span className="text-[9px] font-black text-[#374151] uppercase tracking-wider bg-[#F9FAFB] px-2 py-1 rounded border border-[#FDDBB4]/40">{product.category}</span>
-                          </div>
+                            <div className="flex items-center gap-1.5">
+                              {product.stockQuantity <= (product.lowStockAlert || 5) && (
+                                 <span className="text-[9px] font-black text-red-600 bg-red-50 border border-red-200 uppercase tracking-wider px-2 py-1 rounded" title={`Stock: ${product.stockQuantity}`}>Low Stock</span>
+                              )}
+                              <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border ${product.itemType === 'service' ? 'text-purple-700 bg-purple-50 border-purple-200' : 'text-blue-700 bg-blue-50 border-blue-200'}`}>
+                                {product.itemType === 'service' ? '✂️ Service' : '📦 Product'}
+                              </span>
+                              <span className="text-[9px] font-black text-[#374151] uppercase tracking-wider bg-[#F9FAFB] px-2 py-1 rounded border border-[#FDDBB4]/40">{product.category}</span>
+                            </div>
                         </div>
                       </div>
                     </div>

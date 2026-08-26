@@ -40,6 +40,7 @@ interface ProductForm {
   stock_quantity: string
   low_stock_alert: string
   is_active: boolean
+  item_type: 'product' | 'service'
 }
 
 const EMPTY_FORM: ProductForm = {
@@ -50,6 +51,7 @@ const EMPTY_FORM: ProductForm = {
   stock_quantity: '0',
   low_stock_alert: '5',
   is_active: true,
+  item_type: 'product',
 }
 
 const getStatus = (p: InventoryProduct) => {
@@ -168,6 +170,7 @@ export default function Inventory() {
       stock_quantity: String(p.stock_quantity),
       low_stock_alert: String(p.low_stock_alert || 5),
       is_active: p.is_active,
+      item_type: ((p as any).item_type === 'service' ? 'service' : 'product') as 'product' | 'service',
     })
     setProductNotice('')
     setActiveTab('products')
@@ -197,6 +200,7 @@ export default function Inventory() {
         stock_quantity: parseFloat(productForm.stock_quantity) || 0,
         low_stock_alert: parseInt(productForm.low_stock_alert) || 5,
         is_active: productForm.is_active,
+        item_type: productForm.item_type,
         updated_at: new Date().toISOString(),
       }
       if (editingProduct) {
@@ -448,6 +452,24 @@ export default function Inventory() {
                   <input type="number" min="0" value={productForm.low_stock_alert} onChange={e => setProductForm(f => ({...f, low_stock_alert: e.target.value}))}
                     className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
                 </div>
+              </div>
+
+              {/* Item Type Toggle */}
+              <div className="space-y-2">
+                <label className="text-[11px] font-black uppercase tracking-wider text-[#6B7280]">Type</label>
+                <div className="flex gap-2">
+                  <button type="button"
+                    onClick={() => setProductForm(f => ({ ...f, item_type: 'product' }))}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${productForm.item_type === 'product' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-[#374151] border-[#FDDBB4]/60 hover:border-blue-300'}`}>
+                    📦 Product
+                  </button>
+                  <button type="button"
+                    onClick={() => setProductForm(f => ({ ...f, item_type: 'service' }))}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${productForm.item_type === 'service' ? 'bg-purple-500 text-white border-purple-500' : 'bg-white text-[#374151] border-[#FDDBB4]/60 hover:border-purple-300'}`}>
+                    ✂️ Service
+                  </button>
+                </div>
+                <p className="text-[10px] text-[#9CA3AF]">Products = physical items sold. Services = tailoring, stitching, alterations.</p>
               </div>
 
               <div className="flex items-center gap-3 p-3 bg-[#FAFAFA] rounded-xl border border-[#FDDBB4]/60">

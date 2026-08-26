@@ -523,6 +523,7 @@ export default function Pos(props: PosProps = {}) {
           basePrice: Number(item.basePrice) || 0,
           imageUrl: item.imageUrl || item.image || null,
           source: item.source || 'catalogue',
+          itemType: item.itemType || 'product',
           note: item.note || null,
         })),
         shipping: Number(shipping || 0),

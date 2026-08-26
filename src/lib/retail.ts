@@ -20,6 +20,7 @@ export type StructuredOrderItem = {
   line_total: number
   image_url: string | null
   source?: 'catalogue' | 'manual'
+  item_type?: 'product' | 'service'
   note?: string | null
 }
 
@@ -405,6 +406,7 @@ export const buildStructuredOrderItem = (input: {
   basePrice: number
   imageUrl?: string | null
   source?: 'catalogue' | 'manual'
+  itemType?: 'product' | 'service'
   note?: string | null
 }): StructuredOrderItem => {
   const safeQuantity = normalizeSelectedQuantity(
@@ -431,6 +433,7 @@ export const buildStructuredOrderItem = (input: {
     line_total: calculateLineTotal(safeQuantity, input.unitType, safeBaseQuantity, safeBasePrice),
     image_url: input.imageUrl ? String(input.imageUrl) : null,
     source: input.source || 'catalogue',
+    item_type: input.itemType || 'product',
     note: input.note ? String(input.note) : null,
   }
 }

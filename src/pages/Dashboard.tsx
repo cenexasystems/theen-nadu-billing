@@ -665,8 +665,31 @@ export default function Dashboard() {
       waCompleted,
       topWAProducts,
       topWACategories,
-      productRevenue: posRevenue + onlinePosRevenue,
-      serviceRevenue: manualRevenue || totalManualRevenue,
+      // Revenue split by item_type stored in each bill's items array
+      productRevenue: (() => {
+        let total = 0
+        billableCompleted.forEach(order => {
+          const items = parseOrderItems(order.items)
+          items.forEach((item: Record<string, unknown>) => {
+            if ((item.item_type || 'product') === 'product') {
+              total += toNumber(item.line_total, 0)
+            }
+          })
+        })
+        return total
+      })(),
+      serviceRevenue: (() => {
+        let total = 0
+        billableCompleted.forEach(order => {
+          const items = parseOrderItems(order.items)
+          items.forEach((item: Record<string, unknown>) => {
+            if (item.item_type === 'service') {
+              total += toNumber(item.line_total, 0)
+            }
+          })
+        })
+        return total
+      })(),
       totalExpenses: expensesList.reduce((s, e) => s + toNumber(e.amount, 0), 0),
       netProfit: completedRevenue - expensesList.reduce((s, e) => s + toNumber(e.amount, 0), 0),
     }
