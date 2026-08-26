@@ -2226,14 +2226,14 @@ export default function Dashboard() {
                       <h3 className="text-[16px] font-bold text-[#111111]">Revenue Trend {analytics.chartYear}</h3>
                       <span className="text-[12px] font-bold text-maroon-dark bg-red-50 px-2.5 py-1 rounded-md">Avg {formatCurrency(analytics.monthlyRevenue || 0)}/mo</span>
                     </div>
-                    <div className="h-48">
+                    <div className="h-64 mt-4">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={analytics.monthlyTrend}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                          <XAxis dataKey="month" tick={{ fill: '#6B7280', fontSize: 9, fontWeight: 700 }} axisLine={false} tickLine={false} interval={0} angle={-45} textAnchor="end" height={60} />
+                          <XAxis dataKey="month" tick={{ fill: '#6B7280', fontSize: 11, fontWeight: 700 }} axisLine={false} tickLine={false} interval={0} angle={-45} textAnchor="end" height={60} />
                           <YAxis hide />
                           <Tooltip cursor={{ fill: '#F9FAFB' }} formatter={(value) => formatCurrency(toNumber(value as number | string, 0))} />
-                          <Bar dataKey="revenue" fill="#E87020" radius={[4, 4, 0, 0]} barSize={12} />
+                          <Bar dataKey="revenue" fill="#E87020" radius={[4, 4, 0, 0]} maxBarSize={32} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
