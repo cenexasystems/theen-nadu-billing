@@ -569,10 +569,10 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
 }))
 
 // --- Admin Auth Store ---
-const ADMIN_PORTAL_ID = 'admin'
-const ADMIN_PORTAL_PASSWORD = 'admin123'
-const STAFF_PORTAL_ID = 'staff'
-const STAFF_PORTAL_PASSWORD = 'staff123'
+const ADMIN_PORTAL_ID = import.meta.env.VITE_ADMIN_ID as string
+const ADMIN_PORTAL_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD as string
+const STAFF_PORTAL_ID = import.meta.env.VITE_STAFF_ID as string
+const STAFF_PORTAL_PASSWORD = import.meta.env.VITE_STAFF_PASSWORD as string
 
 export type AdminRole = 'admin' | 'staff' | null
 
