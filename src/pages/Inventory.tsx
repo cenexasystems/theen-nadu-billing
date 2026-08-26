@@ -195,8 +195,8 @@ export default function Inventory() {
       const payload = {
         name: productForm.name.trim(),
         category: productForm.category.trim() || null,
-        price: parseFloat(productForm.price),
-        purchase_price: productForm.purchase_price ? parseFloat(productForm.purchase_price) : null,
+        price: parseFloat(productForm.price) || 0,
+        purchase_price: productForm.purchase_price ? parseFloat(productForm.purchase_price) : 0,
         stock_quantity: parseFloat(productForm.stock_quantity) || 0,
         low_stock_alert: parseInt(productForm.low_stock_alert) || 5,
         is_active: productForm.is_active,
