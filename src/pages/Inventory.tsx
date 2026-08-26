@@ -215,8 +215,9 @@ export default function Inventory() {
       }
       play('success')
       void fetchProducts()
-    } catch (err: unknown) {
-      setProductNotice(err instanceof Error ? err.message : 'Failed to save product')
+    } catch (err: any) {
+      console.error('Save product error:', err)
+      setProductNotice(`Failed to save: ${err.message || JSON.stringify(err)}`)
       play('error')
     } finally {
       setSavingProduct(false)
