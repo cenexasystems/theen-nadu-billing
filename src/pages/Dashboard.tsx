@@ -723,18 +723,22 @@ export default function Dashboard() {
         supabase.from('coupons')
           .select('id, code, percentage, is_active, expiry_date, usage_limit, usage_count, min_order_value')
           .order('created_at', { ascending: false }),
-        supabase.from('expenses').select('amount').then(res => res).catch(() => ({ data: [], error: null }))
+        (async () => {
+          const res = await supabase.from('expenses').select('amount')
+          if (res.error) return { data: [] as any[], error: null }
+          return res
+        })()
       ])
       if (cRes.error) throw cRes.error
       if (oRes.error) throw oRes.error
-      const mappedOrders = (oRes.data || []).map(r => toDashboardOrder(r as Record<string, unknown>))
+      const mappedOrders = (oRes.data || []).map((r: any) => toDashboardOrder(r as Record<string, unknown>))
       setCats((cRes.data || []) as Category[])
       setOrders(mappedOrders)
-      setSearchResults(mappedOrders.filter(o => normalizeOrderType(o.order_type) !== 'online_request').slice(0, 100))
+      setSearchResults(mappedOrders.filter((o: DashboardOrder) => normalizeOrderType(o.order_type) !== 'online_request').slice(0, 100))
       setCoupons((couponRes.data || []) as DashboardCoupon[])
       setExpensesList((eRes.data || []) as any[])
 
-      const orderIds = mappedOrders.map(o => o.id).filter(Boolean)
+      const orderIds = mappedOrders.map((o: DashboardOrder) => o.id).filter(Boolean)
       if (orderIds.length > 0) {
         let oi: unknown[] | null = null
         let orderItemsError: unknown = null
