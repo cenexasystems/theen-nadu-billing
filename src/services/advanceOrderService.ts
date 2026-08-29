@@ -294,15 +294,15 @@ export async function completeAdvanceOrder(
 
   if (isSupabaseConfigured) {
     try {
-        const { data, error } = await supabase.rpc('complete_advance_order_v3', { 
-          p_order_id: orderId, 
-          p_payment_method: paymentMethod,
-          p_final_amount: finalAmount,
-          p_coupon_code: couponCode,
-          p_coupon_percentage: couponPercentage,
-          p_manual_discount: manualDiscountAmount,
-          p_remarks: remarks 
-        })
+      const { data, error } = await supabase.rpc('complete_advance_order_v2', { 
+        p_order_id: orderId, 
+        p_payment_method: paymentMethod,
+        p_final_amount: finalAmount,
+        p_coupon_code: couponCode,
+        p_coupon_percentage: couponPercentage,
+        p_manual_discount: manualDiscountAmount,
+        p_remarks: remarks 
+      })
       if (error) {
         throw new Error(error.message || JSON.stringify(error))
       }
