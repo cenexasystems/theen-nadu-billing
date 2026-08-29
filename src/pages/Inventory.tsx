@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Package, Search, AlertTriangle, X, RefreshCw, Edit2, Plus, Trash2, ChevronDown } from 'lucide-react'
+import { Package, Search, AlertTriangle, X, RefreshCw, Edit2, Plus, Trash2, ChevronDown, Download, TrendingUp, PieChart } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency } from '../lib/retail'
 import { useSound } from '../context/SoundContext'
@@ -62,7 +62,7 @@ const getStatus = (p: InventoryProduct) => {
 
 export default function Inventory() {
   const { play } = useSound()
-  const [activeTab, setActiveTab] = useState<'stock' | 'products' | 'categories'>('stock')
+  const [activeTab, setActiveTab] = useState<'stock' | 'products' | 'categories' | 'analytics'>('stock')
 
   // Stock state
   const [products, setProducts] = useState<InventoryProduct[]>([])
@@ -86,6 +86,33 @@ export default function Inventory() {
   const [editingCatName, setEditingCatName] = useState('')
   const [savingCat, setSavingCat] = useState(false)
   const [catNotice, setCatNotice] = useState('')
+
+  const downloadCSV = () => {
+    const headers = ['ID', 'Product Name', 'Category', 'Stock Quantity', 'Low Stock Alert', 'Price (RM)', 'Purchase Price (RM)', 'Status', 'Last Updated']
+    const rows = products.map(p => {
+      const status = p.stock_quantity <= 0 ? 'Out of Stock' : p.stock_quantity <= p.low_stock_alert ? 'Low Stock' : 'In Stock'
+      return [
+        p.id,
+        `"${p.name.replace(/"/g, '""')}"`,
+        `"${(p.category || '').replace(/"/g, '""')}"`,
+        p.stock_quantity,
+        p.low_stock_alert,
+        p.price,
+        p.purchase_price || 0,
+        status,
+        new Date(p.updated_at).toLocaleString('en-MY')
+      ].join(',')
+    })
+    
+    const csvContent = [headers.join(','), ...rows].join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.setAttribute('download', `inventory_report_${new Date().toISOString().split('T')[0]}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
 
   const fetchProducts = useCallback(async () => {
     setLoading(true)
@@ -282,8 +309,8 @@ export default function Inventory() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-[#FDDBB4]/60 pb-2">
-        {([['stock', 'Stock Management'], ['products', 'Add / Edit Products'], ['categories', 'Categories']] as const).map(([key, label]) => (
+      <div className="flex gap-2 border-b border-[#FDDBB4]/60 pb-2 overflow-x-auto">
+        {([['stock', 'Stock Management'], ['products', 'Add / Edit Products'], ['categories', 'Categories'], ['analytics', 'Analytics & Reports']] as const).map(([key, label]) => (
           <button key={key} onClick={() => setActiveTab(key)}
             className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors whitespace-nowrap ${activeTab === key ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>
             {label}
@@ -590,6 +617,81 @@ export default function Inventory() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* 📊 ANALYTICS & REPORTS TAB 📊 */}
+      {activeTab === 'analytics' && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60 gap-4">
+            <div>
+              <h3 className="text-lg font-black text-[#111111]">Inventory Reports</h3>
+              <p className="text-xs text-[#6B7280]">Download your current stock data for accounting or backup.</p>
+            </div>
+            <button onClick={downloadCSV} className="flex items-center gap-2 bg-[#E87020] hover:bg-[#C85C10] text-white px-5 py-2.5 rounded-xl font-bold transition-transform active:scale-95 shadow-lg shadow-orange-600/20">
+              <Download size={18} />
+              Export to CSV
+            </button>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            {/* Highest Stock Value */}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60">
+              <h4 className="font-black text-sm uppercase tracking-wider text-[#374151] mb-4 flex items-center gap-2">
+                <TrendingUp size={16} className="text-emerald-500" />
+                Highest Stock Value
+              </h4>
+              <div className="space-y-3">
+                {products
+                  .filter(p => p.stock_quantity > 0)
+                  .sort((a, b) => (b.stock_quantity * b.price) - (a.stock_quantity * a.price))
+                  .slice(0, 5)
+                  .map((p, i) => (
+                    <div key={p.id} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-white font-black text-xs text-slate-400 shadow-sm">{i + 1}</span>
+                        <div className="min-w-0">
+                          <p className="font-bold text-sm text-slate-800 truncate">{p.name}</p>
+                          <p className="text-[10px] font-semibold text-slate-500 truncate">{p.stock_quantity} in stock • {formatCurrency(p.price)} each</p>
+                        </div>
+                      </div>
+                      <p className="font-black text-emerald-600 shrink-0 ml-2">{formatCurrency(p.stock_quantity * p.price)}</p>
+                    </div>
+                ))}
+                {products.filter(p => p.stock_quantity > 0).length === 0 && (
+                  <p className="text-sm font-bold text-slate-400 text-center py-4">No stock value found.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Category Breakdown */}
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60">
+              <h4 className="font-black text-sm uppercase tracking-wider text-[#374151] mb-4 flex items-center gap-2">
+                <PieChart size={16} className="text-purple-500" />
+                Stock by Category
+              </h4>
+              <div className="space-y-3">
+                {Object.entries(
+                  products.reduce((acc, p) => {
+                    const cat = p.category || 'Uncategorised'
+                    acc[cat] = (acc[cat] || 0) + p.stock_quantity;
+                    return acc;
+                  }, {} as Record<string, number>)
+                ).sort((a, b) => b[1] - a[1]).map(([cat, qty], i) => (
+                  <div key={cat} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-purple-200 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className={`shrink-0 w-3 h-3 rounded-full ${['bg-orange-500', 'bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500'][i % 5]}`} />
+                      <p className="font-bold text-sm text-slate-800">{cat}</p>
+                    </div>
+                    <p className="font-black text-slate-600 shrink-0"><span className="text-purple-600">{qty}</span> items</p>
+                  </div>
+                ))}
+                {products.length === 0 && (
+                  <p className="text-sm font-bold text-slate-400 text-center py-4">No products found.</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
