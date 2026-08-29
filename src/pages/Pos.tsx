@@ -1347,7 +1347,7 @@ export default function Pos(props: PosProps = {}) {
                           : 'bg-white text-[#374151] border-[#FDDBB4]/60 hover:border-[#E87020]/40'
                       }`}
                     >
-                      {mode === 'qr' ? 'QR' : mode === 'card' ? 'Card' : 'Cash'}
+                      {mode}
                     </button>
                   ))}
                 </div>
@@ -1358,7 +1358,7 @@ export default function Pos(props: PosProps = {}) {
               <div>
                 <div className="border border-[#FDDBB4]/60 rounded-xl p-2.5 bg-white">
                   <label className="block text-[10px] font-black text-[#374151] tracking-wider uppercase mb-0.5">
-                    {paymentType === 'qr' ? 'QR' : paymentType === 'card' ? 'Card' : 'Cash'} — Amount Received (RM)
+                    {paymentType} — Amount Received (RM)
                   </label>
                   <input
                     type="number" onWheel={(e) => (e.target as HTMLInputElement).blur()}
