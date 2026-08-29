@@ -21,12 +21,12 @@ import { advanceReceiptPdf, downloadFile, printAdvanceReceipt } from '../lib/adv
 import { printThermalReceipt } from '../lib/thermalPrint'
 import {
   buildStructuredOrderItem,
-import { PAYMENT_METHODS } from '../lib/paymentMethods'
   calculateLineTotal,
   formatCurrency,
   formatQuantityDisplay,
   formatInvoiceNo,
 } from '../lib/retail'
+import { PAYMENT_METHODS } from '../lib/paymentMethods'
 import { buildProfessionalWhatsAppMessage, buildAdvanceDepositWhatsAppMessage } from '../lib/whatsappMessage'
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getProductImage, onImgError } from '../lib/productImages'
