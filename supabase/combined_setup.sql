@@ -959,7 +959,7 @@ create table if not exists public.advance_order_payments (
   advance_order_id uuid not null references public.advance_orders(id) on delete cascade,
   payment_type text not null check (payment_type in ('deposit','remaining')),
   amount numeric(12,2) not null check (amount >= 0),
-  payment_method text not null check (payment_method in ('cash','upi','card')),
+  payment_method text not null,
   remarks text not null default '',
   received_by uuid references auth.users(id) on delete set null,
   received_at timestamptz not null default now(),
@@ -989,7 +989,6 @@ begin
   if trim(coalesce(p_product_name,'')) = '' then raise exception 'Product name is required'; end if;
   if coalesce(p_total_amount,0) <= 0 then raise exception 'Total amount must be greater than zero'; end if;
   if coalesce(p_deposit_amount,0) <= 0 or p_deposit_amount >= p_total_amount then raise exception 'Deposit must be greater than zero and less than the total amount'; end if;
-  if lower(coalesce(p_payment_method,'')) not in ('cash','upi','card') then raise exception 'Select a valid deposit payment method'; end if;
   v_deposit_id := 'DEP-' || to_char(v_now at time zone 'Asia/Kolkata','YYYYMMDD') || '-' || lpad(nextval('public.deposit_number_seq')::text,4,'0');
   insert into public.advance_orders(deposit_id,customer_name,phone,address,product_name,products,category,description,total_amount,deposit_amount,expected_delivery_date,remarks,created_by,created_by_name,created_at,updated_at)
   values(v_deposit_id,trim(p_customer_name),trim(p_phone),trim(coalesce(p_address,'')),trim(p_product_name),case when jsonb_typeof(coalesce(p_products,'[]'::jsonb))='array' then coalesce(p_products,'[]'::jsonb) else '[]'::jsonb end,trim(coalesce(p_category,'')),trim(coalesce(p_description,'')),round(p_total_amount,2),round(p_deposit_amount,2),p_expected_delivery_date,trim(coalesce(p_remarks,'')),auth.uid(),trim(coalesce(p_created_by_name,'')),v_now,v_now)
@@ -1035,7 +1034,6 @@ language plpgsql security definer set search_path = public
 as $$
 declare v_advance public.advance_orders; v_order_id uuid := gen_random_uuid(); v_invoice text; v_now timestamptz := now(); v_items jsonb; v_item jsonb;
 begin
-  if lower(coalesce(p_payment_method,'')) not in ('cash','upi','card') then raise exception 'Select a valid payment method'; end if;
   select * into v_advance from public.advance_orders where id=p_order_id for update;
   if not found then raise exception 'Advance order not found'; end if;
   if v_advance.status='cancelled' then raise exception 'A cancelled order cannot be completed'; end if;
@@ -1130,9 +1128,6 @@ DECLARE
   v_item           jsonb;
 BEGIN
   -- Validate payment method
-  IF lower(coalesce(p_payment_method, '')) NOT IN ('cash', 'upi', 'card') THEN
-    RAISE EXCEPTION 'Select a valid payment method';
-  END IF;
 
   -- Lock and fetch the advance order
   SELECT * INTO v_advance FROM public.advance_orders WHERE id = p_order_id FOR UPDATE;
@@ -1306,9 +1301,6 @@ DECLARE
   v_total_discount numeric := 0;
 BEGIN
   -- Validate payment method
-  IF lower(coalesce(p_payment_method, '')) NOT IN ('cash', 'upi', 'card') THEN
-    RAISE EXCEPTION 'Select a valid payment method';
-  END IF;
 
   -- Lock and fetch the advance order
   SELECT * INTO v_advance FROM public.advance_orders WHERE id = p_order_id FOR UPDATE;
@@ -1768,3 +1760,4 @@ CREATE POLICY "Enable read access for all authenticated users" ON public.expense
 CREATE POLICY "Enable all access for all authenticated users" ON public.expenses FOR ALL TO authenticated USING (true);
 CREATE POLICY "Enable all access for all authenticated users" ON public.staff FOR ALL TO authenticated USING (true);
 CREATE POLICY "Enable all access for all authenticated users" ON public.attendance FOR ALL TO authenticated USING (true);
+

@@ -1,7 +1,7 @@
 export const BRAND_EN = "Thenn Nadu Tailoring"
 export const BRAND_TA = "Thenn Nadu Tailoring"
 export const BRAND_SUBTITLE = 'Thenn Nadu Legacy'
-export const BRAND_LOGO = '/thenn-nadu-logo.jpeg'
+export const BRAND_LOGO = '/logo.png'
 
 export const BRAND_PRIMARY_PHONE_DISPLAY = '+60 16-409 1130'
 export const BRAND_PRIMARY_PHONE_E164 = '60164091130'

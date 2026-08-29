@@ -21,6 +21,7 @@ import { advanceReceiptPdf, downloadFile, printAdvanceReceipt } from '../lib/adv
 import { printThermalReceipt } from '../lib/thermalPrint'
 import {
   buildStructuredOrderItem,
+import { PAYMENT_METHODS } from '../lib/paymentMethods'
   calculateLineTotal,
   formatCurrency,
   formatQuantityDisplay,
@@ -132,7 +133,7 @@ export default function Pos(props: PosProps = {}) {
   const [remarks, setRemarks] = useState('')
   const [referenceNumber, setReferenceNumber] = useState('')
   const [billingDate, setBillingDate] = useState('') // '' = use current date/time
-  const [paymentType, setPaymentType] = useState<'cash' | 'qr' | 'card'>('cash')
+  const [paymentType, setPaymentType] = useState<string>('Cash')
   const [saving, setSaving] = useState(false)
   const [shipping, setShipping] = useState<string>('0')
   const [couponInput, setCouponInput] = useState('')
@@ -499,8 +500,8 @@ export default function Pos(props: PosProps = {}) {
     const normalizedPhone = normalizePhone(customer.phone || '')
     if (!normalizedPhone) { setError('Please enter a valid Malaysian mobile number (e.g. 0123456789 or +60 12-345 6789)'); return }
     // Validate payment amount (only required for cash)
-    if (paymentType === 'cash' && !cashReceived.trim()) { setError('Enter the amount received from customer'); return }
-    if (paymentType === 'cash' && cashReceivedNum < total) { setError(`Insufficient payment. Customer still owes ${formatCurrency(total - cashReceivedNum)}`); return }
+    if (paymentType === 'Cash' && !cashReceived.trim()) { setError('Enter the amount received from customer'); return }
+    if (paymentType === 'Cash' && cashReceivedNum < total) { setError(`Insufficient payment. Customer still owes ${formatCurrency(total - cashReceivedNum)}`); return }
     // Validate online mode availability
     if (ordermode === 'online' && !isSupabaseConfigured) { setError('Cannot place online orders while offline'); return }
     setSaving(true); setError('')
@@ -583,7 +584,7 @@ export default function Pos(props: PosProps = {}) {
         address: customer.address.trim() || 'POS Counter',
         amountReceived: cashReceivedNum,
         balanceReturned: balanceToReturn,
-        paymentMode: ordermode === 'online' ? 'Online' : paymentType === 'qr' ? 'QR' : paymentType === 'card' ? 'Card' : 'Cash',
+        paymentMode: ordermode === 'online' ? 'Online' : paymentType,
         paymentMethod: paymentMode,
       }
       setInvoice(createdInvoice)
@@ -1334,8 +1335,8 @@ export default function Pos(props: PosProps = {}) {
               {/* Payment Mode Selector */}
               <div>
                 <label className="block text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1">Payment Mode</label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {(['cash', 'qr', 'card'] as const).map(mode => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                  {PAYMENT_METHODS.map(mode => (
                     <button
                       key={mode}
                       type="button"
