@@ -60,6 +60,209 @@ const getStatus = (p: InventoryProduct) => {
   return 'ok'
 }
 
+interface InventoryLog {
+  id: string
+  product_id: string | number
+  old_quantity: number
+  new_quantity: number
+  adjustment: number
+  reason: string
+  reference_id?: string
+  created_at: string
+  products?: { name: string; category: string }
+}
+
+type DatePreset = 'today' | 'week' | 'month' | 'custom'
+
+function InventoryAnalytics({ products, downloadCSV }: { products: InventoryProduct[]; downloadCSV: () => void }) {
+  const [datePreset, setDatePreset] = useState<DatePreset>('week')
+  const [fromDate, setFromDate] = useState(() => {
+    const d = new Date(); d.setDate(d.getDate() - 7); return d.toISOString().split('T')[0]
+  })
+  const [toDate, setToDate] = useState(() => new Date().toISOString().split('T')[0])
+  const [logs, setLogs] = useState<InventoryLog[]>([])
+  const [loadingLogs, setLoadingLogs] = useState(false)
+
+  const applyPreset = (preset: DatePreset) => {
+    setDatePreset(preset)
+    const now = new Date()
+    const today = now.toISOString().split('T')[0]
+    if (preset === 'today') { setFromDate(today); setToDate(today) }
+    else if (preset === 'week') { const d = new Date(); d.setDate(d.getDate() - 7); setFromDate(d.toISOString().split('T')[0]); setToDate(today) }
+    else if (preset === 'month') { const d = new Date(); d.setDate(1); setFromDate(d.toISOString().split('T')[0]); setToDate(today) }
+  }
+
+  useEffect(() => {
+    const fetchLogs = async () => {
+      setLoadingLogs(true)
+      const from = new Date(fromDate + 'T00:00:00').toISOString()
+      const to = new Date(toDate + 'T23:59:59').toISOString()
+      const { data } = await supabase
+        .from('inventory_logs')
+        .select('*, products(name, category)')
+        .gte('created_at', from)
+        .lte('created_at', to)
+        .order('created_at', { ascending: false })
+      setLogs((data as InventoryLog[]) || [])
+      setLoadingLogs(false)
+    }
+    void fetchLogs()
+  }, [fromDate, toDate])
+
+  const totalRestocked = logs.filter(l => l.adjustment > 0).reduce((s, l) => s + l.adjustment, 0)
+  const totalLost = logs.filter(l => l.adjustment < 0 && l.reason !== 'sale').reduce((s, l) => s + Math.abs(l.adjustment), 0)
+  const totalSold = logs.filter(l => l.reason === 'sale').reduce((s, l) => s + Math.abs(l.adjustment), 0)
+
+  const REASON_COLORS: Record<string, string> = {
+    restock: 'bg-emerald-100 text-emerald-700',
+    sale: 'bg-blue-100 text-blue-700',
+    return: 'bg-purple-100 text-purple-700',
+    loss: 'bg-red-100 text-red-700',
+    manual_adjustment: 'bg-orange-100 text-orange-700',
+    correction: 'bg-yellow-100 text-yellow-700',
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Header + Export */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60 gap-4">
+        <div>
+          <h3 className="text-lg font-black text-[#111111]">Inventory Analytics & Reports</h3>
+          <p className="text-xs text-[#6B7280]">Track stock movements, restocks, losses and more — filtered by date.</p>
+        </div>
+        <button onClick={downloadCSV} className="flex items-center gap-2 bg-[#E87020] hover:bg-[#C85C10] text-white px-5 py-2.5 rounded-xl font-bold transition-transform active:scale-95 shadow-lg shadow-orange-600/20">
+          <Download size={16} /> Export CSV
+        </button>
+      </div>
+
+      {/* Date Filter */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-[#FDDBB4]/60">
+        <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-3">Filter by Date</p>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {(['today', 'week', 'month', 'custom'] as DatePreset[]).map(p => (
+            <button key={p} onClick={() => applyPreset(p)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${datePreset === p ? 'bg-[#E87020] text-white' : 'bg-[#F5F5F5] text-[#374151] hover:bg-orange-50'}`}>
+              {p === 'today' ? 'Today' : p === 'week' ? 'This Week' : p === 'month' ? 'This Month' : 'Custom'}
+            </button>
+          ))}
+        </div>
+        {datePreset === 'custom' && (
+          <div className="flex flex-wrap gap-3 items-center">
+            <div className="flex items-center gap-2">
+              <label className="text-[10px] font-black uppercase text-[#6B7280]">From</label>
+              <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
+                className="border border-[#FDDBB4]/60 rounded-lg px-3 py-1.5 text-sm font-bold outline-none focus:border-[#E87020]" />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-[10px] font-black uppercase text-[#6B7280]">To</label>
+              <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}
+                className="border border-[#FDDBB4]/60 rounded-lg px-3 py-1.5 text-sm font-bold outline-none focus:border-[#E87020]" />
+            </div>
+          </div>
+        )}
+        {datePreset !== 'custom' && (
+          <p className="text-xs text-[#9CA3AF]">Showing: <span className="font-bold text-[#374151]">{fromDate}</span> → <span className="font-bold text-[#374151]">{toDate}</span></p>
+        )}
+      </div>
+
+      {/* Activity Summary Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {[
+          { label: 'Units Restocked', value: totalRestocked, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'Units Sold', value: totalSold, color: 'text-blue-600', bg: 'bg-blue-50' },
+          { label: 'Units Lost/Damaged', value: totalLost, color: 'text-red-600', bg: 'bg-red-50' },
+        ].map(c => (
+          <div key={c.label} className={`${c.bg} rounded-2xl border border-[#FDDBB4]/60 p-4 shadow-sm`}>
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{c.label}</p>
+            <p className={`text-2xl font-black ${c.color}`}>{c.value}</p>
+            <p className="text-[10px] text-[#9CA3AF] mt-1">in selected period</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Static Analytics */}
+      <div className="grid md:grid-cols-2 gap-5">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60">
+          <h4 className="font-black text-sm uppercase tracking-wider text-[#374151] mb-4 flex items-center gap-2">
+            <TrendingUp size={16} className="text-emerald-500" /> Highest Stock Value (Current)
+          </h4>
+          <div className="space-y-3">
+            {products.filter(p => p.stock_quantity > 0)
+              .sort((a, b) => (b.stock_quantity * b.price) - (a.stock_quantity * a.price))
+              .slice(0, 5).map((p, i) => (
+                <div key={p.id} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-white font-black text-xs text-slate-400 shadow-sm">{i + 1}</span>
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm text-slate-800 truncate">{p.name}</p>
+                      <p className="text-[10px] text-slate-500 truncate">{p.stock_quantity} units • {formatCurrency(p.price)}/unit</p>
+                    </div>
+                  </div>
+                  <p className="font-black text-emerald-600 shrink-0 ml-2">{formatCurrency(p.stock_quantity * p.price)}</p>
+                </div>
+            ))}
+            {products.filter(p => p.stock_quantity > 0).length === 0 && <p className="text-sm text-slate-400 text-center py-4">No data.</p>}
+          </div>
+        </div>
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60">
+          <h4 className="font-black text-sm uppercase tracking-wider text-[#374151] mb-4 flex items-center gap-2">
+            <PieChart size={16} className="text-purple-500" /> Stock by Category (Current)
+          </h4>
+          <div className="space-y-3">
+            {Object.entries(products.reduce((acc, p) => {
+              const cat = p.category || 'Uncategorised'
+              acc[cat] = (acc[cat] || 0) + p.stock_quantity
+              return acc
+            }, {} as Record<string, number>)).sort((a, b) => b[1] - a[1]).map(([cat, qty], i) => (
+              <div key={cat} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className={`shrink-0 w-3 h-3 rounded-full ${['bg-orange-500','bg-emerald-500','bg-blue-500','bg-purple-500','bg-pink-500'][i%5]}`} />
+                  <p className="font-bold text-sm text-slate-800">{cat}</p>
+                </div>
+                <p className="font-black text-slate-600 shrink-0"><span className="text-purple-600">{qty}</span> items</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Activity Log Table */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
+        <div className="px-5 py-4 border-b border-[#FDDBB4]/60 flex items-center justify-between">
+          <h4 className="font-black text-sm uppercase tracking-wider text-[#374151]">Stock Movement Log</h4>
+          <span className="text-xs font-bold text-[#6B7280]">{logs.length} entries</span>
+        </div>
+        {loadingLogs ? (
+          <p className="text-center py-10 text-sm font-bold text-[#6B7280]">Loading...</p>
+        ) : logs.length === 0 ? (
+          <p className="text-center py-10 text-sm font-bold text-[#9CA3AF]">No stock movements in this date range.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead className="bg-[#F8F7F4] text-[10px] font-black uppercase tracking-wider text-[#737B72]">
+                <tr>{['Date', 'Product', 'Category', 'Reason', 'Old Qty', 'New Qty', 'Change'].map(h => <th key={h} className="px-4 py-3 text-left">{h}</th>)}</tr>
+              </thead>
+              <tbody className="divide-y divide-[#F0EEE9]">
+                {logs.map(log => (
+                  <tr key={log.id} className="hover:bg-orange-50/30">
+                    <td className="px-4 py-3 text-[11px] text-[#6B7280] whitespace-nowrap">{new Date(log.created_at).toLocaleDateString('en-MY')}<br/><span className="text-[10px] opacity-70">{new Date(log.created_at).toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'})}</span></td>
+                    <td className="px-4 py-3 font-bold text-[#111111] max-w-[140px] truncate">{(log.products as any)?.name || '—'}</td>
+                    <td className="px-4 py-3 text-[#6B7280] text-xs">{(log.products as any)?.category || '—'}</td>
+                    <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase ${REASON_COLORS[log.reason] || 'bg-gray-100 text-gray-600'}`}>{log.reason.replace('_',' ')}</span></td>
+                    <td className="px-4 py-3 font-bold text-[#374151]">{log.old_quantity}</td>
+                    <td className="px-4 py-3 font-bold text-[#374151]">{log.new_quantity}</td>
+                    <td className={`px-4 py-3 font-black ${log.adjustment > 0 ? 'text-emerald-600' : 'text-red-600'}`}>{log.adjustment > 0 ? '+' : ''}{log.adjustment}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function Inventory() {
   const { play } = useSound()
   const [activeTab, setActiveTab] = useState<'stock' | 'products' | 'categories' | 'analytics'>('stock')
@@ -622,79 +825,7 @@ export default function Inventory() {
       )}
 
       {/* 📊 ANALYTICS & REPORTS TAB 📊 */}
-      {activeTab === 'analytics' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60 gap-4">
-            <div>
-              <h3 className="text-lg font-black text-[#111111]">Inventory Reports</h3>
-              <p className="text-xs text-[#6B7280]">Download your current stock data for accounting or backup.</p>
-            </div>
-            <button onClick={downloadCSV} className="flex items-center gap-2 bg-[#E87020] hover:bg-[#C85C10] text-white px-5 py-2.5 rounded-xl font-bold transition-transform active:scale-95 shadow-lg shadow-orange-600/20">
-              <Download size={18} />
-              Export to CSV
-            </button>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-5">
-            {/* Highest Stock Value */}
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60">
-              <h4 className="font-black text-sm uppercase tracking-wider text-[#374151] mb-4 flex items-center gap-2">
-                <TrendingUp size={16} className="text-emerald-500" />
-                Highest Stock Value
-              </h4>
-              <div className="space-y-3">
-                {products
-                  .filter(p => p.stock_quantity > 0)
-                  .sort((a, b) => (b.stock_quantity * b.price) - (a.stock_quantity * a.price))
-                  .slice(0, 5)
-                  .map((p, i) => (
-                    <div key={p.id} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200 transition-colors">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-white font-black text-xs text-slate-400 shadow-sm">{i + 1}</span>
-                        <div className="min-w-0">
-                          <p className="font-bold text-sm text-slate-800 truncate">{p.name}</p>
-                          <p className="text-[10px] font-semibold text-slate-500 truncate">{p.stock_quantity} in stock • {formatCurrency(p.price)} each</p>
-                        </div>
-                      </div>
-                      <p className="font-black text-emerald-600 shrink-0 ml-2">{formatCurrency(p.stock_quantity * p.price)}</p>
-                    </div>
-                ))}
-                {products.filter(p => p.stock_quantity > 0).length === 0 && (
-                  <p className="text-sm font-bold text-slate-400 text-center py-4">No stock value found.</p>
-                )}
-              </div>
-            </div>
-
-            {/* Category Breakdown */}
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#FDDBB4]/60">
-              <h4 className="font-black text-sm uppercase tracking-wider text-[#374151] mb-4 flex items-center gap-2">
-                <PieChart size={16} className="text-purple-500" />
-                Stock by Category
-              </h4>
-              <div className="space-y-3">
-                {Object.entries(
-                  products.reduce((acc, p) => {
-                    const cat = p.category || 'Uncategorised'
-                    acc[cat] = (acc[cat] || 0) + p.stock_quantity;
-                    return acc;
-                  }, {} as Record<string, number>)
-                ).sort((a, b) => b[1] - a[1]).map(([cat, qty], i) => (
-                  <div key={cat} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-purple-200 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className={`shrink-0 w-3 h-3 rounded-full ${['bg-orange-500', 'bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500'][i % 5]}`} />
-                      <p className="font-bold text-sm text-slate-800">{cat}</p>
-                    </div>
-                    <p className="font-black text-slate-600 shrink-0"><span className="text-purple-600">{qty}</span> items</p>
-                  </div>
-                ))}
-                {products.length === 0 && (
-                  <p className="text-sm font-bold text-slate-400 text-center py-4">No products found.</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {activeTab === 'analytics' && <InventoryAnalytics products={products} downloadCSV={downloadCSV} />}
 
       {/* ── Adjust Stock Modal ── */}
       {adjustModal && (
