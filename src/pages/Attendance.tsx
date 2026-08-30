@@ -20,7 +20,7 @@ interface AttendanceRecord {
 }
 
 export default function Attendance() {
-  const [tab, setTab] = useState<'today'|'staff'>('today')
+  const [tab, setTab] = useState<'today'|'staff'|'report'>('today')
   const [staff, setStaff] = useState<Staff[]>([])
   const [attendanceMap, setAttendanceMap] = useState<Record<string, string>>({})
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
@@ -59,8 +59,47 @@ export default function Attendance() {
     }
   }, [selectedDate])
 
+  const [reportMonth, setReportMonth] = useState(() => new Date().toISOString().substring(0, 7))
+  const [reportData, setReportData] = useState<Record<string, { present: number, half: number, absent: number, leave: number }>>({})
+  const [reportLoading, setReportLoading] = useState(false)
+
   useEffect(() => { void fetchData() }, [fetchData])
 
+  useEffect(() => {
+    if (tab !== 'report') return
+    const fetchReport = async () => {
+      setReportLoading(true)
+      try {
+        const startDate = `${reportMonth}-01`
+        const dateObj = new Date(`${reportMonth}-01T00:00:00`)
+        dateObj.setMonth(dateObj.getMonth() + 1)
+        dateObj.setDate(0)
+        const endDate = dateObj.toISOString().split('T')[0]
+        
+        const { data, error } = await supabase.from('attendance')
+          .select('*')
+          .gte('date', startDate)
+          .lte('date', endDate)
+        
+        if (data) {
+          const stats: Record<string, { present: number, half: number, absent: number, leave: number }> = {}
+          data.forEach(r => {
+            if (!stats[r.staff_id]) stats[r.staff_id] = { present: 0, half: 0, absent: 0, leave: 0 }
+            if (r.status === 'present') stats[r.staff_id].present++
+            else if (r.status === 'half-day') stats[r.staff_id].half++
+            else if (r.status === 'absent') stats[r.staff_id].absent++
+            else if (r.status === 'leave') stats[r.staff_id].leave++
+          })
+          setReportData(stats)
+        }
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setReportLoading(false)
+      }
+    }
+    void fetchReport()
+  }, [tab, reportMonth])
   const markAttendance = async (staffId: string, status: string) => {
     setAttendanceMap(p => ({ ...p, [staffId]: status }))
     await supabase.from('attendance').upsert({
@@ -123,9 +162,10 @@ export default function Attendance() {
         </div>
       )}
 
-      <div className="flex gap-2 border-b border-[#FDDBB4]/60 pb-2">
-        <button onClick={() => setTab('today')} className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'today' ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>Today's Attendance</button>
-        <button onClick={() => setTab('staff')} className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'staff' ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>Staff Management</button>
+      <div className="flex gap-2 border-b border-[#FDDBB4]/60 pb-2 overflow-x-auto no-scrollbar">
+        <button onClick={() => setTab('today')} className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'today' ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>Today's Attendance</button>
+        <button onClick={() => setTab('report')} className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'report' ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>Monthly Report</button>
+        <button onClick={() => setTab('staff')} className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'staff' ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>Staff Management</button>
       </div>
 
       {tab === 'today' && (
@@ -244,6 +284,69 @@ export default function Attendance() {
           </div>
         </div>
       )}
+
+      {tab === 'report' && (
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-[#FDDBB4]/60 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="bg-purple-100 p-2.5 rounded-xl text-purple-600"><Calendar size={20} /></div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280]">Select Month</p>
+                <input type="month" value={reportMonth} onChange={e => setReportMonth(e.target.value)} className="font-black text-[#111111] bg-transparent outline-none" />
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-[#6B7280] font-bold">Estimated salary is based on 30 working days per month.</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/60">
+                  <tr>
+                    <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151]">Staff Member</th>
+                    <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151]">Role</th>
+                    <th className="px-4 py-3 text-[11px] font-black uppercase text-green-600 text-center">Present</th>
+                    <th className="px-4 py-3 text-[11px] font-black uppercase text-orange-500 text-center">Half Day</th>
+                    <th className="px-4 py-3 text-[11px] font-black uppercase text-red-600 text-center">Absent</th>
+                    <th className="px-4 py-3 text-[11px] font-black uppercase text-blue-600 text-center">Leave</th>
+                    <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151] text-right">Est. Salary</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reportLoading ? (
+                    <tr><td colSpan={7} className="text-center p-8 text-[#6B7280] font-bold">Loading report...</td></tr>
+                  ) : activeStaff.length === 0 ? (
+                    <tr><td colSpan={7} className="text-center p-8 text-[#6B7280] font-bold">No active staff members.</td></tr>
+                  ) : activeStaff.map(member => {
+                    const stats = reportData[member.id] || { present: 0, half: 0, absent: 0, leave: 0 }
+                    const daysWorked = stats.present + (stats.half * 0.5)
+                    const estSalary = (member.base_salary / 30) * daysWorked
+                    return (
+                      <tr key={member.id} className="border-b border-[#FDDBB4]/30 hover:bg-[#FAFAFA]">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[#FFF8F2] text-[#E87020] border border-[#FDDBB4] flex items-center justify-center font-black text-sm shrink-0 uppercase">{member.name.charAt(0)}</div>
+                            <span className="font-bold text-[#111111] text-sm">{member.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-[#374151]">{member.role}</td>
+                        <td className="px-4 py-3 text-center font-bold text-green-700">{stats.present}</td>
+                        <td className="px-4 py-3 text-center font-bold text-orange-600">{stats.half}</td>
+                        <td className="px-4 py-3 text-center font-bold text-red-700">{stats.absent}</td>
+                        <td className="px-4 py-3 text-center font-bold text-blue-700">{stats.leave}</td>
+                        <td className="px-4 py-3 text-right font-black text-[#111111]">{formatCurrency(estSalary)}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
