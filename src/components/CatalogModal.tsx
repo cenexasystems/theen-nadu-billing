@@ -220,21 +220,25 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                         </button>
                       </div>
                       <div onClick={() => onAdd(product)} className="cursor-pointer flex-1">
-                        <h4 className="text-[13px] font-black text-[#111111] leading-tight group-hover:text-[#E87020] transition-colors">{product.name}</h4>
-                        {product.nameTa && <p className="text-[10px] font-bold text-[#374151] mt-0.5">{product.nameTa}</p>}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <h4 className="text-[13px] font-black text-[#111111] leading-tight group-hover:text-[#E87020] transition-colors truncate">{product.name}</h4>
+                            {product.nameTa && <p className="text-[10px] font-bold text-[#374151] mt-0.5 truncate">{product.nameTa}</p>}
+                          </div>
+                          <span className={`shrink-0 text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border ${product.itemType === 'service' ? 'text-purple-700 bg-purple-50 border-purple-200' : 'text-blue-700 bg-blue-50 border-blue-200'}`}>
+                            {product.itemType === 'service' ? '✂️ Service' : '📦 Product'}
+                          </span>
+                        </div>
                       </div>
                       <div onClick={() => onAdd(product)} className="cursor-pointer">
-                        <div className="flex items-end justify-between mt-2 pt-2 border-t border-[#FDDBB4]/30">
-                          <span className="text-[14px] font-black text-[#111111]">RM {product.price}</span>
-                            <div className="flex items-center gap-1.5">
-                              {product.stockQuantity <= (product.lowStockAlert || 5) && (
-                                 <span className="text-[9px] font-black text-red-600 bg-red-50 border border-red-200 uppercase tracking-wider px-2 py-1 rounded" title={`Stock: ${product.stockQuantity}`}>Low Stock</span>
-                              )}
-                              <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border ${product.itemType === 'service' ? 'text-purple-700 bg-purple-50 border-purple-200' : 'text-blue-700 bg-blue-50 border-blue-200'}`}>
-                                {product.itemType === 'service' ? '✂️ Service' : '📦 Product'}
-                              </span>
-                              <span className="text-[9px] font-black text-[#374151] uppercase tracking-wider bg-[#F9FAFB] px-2 py-1 rounded border border-[#FDDBB4]/40">{product.category}</span>
-                            </div>
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#FDDBB4]/30 gap-2">
+                          <span className="text-[14px] font-black text-[#111111] shrink-0 whitespace-nowrap">RM {product.price}</span>
+                          <div className="flex items-center justify-end gap-1.5 overflow-hidden">
+                            {product.stockQuantity <= (product.lowStockAlert || 5) && (
+                               <span className="text-[9px] font-black text-red-600 bg-red-50 border border-red-200 uppercase tracking-wider px-2 py-1 rounded shrink-0" title={`Stock: ${product.stockQuantity}`}>Low Stock</span>
+                            )}
+                            <span className="text-[9px] font-black text-[#374151] uppercase tracking-wider bg-[#F9FAFB] px-2 py-1 rounded border border-[#FDDBB4]/40 truncate min-w-0">{product.category}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
