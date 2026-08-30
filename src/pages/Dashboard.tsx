@@ -1068,18 +1068,22 @@ export default function Dashboard() {
     if (preset === 'custom') { setSearch(s => ({ ...s, dateFrom: '', dateTo: '' })); return }
     const today = new Date()
     const todayStr = today.toISOString().slice(0, 10)
+    let newFrom = '', newTo = todayStr
     if (preset === 'today') {
-      setSearch(s => ({ ...s, dateFrom: todayStr, dateTo: todayStr }))
+      newFrom = todayStr
     } else if (preset === 'week') {
       const weekAgo = new Date(today); weekAgo.setDate(today.getDate() - 6)
-      setSearch(s => ({ ...s, dateFrom: weekAgo.toISOString().slice(0, 10), dateTo: todayStr }))
+      newFrom = weekAgo.toISOString().slice(0, 10)
     } else if (preset === 'month') {
-      setSearch(s => ({ ...s, dateFrom: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`, dateTo: todayStr }))
+      newFrom = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`
     }
+    setSearch(s => ({ ...s, dateFrom: newFrom, dateTo: newTo }))
+    // Auto-run search immediately with the new dates
+    setTimeout(() => void runSearch(undefined, newFrom, newTo), 0)
   }
 
   // Order search - POS bills only (online_request excluded)
-  const runSearch = async (e?: FormEvent) => {
+  const runSearch = async (e?: FormEvent, dateFromOverride?: string, dateToOverride?: string, billTypeOverride?: string) => {
     e?.preventDefault()
     setSearchLoading(true)
     try {
@@ -1116,15 +1120,16 @@ export default function Dashboard() {
         q = q.ilike('customer_name', `%${custInput}%`)
       }
 
-      // Apply date filters only if no specific text query is active or if custom date range was selected
-      if (!hasQuery || datePreset === 'custom') {
-        if (search.dateFrom) q = q.gte('created_at', `${search.dateFrom}T00:00:00`)
-        if (search.dateTo)   q = q.lte('created_at', `${search.dateTo}T23:59:59`)
-      }
+      // Apply date filters — always apply them (overrides take priority over state for instant preset clicks)
+      const effectiveDateFrom = dateFromOverride ?? search.dateFrom
+      const effectiveDateTo   = dateToOverride   ?? search.dateTo
+      if (effectiveDateFrom) q = q.gte('created_at', `${effectiveDateFrom}T00:00:00`)
+      if (effectiveDateTo)   q = q.lte('created_at', `${effectiveDateTo}T23:59:59`)
 
-      if (billTypeFilter === 'manual')       q = q.eq('order_type', 'manual_sale')
-      else if (billTypeFilter === 'offline') q = q.eq('order_type', 'pos_sale').eq('order_mode', 'offline')
-      else if (billTypeFilter === 'online')  q = q.eq('order_type', 'pos_sale').eq('order_mode', 'online')
+      const effectiveBillType = billTypeOverride ?? billTypeFilter
+      if (effectiveBillType === 'manual')       q = q.eq('order_type', 'manual_sale')
+      else if (effectiveBillType === 'offline') q = q.eq('order_type', 'pos_sale').eq('order_mode', 'offline')
+      else if (effectiveBillType === 'online')  q = q.eq('order_type', 'pos_sale').eq('order_mode', 'online')
 
       const { data, error } = await q
       if (error) throw error
@@ -2780,7 +2785,7 @@ export default function Dashboard() {
                   { v: 'online',  l: l('Online', 'ஆன்லைன்') },
                   { v: 'manual',  l: l('Manual', 'கைமுறை') },
                 ] as const).map(({ v, l }) => (
-                  <button key={v} type="button" onClick={() => setBillTypeFilter(v)}
+                  <button key={v} type="button" onClick={() => { setBillTypeFilter(v); setTimeout(() => void runSearch(undefined, undefined, undefined, v), 0) }}
                     className={`min-h-[44px] px-3 py-1.5 rounded-xl text-[12px] font-black transition-colors ${billTypeFilter === v ? 'bg-[#111111] text-white shadow-sm' : 'bg-[#F9FAFB] text-[#374151] hover:bg-[#FDDBB4]/40'}`}>
                     {l}
                   </button>
@@ -2795,7 +2800,7 @@ export default function Dashboard() {
                     </button>
                   ))}
                   {(search.dateFrom || search.dateTo || datePreset) && (
-                    <button type="button" onClick={() => { setDatePreset(''); setSearch(s => ({ ...s, dateFrom: '', dateTo: '' })) }}
+                    <button type="button" onClick={() => { setDatePreset(''); setSearch(s => ({ ...s, dateFrom: '', dateTo: '' })); setTimeout(() => void runSearch(undefined, '', ''), 0) }}
                       className="min-h-[44px] px-3 py-1.5 rounded-xl text-[12px] font-black text-[#E87020] hover:bg-[#E87020]/5">{l('Clear Dates', 'தேதி அழி')}</button>
                   )}
                 </div>
