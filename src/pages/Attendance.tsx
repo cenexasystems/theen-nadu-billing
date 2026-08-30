@@ -295,9 +295,6 @@ export default function Attendance() {
                 <input type="month" value={reportMonth} onChange={e => setReportMonth(e.target.value)} className="font-black text-[#111111] bg-transparent outline-none" />
               </div>
             </div>
-            <div>
-              <p className="text-xs text-[#6B7280] font-bold">Estimated salary is based on 30 working days per month.</p>
-            </div>
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
@@ -311,18 +308,15 @@ export default function Attendance() {
                     <th className="px-4 py-3 text-[11px] font-black uppercase text-orange-500 text-center">Half Day</th>
                     <th className="px-4 py-3 text-[11px] font-black uppercase text-red-600 text-center">Absent</th>
                     <th className="px-4 py-3 text-[11px] font-black uppercase text-blue-600 text-center">Leave</th>
-                    <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151] text-right">Est. Salary</th>
                   </tr>
                 </thead>
                 <tbody>
                   {reportLoading ? (
-                    <tr><td colSpan={7} className="text-center p-8 text-[#6B7280] font-bold">Loading report...</td></tr>
+                    <tr><td colSpan={6} className="text-center p-8 text-[#6B7280] font-bold">Loading report...</td></tr>
                   ) : activeStaff.length === 0 ? (
-                    <tr><td colSpan={7} className="text-center p-8 text-[#6B7280] font-bold">No active staff members.</td></tr>
+                    <tr><td colSpan={6} className="text-center p-8 text-[#6B7280] font-bold">No active staff members.</td></tr>
                   ) : activeStaff.map(member => {
                     const stats = reportData[member.id] || { present: 0, half: 0, absent: 0, leave: 0 }
-                    const daysWorked = stats.present + (stats.half * 0.5)
-                    const estSalary = (member.base_salary / 30) * daysWorked
                     return (
                       <tr key={member.id} className="border-b border-[#FDDBB4]/30 hover:bg-[#FAFAFA]">
                         <td className="px-4 py-3">
@@ -336,7 +330,6 @@ export default function Attendance() {
                         <td className="px-4 py-3 text-center font-bold text-orange-600">{stats.half}</td>
                         <td className="px-4 py-3 text-center font-bold text-red-700">{stats.absent}</td>
                         <td className="px-4 py-3 text-center font-bold text-blue-700">{stats.leave}</td>
-                        <td className="px-4 py-3 text-right font-black text-[#111111]">{formatCurrency(estSalary)}</td>
                       </tr>
                     )
                   })}
