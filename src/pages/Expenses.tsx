@@ -99,41 +99,50 @@ export default function Expenses() {
     void fetchData()
   }
 
-  const totalMonth = expenses.filter(e => new Date(e.expense_date).getMonth() === new Date().getMonth()).reduce((s, e) => s + e.amount, 0)
-  const totalYear = expenses.filter(e => new Date(e.expense_date).getFullYear() === new Date().getFullYear()).reduce((s, e) => s + e.amount, 0)
+  const now = new Date()
+  const todayStr = now.toISOString().split('T')[0]
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+  const totalToday = expenses.filter(e => e.expense_date.startsWith(todayStr)).reduce((s, e) => s + e.amount, 0)
+  const totalWeek = expenses.filter(e => e.expense_date >= oneWeekAgo).reduce((s, e) => s + e.amount, 0)
+  const totalMonth = expenses.filter(e => new Date(e.expense_date).getMonth() === now.getMonth() && new Date(e.expense_date).getFullYear() === now.getFullYear()).reduce((s, e) => s + e.amount, 0)
+  const totalYear = expenses.filter(e => new Date(e.expense_date).getFullYear() === now.getFullYear()).reduce((s, e) => s + e.amount, 0)
+  const totalAll = expenses.reduce((s, e) => s + e.amount, 0)
 
   return (
     <div className="p-4 sm:p-6 space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
-        <h1 className="text-2xl font-black text-[#111111] flex items-center gap-2"><Receipt size={24} className="text-[#E87020]" /> Expense Tracker</h1>
+        <div className="flex items-center gap-3">
+          <Receipt size={24} className="text-[#E87020]" />
+          <h2 className="text-[22px] font-black text-[#111111]">Expense Tracker</h2>
+        </div>
       </div>
 
       {dbError && (
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-xl flex items-center gap-3">
-          <AlertTriangle size={24} className="shrink-0" />
-          <div>
-            <p className="font-black text-sm">Database tables not set up yet!</p>
-            <p className="text-[13px]">Please run the SQL migration script in your Supabase SQL Editor to create the expenses tables.</p>
-          </div>
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-xl flex items-start gap-3">
+          <AlertTriangle className="shrink-0 mt-0.5" size={18} />
+          <p className="text-sm font-bold">Database tables not set up yet. Please run the SQL migration in your Supabase SQL Editor.</p>
         </div>
       )}
 
-      <div className="flex gap-2 border-b border-[#FDDBB4]/60 pb-2">
-        <button onClick={() => setTab('expenses')} className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'expenses' ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>Expenses</button>
-        <button onClick={() => setTab('categories')} className={`px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === 'categories' ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>Categories</button>
+      <div className="flex gap-2 bg-[#F3F4F6] rounded-2xl p-1.5 w-fit">
+        <button onClick={() => setTab('expenses')} className={`px-4 py-2 rounded-xl text-sm font-black transition-all ${tab === 'expenses' ? 'bg-[#E87020] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>Expenses</button>
+        <button onClick={() => setTab('categories')} className={`px-4 py-2 rounded-xl text-sm font-black transition-all ${tab === 'categories' ? 'bg-[#E87020] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>Categories</button>
       </div>
 
       {tab === 'expenses' && (
         <div className="space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             {[
-              { label: 'Total This Month', value: formatCurrency(totalMonth), color: 'text-red-600' },
-              { label: 'Total This Year', value: formatCurrency(totalYear), color: 'text-red-600' },
-              { label: 'Total Expenses', value: expenses.length, color: 'text-[#111111]' },
+              { label: 'Today', value: formatCurrency(totalToday), color: 'text-red-600' },
+              { label: 'This Week', value: formatCurrency(totalWeek), color: 'text-red-600' },
+              { label: 'This Month', value: formatCurrency(totalMonth), color: 'text-red-600' },
+              { label: 'This Year', value: formatCurrency(totalYear), color: 'text-red-600' },
+              { label: 'Total All Time', value: formatCurrency(totalAll), color: 'text-[#111111]' },
             ].map((c, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-[#FDDBB4]/60 p-4 shadow-sm">
+              <div key={i} className="bg-white rounded-2xl border border-[#FDDBB4]/60 p-3 sm:p-4 shadow-sm">
                 <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{c.label}</p>
-                <p className={`text-2xl font-black ${c.color}`}>{c.value}</p>
+                <p className={`text-[16px] xl:text-[20px] font-black ${c.color} truncate`} title={c.value}>{c.value}</p>
               </div>
             ))}
           </div>
