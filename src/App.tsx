@@ -13,6 +13,7 @@ const Login = lazy(() => import('./pages/Login'))
 const Expenses = lazy(() => import('./pages/Expenses'))
 const Attendance = lazy(() => import('./pages/Attendance'))
 const AdminLogin = lazy(() => import('./pages/AdminLogin'))
+const StaffPunch = lazy(() => import('./pages/StaffPunch'))
 
 function LoadingSpinner() {
   return (
@@ -116,6 +117,15 @@ function AppShell() {
             element={
               <Suspense fallback={<LoadingSpinner />}>
                 <AdminLogin />
+              </Suspense>
+            }
+          />
+          {/* PUBLIC — no auth needed — staff self-punch portal */}
+          <Route
+            path="/staff-attendance"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <StaffPunch />
               </Suspense>
             }
           />
