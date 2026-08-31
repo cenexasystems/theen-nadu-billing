@@ -121,11 +121,8 @@ export async function listAdvanceOrders(): Promise<AdvanceOrder[]> {
         console.error('[listAdvanceOrders] Supabase error:', error.message)
       } else if (Array.isArray(data)) {
         const remote = data.map(row => normalizeOrder(row as Record<string, unknown>))
-        const remoteIds = new Set(remote.map(r => r.id))
-        const localOnly = local.filter(l => !remoteIds.has(l.id))
-        const merged = [...remote, ...localOnly].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        saveLocalOrders(merged)
-        return merged
+        saveLocalOrders(remote)
+        return remote
       }
     } catch (err) { console.error('[listAdvanceOrders] Exception:', err) }
   }
@@ -142,8 +139,8 @@ export async function getAdvanceOrderHistory(orderId: string) {
         supabase.from('advance_order_timeline').select('*').eq('advance_order_id', orderId).order('created_at'),
         supabase.from('advance_order_payments').select('*').eq('advance_order_id', orderId).order('received_at'),
       ])
-      const timeline = (tRes.data && tRes.data.length > 0) ? (tRes.data as AdvanceTimeline[]) : localTimeline
-      const payments = (pRes.data && pRes.data.length > 0) ? (pRes.data as AdvancePayment[]) : localPayments
+      const timeline = !tRes.error && tRes.data ? (tRes.data as AdvanceTimeline[]) : localTimeline
+      const payments = !pRes.error && pRes.data ? (pRes.data as AdvancePayment[]) : localPayments
       return { timeline, payments }
     } catch { /* fallback */ }
   }
