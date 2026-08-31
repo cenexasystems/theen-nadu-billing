@@ -38,8 +38,15 @@ export function printThermalReceipt(data: ThermalReceiptData) {
   const doc = iframe.contentWindow?.document
   if (!doc) return
 
+
   const dateStr = (() => {
-    try { return new Date(data.date).toLocaleString('en-MY', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }
+    try {
+      const d = new Date(data.date)
+      // If date string has no time component (e.g. "2026-08-31"), use current time instead
+      const hasTime = data.date.includes('T') || data.date.includes(' ')
+      const display = hasTime ? d : new Date()
+      return display.toLocaleString('en-MY', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    }
     catch { return new Date().toLocaleString('en-MY') }
   })()
 

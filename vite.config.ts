@@ -18,9 +18,9 @@ export default defineConfig({
         'robots.txt',
       ],
       manifest: {
-        name: 'Thenn Nadu Legacy',
-        short_name: 'Thenn Nadu',
-        description: "Thenn Nadu Legacy billing, catalog, coupon, order, receipt, and invoice administration.",
+        name: 'Thenn Nadu Billing',
+        short_name: 'TN Billing',
+        description: "Thenn Nadu Billing – POS, advance orders, catalog, invoices, and analytics.",
         theme_color: '#E87020',
         background_color: '#FBFAF6',
         display: 'standalone',

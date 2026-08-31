@@ -129,7 +129,7 @@ const emptyForm = {
 }
 
 const exportCSV = (orders: DashboardOrder[]) => {
-  const header = ['Order Ref', 'Customer', 'Phone', 'Date', 'Total (INR)', 'Order Type', 'Status']
+  const header = ['Order Ref', 'Customer', 'Phone', 'Date', 'Total (RM)', 'Order Type', 'Status']
   const rows = orders.map(o => [
     o.order_type === 'online_request' ? o.id : o.invoice_no, o.customer_name, o.phone,
     new Date(o.created_at).toLocaleDateString('en-MY'),
@@ -2139,17 +2139,16 @@ export default function Dashboard() {
 
             <div className="flex flex-col gap-4 border-b border-[#E7E7E7] pb-4 md:flex-row md:items-center md:justify-between">
               {/* Sub-tabs */}
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3 md:flex md:gap-6">
+              <div className="flex flex-wrap gap-2 bg-[#F3F4F6] rounded-2xl p-1.5">
                 {([
-                  { id: 'revenue' as const,    label: 'REVENUE' },
-                  { id: 'today' as const,      label: 'TODAY\'S SALES' },
-                  { id: 'products' as const,   label: 'PRODUCTS' },
-                  { id: 'coupons' as const,    label: 'COUPONS' },
+                  { id: 'revenue' as const,    label: 'Revenue' },
+                  { id: 'today' as const,      label: "Today's Sales" },
+                  { id: 'products' as const,   label: 'Products' },
+                  { id: 'coupons' as const,    label: 'Coupons' },
                 ]).map(({ id, label }) => (
                   <button key={id} onClick={() => setPosAnalyticsTab(id as PosAnalyticsTab)}
-                    className={`pb-2 md:pb-4 text-left text-[13px] font-bold tracking-wide transition-colors relative ${posAnalyticsTab === id ? 'text-maroon-dark' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+                    className={`px-4 py-2 rounded-xl text-[12px] font-black tracking-wide transition-all ${posAnalyticsTab === id ? 'bg-white text-[#E87020] shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
                     {label}
-                    {posAnalyticsTab === id && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-maroon-dark rounded-t-md" />}
                   </button>
                 ))}
               </div>
@@ -2892,26 +2891,24 @@ export default function Dashboard() {
                           </div>
                         )}
                       </div>
-                      <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                        <div className="flex gap-2 w-full sm:flex-1">
-                          <button onClick={() => void openOrderInvoice(o, 'view')} className="inline-flex h-10 sm:min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#FDDBB4]/60 px-2 sm:px-3 text-[12px] font-black text-[#111111] transition-colors hover:bg-white" title="View Invoice">
-                            <Eye size={14} /> View
-                          </button>
-                          <button onClick={() => window.open(`/invoice/${o.id}`, '_blank')} className="inline-flex h-10 sm:min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-2 sm:px-3 text-[12px] font-black text-white transition-colors hover:bg-green-600" title="Invoice & Share">
-                            <MessageCircle size={14} /> Share
-                          </button>
-                        </div>
-                        <div className="flex gap-2 w-full sm:flex-1">
+                      <div className="flex flex-col gap-2 pt-1">
                         <select value={normalizeStatus(o.status)} onChange={e => void updateOrderStatus(o.id, e.target.value)}
-                          className={`min-h-[44px] flex-1 cursor-pointer rounded-xl border px-3 py-2 text-[12px] font-black outline-none ${normalizeStatus(o.status) === 'completed' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
+                          className={`w-full h-10 cursor-pointer rounded-xl border px-3 py-2 text-[12px] font-black outline-none ${normalizeStatus(o.status) === 'completed' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
                           <option value="pending">{l('Pending', 'நிலுவை')}</option>
                           <option value="completed">{l('Completed', 'முடிந்தது')}</option>
                         </select>
-                        {role === 'admin' && (
-                          <button onClick={() => void deleteOrder(o.id, o.invoice_no)} className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-xl border border-[#FDDBB4]/60 text-[#E87020] transition-colors hover:bg-[#E87020]/5" title="Delete Order">
-                            <Trash2 size={14} className="mx-auto" />
+                        <div className="flex flex-row gap-2 w-full">
+                          <button onClick={() => void openOrderInvoice(o, 'view')} className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#FDDBB4]/60 px-2 text-[12px] font-black text-[#111111] transition-colors hover:bg-white" title="View Invoice">
+                            <Eye size={14} /> View
                           </button>
-                        )}
+                          <button onClick={() => window.open(`/invoice/${o.id}`, '_blank')} className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-2 text-[12px] font-black text-white transition-colors hover:bg-green-600" title="Invoice & Share">
+                            <MessageCircle size={14} /> Share
+                          </button>
+                          {role === 'admin' && (
+                            <button onClick={() => void deleteOrder(o.id, o.invoice_no)} className="h-10 w-10 shrink-0 rounded-xl border border-[#FDDBB4]/60 text-[#E87020] transition-colors hover:bg-[#E87020]/5" title="Delete Order">
+                              <Trash2 size={14} className="mx-auto" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -3139,7 +3136,7 @@ export default function Dashboard() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-[#6B7280]">{l('Min Order (INR)', 'குறைந்த ஆர்டர் (INR)')}</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-[#6B7280]">{l('Min Order (RM)', 'குறைந்த ஆர்டர் (RM)')}</label>
                     <input
                       type="number"
                       min="0"

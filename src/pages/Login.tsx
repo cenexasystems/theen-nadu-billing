@@ -126,7 +126,7 @@ const emptyForm = {
 }
 
 const exportCSV = (orders: DashboardOrder[]) => {
-  const header = ['Order Ref', 'Customer', 'Phone', 'Date', 'Total (INR)', 'Order Type', 'Status']
+  const header = ['Order Ref', 'Customer', 'Phone', 'Date', 'Total (RM)', 'Order Type', 'Status']
   const rows = orders.map(o => [
     o.order_type === 'online_request' ? o.id : o.invoice_no, o.customer_name, o.phone,
     new Date(o.created_at).toLocaleDateString('en-MY'),
@@ -2076,17 +2076,16 @@ export default function Dashboard() {
 
             <div className="flex flex-col gap-4 border-b border-[#E7E7E7] pb-4 md:flex-row md:items-center md:justify-between">
               {/* Sub-tabs */}
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3 md:flex md:gap-6">
+              <div className="flex flex-wrap gap-2 bg-[#F3F4F6] rounded-2xl p-1.5">
                 {([
-                  { id: 'revenue' as const,    label: 'REVENUE' },
-                  { id: 'today' as const,      label: 'TODAY\'S SALES' },
-                  { id: 'products' as const,   label: 'PRODUCTS' },
-                  { id: 'coupons' as const,    label: 'COUPONS' },
+                  { id: 'revenue' as const,    label: 'Revenue' },
+                  { id: 'today' as const,      label: "Today's Sales" },
+                  { id: 'products' as const,   label: 'Products' },
+                  { id: 'coupons' as const,    label: 'Coupons' },
                 ]).map(({ id, label }) => (
                   <button key={id} onClick={() => setPosAnalyticsTab(id as PosAnalyticsTab)}
-                    className={`pb-2 md:pb-4 text-left text-[13px] font-bold tracking-wide transition-colors relative ${posAnalyticsTab === id ? 'text-maroon-dark' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+                    className={`px-4 py-2 rounded-xl text-[12px] font-black tracking-wide transition-all ${posAnalyticsTab === id ? 'bg-white text-[#E87020] shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
                     {label}
-                    {posAnalyticsTab === id && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-maroon-dark rounded-t-md" />}
                   </button>
                 ))}
               </div>
@@ -3009,7 +3008,7 @@ export default function Dashboard() {
                       placeholder="எ.கா. மஞ்சள் பொடி" value={prodForm.nameTa} onChange={e => setProdForm(f => ({...f, nameTa: e.target.value}))} />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black uppercase text-[#6B7280] tracking-wider mb-1">{l('Price (RM)', 'விலை (INR)')} *</label>
+                    <label className="block text-[11px] font-black uppercase text-[#6B7280] tracking-wider mb-1">{l('Price (RM)', 'விலை (RM)')} *</label>
                     <input required type="number" min="0" step="0.01"
                       className="w-full px-4 py-2.5 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-maroon-dark rounded-xl text-[13px] font-bold outline-none transition-colors"
                       value={prodForm.price} onChange={e => setProdForm(f => ({...f, price: Number(e.target.value)}))} />
@@ -3024,7 +3023,7 @@ export default function Dashboard() {
                       value={prodForm.purchasePrice} onChange={e => setProdForm(f => ({...f, purchasePrice: Number(e.target.value)}))} />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-black uppercase text-[#6B7280] tracking-wider mb-1">{l('MRP (INR)', 'MRP (INR)')}</label>
+                    <label className="block text-[11px] font-black uppercase text-[#6B7280] tracking-wider mb-1">{l('MRP (RM)', 'MRP (RM)')}</label>
                     <input type="number" min="0" step="0.01"
                       className="w-full px-4 py-2.5 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-maroon-dark rounded-xl text-[13px] font-bold outline-none transition-colors"
                       placeholder="Maximum Retail Price"
@@ -3311,7 +3310,7 @@ export default function Dashboard() {
                           onChange={e => setVariantForm(f => ({...f, purchasePrice: e.target.value}))} />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{l('MRP (INR)', 'MRP (INR)')}</label>
+                        <label className="block text-[11px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{l('MRP (RM)', 'MRP (RM)')}</label>
                         <input type="number" min="0" step="0.01"
                           className="w-full px-4 py-2.5 bg-white rounded-xl border border-[#D1D5DB] text-[13px] font-bold outline-none focus:border-maroon-dark transition-colors shadow-sm"
                           placeholder="50"
@@ -3603,7 +3602,7 @@ export default function Dashboard() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-[#6B7280]">{l('Min Order (INR)', 'குறைந்த ஆர்டர் (INR)')}</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.15em] text-[#6B7280]">{l('Min Order (RM)', 'குறைந்த ஆர்டர் (RM)')}</label>
                     <input
                       type="number"
                       min="0"

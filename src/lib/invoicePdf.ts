@@ -46,7 +46,7 @@ export function createInvoicePdf(data: InvoicePdfData): Blob {
   y += 10
 
   try {
-    doc.addImage(LOGO_BASE64, 'JPEG', left, y, 20, 20)
+    doc.addImage(LOGO_BASE64, 'PNG', left, y, 20, 20)
   } catch {
     doc.setTextColor(primaryColor)
     doc.setFontSize(16)
