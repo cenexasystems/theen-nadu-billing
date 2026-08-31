@@ -72,7 +72,7 @@ interface InventoryLog {
   products?: { name: string; category: string }
 }
 
-type DatePreset = 'today' | 'week' | 'month' | 'custom'
+type DatePreset = 'all' | 'today' | 'week' | 'month' | 'custom'
 
 function InventoryAnalytics({ products, downloadCSV }: { products: InventoryProduct[]; downloadCSV: () => void }) {
   const [datePreset, setDatePreset] = useState<DatePreset>('week')
@@ -87,7 +87,8 @@ function InventoryAnalytics({ products, downloadCSV }: { products: InventoryProd
     setDatePreset(preset)
     const now = new Date()
     const today = now.toISOString().split('T')[0]
-    if (preset === 'today') { setFromDate(today); setToDate(today) }
+    if (preset === 'all') { setFromDate('2000-01-01'); setToDate(today) }
+    else if (preset === 'today') { setFromDate(today); setToDate(today) }
     else if (preset === 'week') { const d = new Date(); d.setDate(d.getDate() - 7); setFromDate(d.toISOString().split('T')[0]); setToDate(today) }
     else if (preset === 'month') { const d = new Date(); d.setDate(1); setFromDate(d.toISOString().split('T')[0]); setToDate(today) }
   }
@@ -139,10 +140,10 @@ function InventoryAnalytics({ products, downloadCSV }: { products: InventoryProd
       <div className="bg-white p-4 rounded-2xl shadow-sm border border-[#FDDBB4]/60">
         <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-3">Filter by Date</p>
         <div className="flex flex-wrap gap-2 mb-3">
-          {(['today', 'week', 'month', 'custom'] as DatePreset[]).map(p => (
+          {(['all', 'today', 'week', 'month', 'custom'] as DatePreset[]).map(p => (
             <button key={p} onClick={() => applyPreset(p)}
               className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-colors ${datePreset === p ? 'bg-[#E87020] text-white' : 'bg-[#F5F5F5] text-[#374151] hover:bg-orange-50'}`}>
-              {p === 'today' ? 'Today' : p === 'week' ? 'This Week' : p === 'month' ? 'This Month' : 'Custom'}
+              {p === 'all' ? 'All Time' : p === 'today' ? 'Today' : p === 'week' ? 'This Week' : p === 'month' ? 'This Month' : 'Custom'}
             </button>
           ))}
         </div>
