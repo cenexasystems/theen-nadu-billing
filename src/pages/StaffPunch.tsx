@@ -27,7 +27,10 @@ function formatTime(ts: string | null) {
 
 function getTodayLocal() {
   const d = new Date()
-  return ${d.getFullYear()}--
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return y + '-' + m + '-' + day
 }
 
 export default function StaffPunch() {
@@ -213,7 +216,7 @@ export default function StaffPunch() {
 
         {step === 'done' && selectedStaff && (
           <div className="flex flex-col items-center justify-center flex-1 text-center">
-            <div className={h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-6 }>
+            <div className={`h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-6 ${notice === 'punch_in' ? 'bg-green-100' : 'bg-orange-100'}`}>
               {notice === 'punch_in' ? <LogIn size={40} className="text-green-600" /> : <LogOut size={40} className="text-orange-600" />}
             </div>
             <h2 className="text-2xl font-black text-[#111111] mb-1">{notice === 'punch_in' ? 'Punched In!' : 'Punched Out!'}</h2>
