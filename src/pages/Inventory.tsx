@@ -657,19 +657,11 @@ export default function Inventory() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Selling Price (RM) *</label>
-                  <input type="number" required step="0.01" min="0" value={productForm.price} onChange={e => setProductForm(f => ({...f, price: e.target.value}))}
-                    className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
-                    placeholder="0.00" />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Cost Price (RM)</label>
-                  <input type="number" step="0.01" min="0" value={productForm.purchase_price} onChange={e => setProductForm(f => ({...f, purchase_price: e.target.value}))}
-                    className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
-                    placeholder="0.00" />
-                </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Price (RM) *</label>
+                <input type="number" required step="0.01" min="0" value={productForm.price} onChange={e => setProductForm(f => ({...f, price: e.target.value}))}
+                  className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
+                  placeholder="0.00" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
