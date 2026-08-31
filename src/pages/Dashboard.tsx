@@ -1865,7 +1865,7 @@ export default function Dashboard() {
               ].map(({ label, val, bg, color, border }) => (
                 <div key={label} className={`${bg} border ${border} rounded-xl p-3 text-center`}>
                   <p className={`text-[10px] uppercase font-black ${color} tracking-wider mb-1`}>{label}</p>
-                  <p className="text-[28px] font-black text-[#111111] leading-none">{val}</p>
+                  <p className="text-[24px] xl:text-[20px] 2xl:text-[24px] font-black text-[#111111] leading-none truncate">{val}</p>
                 </div>
               ))}
             </div>
@@ -2198,8 +2198,8 @@ export default function Dashboard() {
                         </div>
                         <div className={`w-8 h-8 rounded-full ${card.bg} flex items-center justify-center ${card.color}`}>{card.icon}</div>
                       </div>
-                      <p className="text-[28px] font-bold text-[#111111] leading-none mb-2">{card.value}</p>
-                      <p className="text-[12px] text-[#6B7280]">{card.helper}</p>
+                      <p className="text-[24px] xl:text-[20px] 2xl:text-[24px] font-bold text-[#111111] leading-none mb-2 truncate">{card.value}</p>
+                      <p className="text-[12px] text-[#6B7280] truncate">{card.helper}</p>
                     </div>
                   ))}
                 </div>
@@ -2220,7 +2220,7 @@ export default function Dashboard() {
                         <div className={`w-8 h-8 rounded-full ${card.bg} flex items-center justify-center ${card.color}`}>{card.icon}</div>
                       </div>
                       <p className="text-[22px] font-bold text-[#111111] leading-none mb-2 truncate">{card.value}</p>
-                      <p className="text-[12px] text-[#6B7280]">{card.helper}</p>
+                      <p className="text-[12px] text-[#6B7280] truncate">{card.helper}</p>
                     </div>
                   ))}
                 </div>
