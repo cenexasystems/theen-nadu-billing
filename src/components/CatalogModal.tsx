@@ -209,7 +209,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                   {filtered.map(product => (
                     <div key={product.id}
                       className="bg-white border border-[#FDDBB4]/60 rounded-2xl p-3 flex flex-col gap-2 hover:border-[#E87020]/40 hover:shadow-md transition-all group relative">
-                      <div className="absolute top-2 right-2 flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-10">
+                      <div className="flex justify-end gap-1 mb-1 md:absolute md:top-2 md:right-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-10">
                         <button onClick={(e) => { e.stopPropagation(); startEdit(product) }} title="Edit product"
                           className="p-1.5 rounded-lg bg-white border border-[#FDDBB4]/60 text-[#374151] hover:text-[#E87020] hover:border-[#E87020]/40 shadow-sm transition-colors">
                           <Edit2 size={14} />

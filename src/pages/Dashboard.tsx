@@ -2140,7 +2140,7 @@ export default function Dashboard() {
 
             <div className="flex flex-col gap-4 border-b border-[#E7E7E7] pb-4 md:flex-row md:items-center md:justify-between">
               {/* Sub-tabs */}
-              <div className="flex gap-2 overflow-x-auto no-scrollbar bg-[#F3F4F6] rounded-2xl p-1.5">
+              <div className="flex gap-2 overflow-x-auto md:flex-wrap md:overflow-visible no-scrollbar bg-[#F3F4F6] rounded-2xl p-1.5">
                 {([
                   { id: 'revenue' as const,    label: 'Revenue' },
                   { id: 'today' as const,      label: "Today's Sales" },
@@ -2156,8 +2156,8 @@ export default function Dashboard() {
 
               {/* Date filter (hidden for Today's Sales) */}
               {posAnalyticsTab !== 'today' && (
-                <div className="flex flex-col gap-3 md:items-end w-full">
-                  <div className="flex items-center gap-2 rounded-2xl bg-[#F8F8F8] p-2 overflow-x-auto no-scrollbar w-full md:w-auto">
+                <div className="flex flex-col gap-3 md:items-end w-full md:w-auto">
+                  <div className="flex items-center gap-2 rounded-2xl bg-[#F8F8F8] p-2 overflow-x-auto md:flex-wrap md:overflow-visible no-scrollbar w-full md:w-auto">
                     <span className="shrink-0 text-[10px] font-bold uppercase text-[#6B7280] ml-1 mr-1">Period:</span>
                     {(['all', 'today', 'week', 'month', 'year'] as const).map(preset => (
                       <button key={preset} type="button" onClick={() => applyAnalyticsPreset(preset)}
