@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Users, Calendar, AlertTriangle, Plus, X, Edit2, Link, LogIn, LogOut } from 'lucide-react'
+import { Users, Calendar, AlertTriangle, Plus, X, Edit2, LogIn, LogOut } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency } from '../lib/retail'
 
@@ -36,7 +36,6 @@ export default function Attendance() {
   const [dbError, setDbError] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [editingStaff, setEditingStaff] = useState<Staff | null>(null)
-  const [linkCopied, setLinkCopied] = useState(false)
 
   const [form, setForm] = useState({ name: '', role: '', phone: '', base_salary: '' })
   const [submitting, setSubmitting] = useState(false)
@@ -130,13 +129,6 @@ export default function Attendance() {
     void fetchData()
   }
 
-  const copyStaffLink = () => {
-    const url = `${window.location.origin}/staff-attendance`
-    void navigator.clipboard.writeText(url).then(() => {
-      setLinkCopied(true)
-      setTimeout(() => setLinkCopied(false), 2000)
-    })
-  }
 
   const activeStaff = staff.filter(s => s.is_active)
   const presentCount = activeStaff.filter(s => attendanceMap[s.id] === 'present').length
@@ -147,11 +139,6 @@ export default function Attendance() {
     <div className="p-4 sm:p-6 space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
         <h1 className="text-2xl font-black text-[#111111] flex items-center gap-2"><Users size={24} className="text-[#E87020]" /> Attendance & Staff</h1>
-        <button onClick={copyStaffLink}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-black transition-all ${linkCopied ? 'bg-green-50 border-green-300 text-green-700' : 'bg-white border-[#FDDBB4] text-[#E87020] hover:bg-[#FFF8F2]'}`}>
-          <Link size={15} />
-          {linkCopied ? 'Link Copied!' : 'Share Staff Punch Link'}
-        </button>
       </div>
 
       {dbError && (
