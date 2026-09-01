@@ -132,6 +132,7 @@ export default function Pos(props: PosProps = {}) {
   const [customer, setCustomer] = useState({ name: '', phone: '', address: '' })
   const [remarks, setRemarks] = useState('')
   const [referenceNumber, setReferenceNumber] = useState('')
+  const [tailorName, setTailorName] = useState('')
   const [billingDate, setBillingDate] = useState('') // '' = use current date/time
   const [paymentType, setPaymentType] = useState<string>('Cash')
   const [saving, setSaving] = useState(false)
@@ -375,6 +376,7 @@ export default function Pos(props: PosProps = {}) {
     setShipping('0')
     setRemarks('')
     setReferenceNumber('')
+    setTailorName('')
     setBillingDate('')
     setBillGstEnabled(false)
     setGstInput('')
@@ -563,6 +565,7 @@ export default function Pos(props: PosProps = {}) {
         delivery_charge: Number(shipping || 0),
         remarks: remarks.trim(),
         reference_number: referenceNumber.trim(),
+        tailor_name: tailorName.trim(),
         billing_date: effectiveBillingDate,
       }).eq('id', created.orderId)
       const createdInvoice: InvoiceSnap = {
@@ -974,6 +977,16 @@ export default function Pos(props: PosProps = {}) {
                   value={referenceNumber}
                   onChange={e => setReferenceNumber(e.target.value)}
                   placeholder="Optional ref no."
+                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Tailor Name</label>
+                <input
+                  type="text"
+                  value={tailorName}
+                  onChange={e => setTailorName(e.target.value)}
+                  placeholder="Optional tailor name"
                   className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
