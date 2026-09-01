@@ -102,6 +102,12 @@ export default function Expenses() {
     void fetchData()
   }
 
+  const handleDeleteCategory = async (cat: ExpenseCategory) => {
+    if (!confirm(`Delete category "${cat.name}"? This cannot be undone.`)) return
+    await supabase.from('expense_categories').delete().eq('id', cat.id)
+    void fetchData()
+  }
+
   const handleExportCSV = () => {
     const rows = [
       ['Date', 'Category', 'Description', 'Amount'],
@@ -293,18 +299,24 @@ export default function Expenses() {
               <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/60">
                 <tr>
                   <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151]">Category Name</th>
-                  <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151] text-right">Status</th>
+                  <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151] text-center">Status</th>
+                  <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151] text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {categories.length === 0 ? (
-                  <tr><td colSpan={2} className="text-center p-6 text-[#6B7280] text-sm font-bold">No categories added.</td></tr>
+                  <tr><td colSpan={3} className="text-center p-6 text-[#6B7280] text-sm font-bold">No categories added.</td></tr>
                 ) : categories.map(cat => (
-                  <tr key={cat.id} className="border-b border-[#FDDBB4]/30">
+                  <tr key={cat.id} className="border-b border-[#FDDBB4]/30 hover:bg-[#FAFAFA]">
                     <td className="px-4 py-3 font-bold text-[#111111] text-sm">{cat.name}</td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-center">
                       <button onClick={() => toggleCategory(cat)} className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-lg border ${cat.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-500 border-gray-200'}`}>
                         {cat.is_active ? 'Active' : 'Inactive'}
+                      </button>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button onClick={() => handleDeleteCategory(cat)} className="text-red-400 hover:text-red-600 p-1.5 bg-red-50 hover:bg-red-100 rounded-lg transition-colors" title="Delete category">
+                        <Trash2 size={14} />
                       </button>
                     </td>
                   </tr>
