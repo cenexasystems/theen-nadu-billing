@@ -2993,6 +2993,10 @@ export default function Dashboard() {
                             <td colSpan={12} className="px-4 py-4">
                               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-[12px]">
                                 <div>
+                                  <p className="text-[10px] font-black uppercase text-[#9BAB9A] tracking-wider mb-1">Tailor Name</p>
+                                  <p className="font-semibold text-[#111111]">{(o as unknown as Record<string,unknown>).tailor_name as string || '—'}</p>
+                                </div>
+                                <div>
                                   <p className="text-[10px] font-black uppercase text-[#9BAB9A] tracking-wider mb-1">Reference No</p>
                                   <p className="font-semibold text-[#111111]">{(o as unknown as Record<string,unknown>).reference_number as string || '—'}</p>
                                 </div>
