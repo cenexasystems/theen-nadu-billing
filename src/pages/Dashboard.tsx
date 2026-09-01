@@ -43,6 +43,7 @@ import { normalizeStructuredOrderItem, formatInvoiceNo } from '../lib/retail'
 import { Invoice } from '../components/Invoice'
 import Expenses from './Expenses'
 import Attendance from './Attendance'
+import StaffPunch from './StaffPunch'
 import Inventory from './Inventory'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
@@ -1490,7 +1491,7 @@ export default function Dashboard() {
     { id: 'expenses',      icon: <Receipt size={20} />,          label: 'Expenses' },
     { id: 'attendance',    icon: <Users size={20} />,            label: 'Attendance' },
   ]
-  const navItems = allNavItems.filter(item => role === 'admin' || (item.id !== 'pos_analytics' && item.id !== 'coupons' && item.id !== 'expenses' && item.id !== 'attendance'))
+  const navItems = allNavItems.filter(item => role === 'admin' || (item.id !== 'pos_analytics' && item.id !== 'coupons' && item.id !== 'expenses'))
 
   return (
     <div className="admin-shell h-screen min-h-screen bg-bgMain flex flex-col lg:flex-row overflow-hidden">
@@ -3288,7 +3289,7 @@ export default function Dashboard() {
         
         {tab === 'attendance' && (
           <div className="flex flex-col h-full overflow-y-auto">
-            <Attendance />
+            {role === 'admin' ? <Attendance /> : <StaffPunch embedded={true} />}
           </div>
         )}
         
