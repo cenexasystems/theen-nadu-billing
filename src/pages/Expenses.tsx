@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Receipt, Plus, Trash2, X, AlertTriangle } from 'lucide-react'
+import { Receipt, Plus, Trash2, X, AlertTriangle, Download } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency } from '../lib/retail'
 
@@ -30,6 +30,9 @@ export default function Expenses() {
   const [submitting, setSubmitting] = useState(false)
   const [newCatName, setNewCatName] = useState('')
   const [dbError, setDbError] = useState(false)
+  const [filterFrom, setFilterFrom] = useState('')
+  const [filterTo, setFilterTo] = useState('')
+  const [datePreset, setDatePreset] = useState<'all'|'today'|'week'|'month'|'year'>('all')
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -99,15 +102,54 @@ export default function Expenses() {
     void fetchData()
   }
 
+  const handleExportCSV = () => {
+    const rows = [
+      ['Date', 'Category', 'Description', 'Amount'],
+      ...filteredExpenses.map(exp => [
+        new Date(exp.expense_date).toLocaleDateString('en-MY'),
+        exp.expense_categories?.name || 'Unknown',
+        exp.description || '',
+        exp.amount.toFixed(2),
+      ])
+    ]
+    const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `expenses-${datePreset === 'all' ? 'all-time' : datePreset}-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const now = new Date()
   const todayStr = now.toISOString().split('T')[0]
   const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+  const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`
+  const yearStart = `${now.getFullYear()}-01-01`
 
   const totalToday = expenses.filter(e => e.expense_date.startsWith(todayStr)).reduce((s, e) => s + e.amount, 0)
   const totalWeek = expenses.filter(e => e.expense_date >= oneWeekAgo).reduce((s, e) => s + e.amount, 0)
   const totalMonth = expenses.filter(e => new Date(e.expense_date).getMonth() === now.getMonth() && new Date(e.expense_date).getFullYear() === now.getFullYear()).reduce((s, e) => s + e.amount, 0)
   const totalYear = expenses.filter(e => new Date(e.expense_date).getFullYear() === now.getFullYear()).reduce((s, e) => s + e.amount, 0)
   const totalAll = expenses.reduce((s, e) => s + e.amount, 0)
+
+  const filteredExpenses = expenses.filter(exp => {
+    if (!filterFrom && !filterTo) return true
+    const d = exp.expense_date
+    if (filterFrom && d < filterFrom) return false
+    if (filterTo && d > filterTo) return false
+    return true
+  })
+
+  const applyPreset = (preset: typeof datePreset) => {
+    setDatePreset(preset)
+    if (preset === 'all') { setFilterFrom(''); setFilterTo('') }
+    else if (preset === 'today') { setFilterFrom(todayStr); setFilterTo(todayStr) }
+    else if (preset === 'week') { setFilterFrom(oneWeekAgo); setFilterTo(todayStr) }
+    else if (preset === 'month') { setFilterFrom(monthStart); setFilterTo(todayStr) }
+    else if (preset === 'year') { setFilterFrom(yearStart); setFilterTo(todayStr) }
+  }
 
   return (
     <div className="p-4 sm:p-6 space-y-5">
@@ -147,10 +189,53 @@ export default function Expenses() {
             ))}
           </div>
 
-          <div className="flex justify-end">
-            <button onClick={() => setShowModal(true)} disabled={dbError} className="bg-[#E87020] text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[#C85C10] disabled:opacity-50">
-              <Plus size={16} /> Record Expense
-            </button>
+          {/* Filter bar */}
+          <div className="bg-white rounded-2xl border border-[#FDDBB4]/60 shadow-sm px-4 py-3 flex flex-wrap items-center gap-3">
+            {/* FROM date */}
+            <div className="flex items-center gap-2 border border-[#E5E7EB] rounded-xl px-3 py-2 bg-[#F9FAFB]">
+              <span className="text-[11px] font-black uppercase text-[#6B7280]">From</span>
+              <input
+                type="date"
+                value={filterFrom}
+                onChange={e => { setFilterFrom(e.target.value); setDatePreset('all') }}
+                className="text-[12px] font-semibold text-[#111111] bg-transparent outline-none"
+              />
+            </div>
+            {/* TO date */}
+            <div className="flex items-center gap-2 border border-[#E5E7EB] rounded-xl px-3 py-2 bg-[#F9FAFB]">
+              <span className="text-[11px] font-black uppercase text-[#6B7280]">To</span>
+              <input
+                type="date"
+                value={filterTo}
+                onChange={e => { setFilterTo(e.target.value); setDatePreset('all') }}
+                className="text-[12px] font-semibold text-[#111111] bg-transparent outline-none"
+              />
+            </div>
+            {/* Period presets */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+              <span className="shrink-0 text-[11px] font-black uppercase text-[#6B7280] mr-1">Period</span>
+              {([
+                { id: 'all' as const, label: 'All Time' },
+                { id: 'today' as const, label: 'Today' },
+                { id: 'week' as const, label: 'This Week' },
+                { id: 'month' as const, label: 'This Month' },
+                { id: 'year' as const, label: 'This Year' },
+              ]).map(p => (
+                <button key={p.id} onClick={() => applyPreset(p.id)}
+                  className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] font-black uppercase whitespace-nowrap transition-all ${datePreset === p.id ? 'bg-[#111111] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111] border border-[#E5E7EB] bg-white'}`}>
+                  {p.label}
+                </button>
+              ))}
+            </div>
+            {/* Spacer + Export CSV */}
+            <div className="ml-auto flex items-center gap-2">
+              <button onClick={handleExportCSV} className="flex items-center gap-2 border border-[#E5E7EB] bg-white text-[#374151] px-3 py-2 rounded-xl text-[12px] font-black hover:bg-[#F9FAFB] transition-colors">
+                <Download size={14} /> Export CSV
+              </button>
+              <button onClick={() => setShowModal(true)} disabled={dbError} className="bg-[#E87020] text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[#C85C10] disabled:opacity-50">
+                <Plus size={16} /> Record Expense
+              </button>
+            </div>
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
@@ -168,9 +253,11 @@ export default function Expenses() {
                 <tbody>
                   {loading ? (
                     <tr><td colSpan={5} className="text-center p-8 text-[#6B7280] font-bold">Loading...</td></tr>
-                  ) : expenses.length === 0 ? (
-                    <tr><td colSpan={5} className="text-center p-8 text-[#6B7280] font-bold">No expenses recorded yet.</td></tr>
-                  ) : expenses.map(exp => (
+                  ) : filteredExpenses.length === 0 ? (
+                    <tr><td colSpan={5} className="text-center p-8 text-[#6B7280] font-bold">
+                      {expenses.length === 0 ? 'No expenses recorded yet.' : 'No expenses in the selected date range.'}
+                    </td></tr>
+                  ) : filteredExpenses.map(exp => (
                     <tr key={exp.id} className="border-b border-[#FDDBB4]/30 hover:bg-[#FAFAFA]">
                       <td className="px-4 py-3 text-sm font-semibold text-[#111111]">{new Date(exp.expense_date).toLocaleDateString('en-MY')}</td>
                       <td className="px-4 py-3">
