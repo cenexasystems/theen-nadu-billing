@@ -587,16 +587,16 @@ export default function Inventory() {
                         <td className="px-4 py-3 text-sm text-[#374151] font-semibold">{p.low_stock_alert || 5}</td>
                         <td className="px-4 py-3">
                           {status === 'out' ? (
-                            <span className="bg-red-100 text-red-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase">Out of Stock</span>
+                            <span className="whitespace-nowrap bg-red-100 text-red-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase">Out of Stock</span>
                           ) : status === 'low' ? (
-                            <span className="bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1 w-fit">
+                            <span className="whitespace-nowrap bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1 w-fit">
                               <AlertTriangle size={10} /> Low Stock
                             </span>
                           ) : (
-                            <span className="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase">In Stock</span>
+                            <span className="whitespace-nowrap bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase">In Stock</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-sm font-black text-[#111111]">{formatCurrency(p.price)}</td>
+                        <td className="px-4 py-3 text-sm font-black text-[#111111] whitespace-nowrap">{formatCurrency(p.price)}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1.5">
                             <button onClick={() => openAdjust(p)}

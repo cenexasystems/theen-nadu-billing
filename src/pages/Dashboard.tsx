@@ -2140,7 +2140,7 @@ export default function Dashboard() {
 
             <div className="flex flex-col gap-4 border-b border-[#E7E7E7] pb-4 md:flex-row md:items-center md:justify-between">
               {/* Sub-tabs */}
-              <div className="flex flex-wrap gap-2 bg-[#F3F4F6] rounded-2xl p-1.5">
+              <div className="flex gap-2 overflow-x-auto no-scrollbar bg-[#F3F4F6] rounded-2xl p-1.5">
                 {([
                   { id: 'revenue' as const,    label: 'Revenue' },
                   { id: 'today' as const,      label: "Today's Sales" },
@@ -2148,7 +2148,7 @@ export default function Dashboard() {
                   { id: 'coupons' as const,    label: 'Coupons' },
                 ]).map(({ id, label }) => (
                   <button key={id} onClick={() => setPosAnalyticsTab(id as PosAnalyticsTab)}
-                    className={`px-4 py-2 rounded-xl text-[12px] font-black tracking-wide transition-all ${posAnalyticsTab === id ? 'bg-white text-[#E87020] shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+                    className={`px-4 py-2 rounded-xl text-[12px] font-black tracking-wide transition-all whitespace-nowrap ${posAnalyticsTab === id ? 'bg-white text-[#E87020] shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
                     {label}
                   </button>
                 ))}
@@ -2156,12 +2156,12 @@ export default function Dashboard() {
 
               {/* Date filter (hidden for Today's Sales) */}
               {posAnalyticsTab !== 'today' && (
-                <div className="flex flex-col gap-3 md:items-end">
-                  <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-[#F8F8F8] p-2">
-                    <span className="text-[10px] font-bold uppercase text-[#6B7280] ml-1 mr-1">Period:</span>
+                <div className="flex flex-col gap-3 md:items-end w-full">
+                  <div className="flex items-center gap-2 rounded-2xl bg-[#F8F8F8] p-2 overflow-x-auto no-scrollbar w-full md:w-auto">
+                    <span className="shrink-0 text-[10px] font-bold uppercase text-[#6B7280] ml-1 mr-1">Period:</span>
                     {(['all', 'today', 'week', 'month', 'year'] as const).map(preset => (
                       <button key={preset} type="button" onClick={() => applyAnalyticsPreset(preset)}
-                        className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase transition-all ${analyticsDatePreset === preset ? 'bg-maroon-dark text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+                        className={`shrink-0 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase transition-all whitespace-nowrap ${analyticsDatePreset === preset ? 'bg-maroon-dark text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
                         {preset === 'all' ? 'All Time' : preset === 'today' ? 'Today' : preset === 'week' ? 'This Week' : preset === 'month' ? 'This Month' : 'This Year'}
                       </button>
                     ))}

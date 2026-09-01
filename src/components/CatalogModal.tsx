@@ -205,7 +205,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                   <p className="text-[14px] font-bold">No products found</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 min-[360px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                   {filtered.map(product => (
                     <div key={product.id}
                       className="bg-white border border-[#FDDBB4]/60 rounded-2xl p-3 flex flex-col gap-2 hover:border-[#E87020]/40 hover:shadow-md transition-all group relative">
