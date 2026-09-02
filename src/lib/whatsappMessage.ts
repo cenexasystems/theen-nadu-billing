@@ -49,9 +49,42 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
   const customerName = input.customerName?.trim() || 'Valued Customer'
   const invoiceUrl = input.invoiceUrl || publicInvoiceUrl(input.invoiceNumber)
   const formattedNo = formatInvoiceNo(input.invoiceNumber)
+
+  // Each item shows its ORIGINAL price (rate × qty), NOT the discounted line total
   const itemsText = input.items && input.items.length > 0
-    ? input.items.map(item => `• ${item.name} (x${item.qty}) - RM ${Number(item.lineTotal || 0).toFixed(2)}`).join('\n')
+    ? input.items.map(item => {
+        const originalLineAmt = Number(item.rate || 0) * Number(item.qty || 1)
+        return `• ${item.name} (x${item.qty}) – RM ${originalLineAmt.toFixed(2)}`
+      }).join('\n')
     : ''
+
+  // Build totals section separately
+  const subtotal = input.subtotal ?? 0
+  const couponDisc = input.couponDiscount ?? 0
+  const manualDisc = input.manualDiscountAmount ?? 0
+  const totalDiscount = couponDisc + manualDisc
+  const shipping = input.shipping ?? 0
+  const gst = input.gstAmount ?? 0
+  const total = input.total ?? 0
+
+  const totalsLines: string[] = []
+  if (input.items && input.items.length > 0) {
+    totalsLines.push(`Subtotal: RM ${subtotal.toFixed(2)}`)
+  }
+  if (totalDiscount > 0) {
+    totalsLines.push(`Discount: -RM ${totalDiscount.toFixed(2)}`)
+  }
+  if (shipping > 0) {
+    totalsLines.push(`Shipping: RM ${shipping.toFixed(2)}`)
+  }
+  if (gst > 0) {
+    totalsLines.push(`GST: RM ${gst.toFixed(2)}`)
+  }
+  if (input.total !== undefined) {
+    totalsLines.push(`*Total Amount: RM ${total.toFixed(2)}*`)
+  }
+
+  const totalsText = totalsLines.join('\n')
 
   return `✨ *THENN NADU TAILORING* ✨
 🧵 *Official Purchase Invoice & Receipt* 🧵
@@ -62,8 +95,9 @@ Thank you for shopping with Thenn Nadu Tailoring! We truly appreciate your order
 
 🧾 *INVOICE DETAILS*
 📌 *Invoice No:* #${formattedNo}
-${input.invoiceDate ? `📅 *Date:* ${new Date(input.invoiceDate).toLocaleDateString('en-MY')}\n` : ''}${input.paymentMode ? `💳 *Payment Mode:* ${input.paymentMode}\n` : ''}${input.total !== undefined ? `💰 *Total Amount:* RM ${Number(input.total || 0).toFixed(2)}\n` : ''}
-${itemsText ? `📦 *ITEMS ORDERED:*\n${itemsText}\n\n` : ''}📄 *View & Download Digital Invoice / PDF:*
+${input.invoiceDate ? `📅 *Date:* ${new Date(input.invoiceDate).toLocaleDateString('en-MY')}\n` : ''}${input.paymentMode ? `💳 *Payment Mode:* ${input.paymentMode}\n` : ''}
+${itemsText ? `📦 *ITEMS ORDERED:*\n${itemsText}\n\n${totalsText}\n` : input.total !== undefined ? `💰 *Total Amount:* RM ${total.toFixed(2)}\n` : ''}
+📄 *View & Download Digital Invoice / PDF:*
 👉 ${invoiceUrl}
 
 🙏 Thank you, and we hope to see you again soon!
