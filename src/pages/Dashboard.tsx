@@ -45,6 +45,7 @@ import Expenses from './Expenses'
 import Attendance from './Attendance'
 import StaffPunch from './StaffPunch'
 import Inventory from './Inventory'
+import LowStockAlarmModal from '../components/LowStockAlarmModal'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
 import { invoicePdfFile } from '../lib/invoicePdf'
@@ -1476,7 +1477,7 @@ export default function Dashboard() {
       <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-sm">
         <AlertCircle className="mx-auto text-red-400 mb-4" size={48} />
         <h2 className="text-2xl font-black mb-2">{l('Unauthorized', 'அன� மதி இல� லை')}</h2>
-        <Link to="/" className="px-6 py-3 bg-sageDark text-white rounded-xl font-bold inline-block mt-4">{l('Go Home', 'ம� கப� பிற� க� ')}</Link>
+        <Link to="/" className="px-6 py-3 bg-maroon text-white rounded-xl font-bold inline-block mt-4">{l('Go Home', 'ம� கப� பிற� க� ')}</Link>
       </div>
     </div>
   )
@@ -1495,6 +1496,7 @@ export default function Dashboard() {
 
   return (
     <div className="admin-shell h-screen min-h-screen bg-bgMain flex flex-col lg:flex-row overflow-hidden">
+      <LowStockAlarmModal triggerKey={tab} />
       {/* Sidebar */}
       <aside
         className={[
@@ -1506,8 +1508,8 @@ export default function Dashboard() {
         {/* Desktop brand header */}
         <div className={`hidden lg:flex items-center relative transition-all duration-300 ${sidebarCollapsed ? 'flex-col items-center pt-5 pb-4 px-2 gap-3' : 'px-5 py-5 justify-between'}`}>
           <Link to="/pos" title="Go to Billing Panel" className={`flex items-center gap-3 min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'justify-center' : 'flex-1'}`}>
-            <div className="flex items-center justify-center shrink-0 w-11 h-11 rounded-xl bg-white border border-emerald-900/40 shadow-sm overflow-hidden p-1 hover:scale-105 transition-transform">
-              <img src="/logo.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-contain" />
+            <div className="flex items-center justify-center shrink-0 w-11 h-11 rounded-xl overflow-hidden shadow-sm hover:scale-105 transition-transform">
+              <img src="/logo-icon.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-cover" />
             </div>
             {!sidebarCollapsed && (
               <h1 className="text-[20px] font-black text-white truncate tracking-tight">Thenn Nadu Tailoring</h1>
@@ -1526,8 +1528,8 @@ export default function Dashboard() {
         {/* Mobile mini-header */}
         <div className="flex lg:hidden items-center justify-between px-4 py-4 border-b border-white/10">
           <Link to="/pos" title="Go to Billing Panel" className="flex items-center gap-3 min-w-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-emerald-900/40 shrink-0 overflow-hidden shadow-sm p-1 hover:scale-105 transition-transform">
-              <img src="/logo.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-contain" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl shrink-0 overflow-hidden shadow-sm hover:scale-105 transition-transform">
+              <img src="/logo-icon.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-cover" />
             </div>
             <span className="text-[16px] font-black text-white truncate">Thenn Nadu Tailoring</span>
           </Link>
@@ -2820,13 +2822,13 @@ export default function Dashboard() {
                     </>
                   ) : (
                     <button type="submit" disabled={searchLoading}
-                      className="sm:col-span-2 min-h-[48px] flex items-center justify-center gap-2 rounded-xl bg-[#E87020] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#065F46] disabled:opacity-60">
+                      className="sm:col-span-2 min-h-[48px] flex items-center justify-center gap-2 rounded-xl bg-[#E87020] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#C85C10] disabled:opacity-60">
                       <Search size={14} /> {searchLoading ? l('Searching...','தேடுகிறது...') : l('Search Bills','தேடு')}
                     </button>
                   )}
                   {datePreset === 'custom' && (
                     <button type="submit" disabled={searchLoading}
-                      className="sm:col-span-2 lg:col-span-4 min-h-[48px] flex items-center justify-center gap-2 rounded-xl bg-[#E87020] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#065F46] disabled:opacity-60">
+                      className="sm:col-span-2 lg:col-span-4 min-h-[48px] flex items-center justify-center gap-2 rounded-xl bg-[#E87020] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#C85C10] disabled:opacity-60">
                       <Search size={14} /> {searchLoading ? l('Searching...','தேடுகிறது...') : l('Search Bills','தேடு')}
                     </button>
                   )}

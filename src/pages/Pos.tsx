@@ -17,7 +17,7 @@ import { invoicePdfFile } from '../lib/invoicePdf'
 import { uploadInvoicePdf } from '../lib/storage'
 import { createOrderWithStock } from '../services/orderService'
 import { createAdvanceOrder, type AdvanceOrder, type AdvancePaymentMethod } from '../services/advanceOrderService'
-import { advanceReceiptPdf, downloadFile, printAdvanceReceipt } from '../lib/advanceReceipt'
+import { printAdvanceReceipt } from '../lib/advanceReceipt'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import {
   buildStructuredOrderItem,
@@ -498,7 +498,7 @@ export default function Pos(props: PosProps = {}) {
 
   // ── Generate bill ─────────────────────────────────────────────────────
   const generateBill = async () => {
-    if (!items.length) { play('error'); setError('Add at least one product.'); return }
+    if (!items.length) { setError('Add at least one product.'); return }
     // Validate required phone
     const normalizedPhone = normalizePhone(customer.phone || '')
     if (!normalizedPhone) { setError('Please enter a valid Malaysian mobile number (e.g. 0123456789 or +60 12-345 6789)'); return }
@@ -553,7 +553,7 @@ export default function Pos(props: PosProps = {}) {
       const effectiveBillingDate = billingDate.trim()
         ? new Date(billingDate).toISOString()
         : new Date().toISOString()
-      await supabase.from('orders').update({
+      const { error: fixupError } = await supabase.from('orders').update({
         subtotal,
         total,
         total_gst: totalGst,
@@ -568,6 +568,7 @@ export default function Pos(props: PosProps = {}) {
         tailor_name: tailorName.trim(),
         billing_date: effectiveBillingDate,
       }).eq('id', created.orderId)
+      if (fixupError) console.error('Order total/remarks fixup failed:', fixupError)
       const createdInvoice: InvoiceSnap = {
         id: created.orderId,
         invoiceNo: created.invoiceNo,
@@ -603,10 +604,8 @@ export default function Pos(props: PosProps = {}) {
         return []
       })
       if (lowStockItems.length > 0) {
-        play('alert')          // single alert sound replaces success when stock is low
+        play('alert')          // stock alert sound only — no sound on a normal sale
         setLowStockAlert(lowStockItems)
-      } else {
-        play('success')        // normal success sound when stock is fine
       }
 
       void persistInvoicePdf(createdInvoice)
@@ -614,7 +613,6 @@ export default function Pos(props: PosProps = {}) {
       setCustomer({ name: '', phone: '', address: '' })
       void fetchProducts()
     } catch (err: unknown) {
-      play('error')
       setError(err instanceof Error ? err.message : 'Failed to generate bill')
     } finally {
       setSaving(false)
@@ -1027,7 +1025,7 @@ export default function Pos(props: PosProps = {}) {
                 </button>
                 <button
                   onClick={() => setAddProductOpen(true)}
-                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg bg-[#E87020] text-white text-[12px] md:text-[11px] font-black hover:bg-[#065F46] transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
+                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg bg-[#E87020] text-white text-[12px] md:text-[11px] font-black hover:bg-[#C85C10] transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
                 >
                   <Plus size={12} /> ADD TO CATALOG
                 </button>
@@ -1061,7 +1059,7 @@ export default function Pos(props: PosProps = {}) {
                   />
                   <button
                     type="submit"
-                    className="h-10 rounded-lg bg-[#E87020] px-4 text-[11px] font-black text-white hover:bg-[#065F46]"
+                    className="h-10 rounded-lg bg-[#E87020] px-4 text-[11px] font-black text-white hover:bg-[#C85C10]"
                   >
                     ADD ITEM
                   </button>

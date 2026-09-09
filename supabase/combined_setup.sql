@@ -74,6 +74,12 @@ CREATE TABLE IF NOT EXISTS public.products (
 CREATE UNIQUE INDEX IF NOT EXISTS products_category_name_unique
   ON public.products (category_id, LOWER(BTRIM(name)));
 
+-- Distinguishes physical products (stock-tracked) from services (tailoring, stitching, alterations)
+-- for billing analytics and the Inventory add/edit form's Product/Service toggle.
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS item_type TEXT NOT NULL DEFAULT 'product';
+ALTER TABLE public.products DROP CONSTRAINT IF EXISTS products_item_type_check;
+ALTER TABLE public.products ADD CONSTRAINT products_item_type_check CHECK (item_type IN ('product', 'service'));
+
 CREATE TABLE IF NOT EXISTS public.product_variants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id BIGINT NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
@@ -944,6 +950,13 @@ create table if not exists public.advance_orders (
 
 alter table public.advance_orders add column if not exists products jsonb not null default '[]'::jsonb;
 
+-- The "Reference Number" field on the advance-order create form
+-- (advanceOrderService.ts's createAdvanceOrder) patches this in with a
+-- separate UPDATE right after the RPC creates the row, since it isn't one of
+-- the RPC's own parameters. That UPDATE was never error-checked, so this
+-- column silently never existed and every reference number was lost.
+alter table public.advance_orders add column if not exists reference_number text not null default '';
+
 create table if not exists public.advance_order_timeline (
   id bigint generated always as identity primary key,
   advance_order_id uuid not null references public.advance_orders(id) on delete cascade,
@@ -1002,6 +1015,7 @@ begin
 end;
 $$;
 
+drop function if exists public.update_advance_order_status(uuid, text, text);
 create or replace function public.update_advance_order_status(p_order_id uuid, p_status text, p_remarks text default '')
 returns public.advance_orders
 language plpgsql security definer set search_path = public
@@ -1432,8 +1446,23 @@ CREATE TABLE IF NOT EXISTS public.store_reviews (
   comment     text,
   created_at  timestamptz NOT NULL DEFAULT now()
 );
+
+-- Home.tsx's review widget was built against a different column set than the
+-- one above and was never reconciled with it — its SELECT and INSERT both
+-- referenced columns that never existed (name, location, review_text,
+-- is_approved, user_id), so submitting a review always errored and the
+-- reviews list never loaded. There is no admin moderation screen anywhere in
+-- the app, so is_approved must default to true or reviews could never show.
+ALTER TABLE public.store_reviews ADD COLUMN IF NOT EXISTS name text;
+ALTER TABLE public.store_reviews ADD COLUMN IF NOT EXISTS location text;
+ALTER TABLE public.store_reviews ADD COLUMN IF NOT EXISTS review_text text;
+ALTER TABLE public.store_reviews ADD COLUMN IF NOT EXISTS is_approved boolean NOT NULL DEFAULT true;
+ALTER TABLE public.store_reviews ADD COLUMN IF NOT EXISTS user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL;
+
 ALTER TABLE public.store_reviews ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can insert reviews" ON public.store_reviews;
 CREATE POLICY "Anyone can insert reviews" ON public.store_reviews FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Anyone can read reviews" ON public.store_reviews;
 CREATE POLICY "Anyone can read reviews"  ON public.store_reviews FOR SELECT USING (true);
 
 -- 2. Make completed_order_id FK in advance_orders ON DELETE SET NULL
@@ -1565,6 +1594,17 @@ ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS billing_date TIMESTAMPTZ;
 -- Index for fast lookup by billing_date in analytics
 CREATE INDEX IF NOT EXISTS idx_orders_billing_date ON public.orders(billing_date);
 
+-- Ensure tailor_name column exists (used by Pos.tsx's post-checkout totals-fixup
+-- update call — its absence made that whole UPDATE silently fail on every
+-- checkout, since Postgres rejects the entire statement when any SET column
+-- doesn't exist, and the caller never checked the returned error).
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS tailor_name TEXT NOT NULL DEFAULT '';
+
+-- Stores the generated invoice PDF's public URL after upload (Pos.tsx sets
+-- this post-checkout; Dashboard.tsx/Login.tsx read it back for Order History).
+-- Never actually created before, so every one of those calls has been failing.
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS invoice_pdf_url TEXT;
+
 -- Reload PostgREST schema cache so the new column is immediately accessible
 NOTIFY pgrst, 'reload schema';
 
@@ -1591,7 +1631,7 @@ CREATE TABLE IF NOT EXISTS public.inventory_logs (
 
 -- Trigger function to automatically deduct stock and log it on order completion
 CREATE OR REPLACE FUNCTION public.handle_order_inventory_deduction()
-RETURNS TRIGGER AS $
+RETURNS TRIGGER AS $$
 DECLARE
     item RECORD;
     current_stock NUMERIC(12,3);
@@ -1623,7 +1663,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS trigger_order_inventory_deduction ON public.orders;
 CREATE TRIGGER trigger_order_inventory_deduction
@@ -1633,7 +1673,7 @@ CREATE TRIGGER trigger_order_inventory_deduction
 
 -- Also handle advance order completion (tailoring/custom) if they contain product items
 CREATE OR REPLACE FUNCTION public.handle_advance_order_inventory_deduction()
-RETURNS TRIGGER AS $
+RETURNS TRIGGER AS $$
 DECLARE
     item RECORD;
     current_stock NUMERIC(12,3);
@@ -1668,7 +1708,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS trigger_advance_order_inventory_deduction ON public.advance_orders;
 CREATE TRIGGER trigger_advance_order_inventory_deduction
@@ -1731,6 +1771,13 @@ CREATE TABLE IF NOT EXISTS public.attendance (
     UNIQUE (staff_id, date) -- One attendance record per staff per day
 );
 
+-- Both StaffPunch.tsx (self-service kiosk) and Attendance.tsx (admin view)
+-- read/write clock_in and clock_out — neither ever used check_in_time. Without
+-- these, punchIn() fails outright (Postgres rejects the unknown column in the
+-- upsert) and the admin view silently shows blank clock times for everyone.
+ALTER TABLE public.attendance ADD COLUMN IF NOT EXISTS clock_in TIMESTAMPTZ;
+ALTER TABLE public.attendance ADD COLUMN IF NOT EXISTS clock_out TIMESTAMPTZ;
+
 -- ==========================================
 -- STORAGE & RLS POLICIES
 -- ==========================================
@@ -1738,12 +1785,13 @@ CREATE TABLE IF NOT EXISTS public.attendance (
 INSERT INTO storage.buckets (id, name, public) VALUES ('receipts', 'receipts', false)
 ON CONFLICT (id) DO NOTHING;
 
--- Policies for storage (Allow authenticated users to upload/read)
+-- Policies for storage (the app's admin/staff login never creates a real Supabase Auth
+-- session, so these must allow "anon" too — see note above the inventory_logs policies).
 DROP POLICY IF EXISTS "Authenticated users can upload receipts" ON storage.objects;
-CREATE POLICY "Authenticated users can upload receipts" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'receipts');
+CREATE POLICY "Authenticated users can upload receipts" ON storage.objects FOR INSERT TO anon, authenticated WITH CHECK (bucket_id = 'receipts');
 
 DROP POLICY IF EXISTS "Authenticated users can read receipts" ON storage.objects;
-CREATE POLICY "Authenticated users can read receipts" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'receipts');
+CREATE POLICY "Authenticated users can read receipts" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'receipts');
 
 -- Enable RLS on new tables
 ALTER TABLE public.inventory_logs ENABLE ROW LEVEL SECURITY;
@@ -1752,12 +1800,21 @@ ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.staff ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
 
--- Allow all authenticated users full access for now (matching existing tables pattern)
-CREATE POLICY "Enable read access for all authenticated users" ON public.inventory_logs FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Enable insert access for all authenticated users" ON public.inventory_logs FOR INSERT TO authenticated WITH CHECK (true);
+-- Allow anon + authenticated full access, matching the products/categories/orders "portal manage"
+-- pattern above: the app's admin/staff login is a client-side password check (useAdminAuthStore),
+-- not real Supabase Auth, so every request from the Dashboard hits PostgREST as role "anon".
+-- Policies scoped to "authenticated" only silently reject every request from this app.
+DROP POLICY IF EXISTS "Enable read access for all authenticated users" ON public.inventory_logs;
+CREATE POLICY "Enable read access for all authenticated users" ON public.inventory_logs FOR SELECT TO anon, authenticated USING (true);
+DROP POLICY IF EXISTS "Enable insert access for all authenticated users" ON public.inventory_logs;
+CREATE POLICY "Enable insert access for all authenticated users" ON public.inventory_logs FOR INSERT TO anon, authenticated WITH CHECK (true);
 
-CREATE POLICY "Enable read access for all authenticated users" ON public.expense_categories FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Enable all access for all authenticated users" ON public.expenses FOR ALL TO authenticated USING (true);
-CREATE POLICY "Enable all access for all authenticated users" ON public.staff FOR ALL TO authenticated USING (true);
-CREATE POLICY "Enable all access for all authenticated users" ON public.attendance FOR ALL TO authenticated USING (true);
+DROP POLICY IF EXISTS "Enable read access for all authenticated users" ON public.expense_categories;
+CREATE POLICY "Enable read access for all authenticated users" ON public.expense_categories FOR SELECT TO anon, authenticated USING (true);
+DROP POLICY IF EXISTS "Enable all access for all authenticated users" ON public.expenses;
+CREATE POLICY "Enable all access for all authenticated users" ON public.expenses FOR ALL TO anon, authenticated USING (true);
+DROP POLICY IF EXISTS "Enable all access for all authenticated users" ON public.staff;
+CREATE POLICY "Enable all access for all authenticated users" ON public.staff FOR ALL TO anon, authenticated USING (true);
+DROP POLICY IF EXISTS "Enable all access for all authenticated users" ON public.attendance;
+CREATE POLICY "Enable all access for all authenticated users" ON public.attendance FOR ALL TO anon, authenticated USING (true);
 
