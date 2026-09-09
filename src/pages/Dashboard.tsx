@@ -2501,31 +2501,17 @@ export default function Dashboard() {
                     })
                     return filteredProds.length > 0 ? (
                       <>
-                      <div className="space-y-3 md:hidden">
+                      <div className="md:hidden rounded-xl border border-[#FDDBB4]/30 divide-y divide-[#FDDBB4]/20 overflow-hidden bg-white">
                         {filteredProds.slice(0, 50).map((p, i) => (
-                          <div key={`${p.name}-${p.variant || i}`} className="rounded-2xl border border-[#FDDBB4]/30 bg-[#FBFAF6] p-4">
-                            <div className="flex items-start justify-between gap-3">
+                          <div key={`${p.name}-${p.variant || i}`} className="flex items-start justify-between gap-2 px-3 py-2.5">
+                            <div className="min-w-0 flex items-start gap-2">
+                              <span className="text-[10px] font-bold text-[#9BAB9A] shrink-0 pt-0.5">#{i + 1}</span>
                               <div className="min-w-0">
-                                <p className="text-[13px] font-black text-[#9BAB9A]">#{i + 1}</p>
-                                <p className="text-[16px] font-bold text-[#111111] break-words">{p.name}</p>
-                                <p className="text-[13px] text-[#374151]">{p.variant || 'No variant'}</p>
-                              </div>
-                              <p className="text-[14px] font-black text-emerald-700">{formatCurrency(p.revenue)}</p>
-                            </div>
-                            <div className="mt-3 grid grid-cols-2 gap-3 text-[13px]">
-                              <div>
-                                <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Qty Sold</p>
-                                <p className="font-bold text-[#111111]">{Math.round(p.qty)}</p>
-                              </div>
-                              <div>
-                                <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Bills</p>
-                                <p className="font-bold text-[#111111]">{p.billCount}</p>
-                              </div>
-                              <div>
-                                <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Avg Revenue/Bill</p>
-                                <p className="font-bold text-[#111111]">{formatCurrency(p.billCount > 0 ? p.revenue / p.billCount : 0)}</p>
+                                <p className="truncate text-[13px] font-bold text-[#111111]">{p.name}</p>
+                                <p className="truncate text-[11px] text-[#6B7280]">{p.variant || 'No variant'} · Qty {Math.round(p.qty)} · {p.billCount} bill{p.billCount === 1 ? '' : 's'} · Avg {formatCurrency(p.billCount > 0 ? p.revenue / p.billCount : 0)}</p>
                               </div>
                             </div>
+                            <p className="shrink-0 text-[13px] font-black text-emerald-700">{formatCurrency(p.revenue)}</p>
                           </div>
                         ))}
                       </div>
@@ -2572,20 +2558,17 @@ export default function Dashboard() {
                 <h3 className="text-base font-black text-[#111111] mb-4">{l('Category Analytics', 'வகை பகுப்பாய்வு')}</h3>
                 {analytics.topCategories.length > 0 ? (
                   <>
-                  <div className="space-y-3 md:hidden">
+                  <div className="md:hidden rounded-xl border border-[#FDDBB4]/30 divide-y divide-[#FDDBB4]/20 overflow-hidden bg-white">
                     {analytics.topCategories.map((c, i) => (
-                      <div key={c.name} className="rounded-2xl border border-[#FDDBB4]/30 bg-[#FBFAF6] p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-[13px] font-black text-[#9BAB9A]">#{i + 1}</p>
-                            <p className="text-[16px] font-bold text-[#111111] break-words">{c.name}</p>
+                      <div key={c.name} className="flex items-start justify-between gap-2 px-3 py-2.5">
+                        <div className="min-w-0 flex items-start gap-2">
+                          <span className="text-[10px] font-bold text-[#9BAB9A] shrink-0 pt-0.5">#{i + 1}</span>
+                          <div className="min-w-0">
+                            <p className="truncate text-[13px] font-bold text-[#111111]">{c.name}</p>
+                            <p className="text-[11px] text-[#6B7280]">Qty {Math.round(c.qty)}</p>
                           </div>
-                          <p className="text-[14px] font-black text-emerald-700">{formatCurrency(c.revenue)}</p>
                         </div>
-                        <div className="mt-3">
-                          <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Qty Sold</p>
-                          <p className="font-bold text-[#111111]">{Math.round(c.qty)}</p>
-                        </div>
+                        <p className="shrink-0 text-[13px] font-black text-emerald-700">{formatCurrency(c.revenue)}</p>
                       </div>
                     ))}
                   </div>
@@ -2701,26 +2684,17 @@ export default function Dashboard() {
                       <h3 className="text-[15px] font-bold text-[#111111]">All Coupons Performance</h3>
                       <span className="text-[11px] font-bold text-[#10B981]">{analytics.topCoupons.length} coupons</span>
                     </div>
-                    <div className="space-y-3 md:hidden">
+                    <div className="md:hidden rounded-xl border border-[#FDDBB4]/30 divide-y divide-[#FDDBB4]/20 overflow-hidden bg-white">
                       {analytics.topCoupons.map((coupon, i) => (
-                        <div key={coupon.code} className="rounded-2xl border border-[#FDDBB4]/30 bg-[#FBFAF6] p-4">
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <p className="text-[13px] font-black text-[#9BAB9A]">#{i + 1}</p>
-                              <p className="text-[16px] font-bold text-[#111111] break-words">{coupon.code}</p>
-                            </div>
-                            <p className="text-[14px] font-black text-emerald-700">{formatCurrency(coupon.discounts)}</p>
-                          </div>
-                          <div className="mt-3 grid grid-cols-2 gap-3 text-[13px]">
-                            <div>
-                              <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Orders</p>
-                              <p className="font-bold text-[#111111]">{coupon.usage}</p>
-                            </div>
-                            <div>
-                              <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Avg Discount</p>
-                              <p className="font-semibold text-[#374151]">{coupon.usage > 0 ? formatCurrency(coupon.discounts / coupon.usage) : '-'}</p>
+                        <div key={coupon.code} className="flex items-start justify-between gap-2 px-3 py-2.5">
+                          <div className="min-w-0 flex items-start gap-2">
+                            <span className="text-[10px] font-bold text-[#9BAB9A] shrink-0 pt-0.5">#{i + 1}</span>
+                            <div className="min-w-0">
+                              <p className="truncate text-[13px] font-bold text-[#111111]">{coupon.code}</p>
+                              <p className="text-[11px] text-[#6B7280]">{coupon.usage} order{coupon.usage === 1 ? '' : 's'} · Avg {coupon.usage > 0 ? formatCurrency(coupon.discounts / coupon.usage) : '-'}</p>
                             </div>
                           </div>
+                          <p className="shrink-0 text-[13px] font-black text-emerald-700">{formatCurrency(coupon.discounts)}</p>
                         </div>
                       ))}
                     </div>
