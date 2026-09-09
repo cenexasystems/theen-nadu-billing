@@ -632,22 +632,22 @@ export default function Inventory() {
     <div className="p-4 sm:p-6 space-y-5">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-black text-[#111111] flex items-center gap-2">
-          <Package size={24} style={{ color: PRIMARY }} /> Inventory &amp; Products
+        <h1 className="text-lg sm:text-2xl font-black text-[#111111] flex items-center gap-2">
+          <Package size={20} className="sm:w-6 sm:h-6" style={{ color: PRIMARY }} /> Inventory &amp; Products
         </h1>
-        <button onClick={() => { void fetchProducts(); void fetchCategories() }} className="flex items-center gap-2 bg-white border border-[#EEEBE3] px-4 py-2 rounded-xl text-sm font-bold text-[#374151] hover:bg-[#FAFAF7]">
-          <RefreshCw size={15} /> Refresh
+        <button onClick={() => { void fetchProducts(); void fetchCategories() }} className="flex items-center gap-2 bg-white border border-[#EEEBE3] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[#374151] hover:bg-[#FAFAF7]">
+          <RefreshCw size={14} /> Refresh
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1.5 bg-white border border-[#EEEBE3] rounded-2xl p-2 shadow-sm overflow-x-auto">
+      <div className="grid grid-cols-2 sm:flex gap-1.5 bg-white border border-[#EEEBE3] rounded-2xl p-2 shadow-sm">
         {TABS.map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-sm transition-colors whitespace-nowrap shrink-0 ${activeTab === t.key ? 'text-white' : 'text-[#374151] hover:bg-[#FAFAF7]'}`}
+            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl font-black text-[11px] sm:text-sm transition-colors text-center ${activeTab === t.key ? 'text-white' : 'text-[#374151] hover:bg-[#FAFAF7]'}`}
             style={activeTab === t.key ? { background: PRIMARY } : undefined}>
-            <t.icon size={16} className="shrink-0" />
-            {t.label}
+            <t.icon size={14} className="shrink-0 sm:w-4 sm:h-4" />
+            <span className="truncate">{t.label}</span>
           </button>
         ))}
       </div>
@@ -656,19 +656,19 @@ export default function Inventory() {
       {activeTab === 'stock' && (
         <div className="space-y-5">
           {/* Summary Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
             {[
               { label: 'Total SKUs', value: products.length, icon: Layers, iconBg: '', iconText: 'text-white', bgStyle: { background: PRIMARY } },
               { label: 'Total Stock', value: `${totalStock} Units`, icon: Box, iconBg: 'bg-emerald-50', iconText: 'text-emerald-600' },
               { label: 'Low Stock Items', value: lowCount, icon: AlertTriangle, iconBg: 'bg-amber-50', iconText: 'text-amber-600' },
               { label: 'Stock Valuation', value: formatCurrency(stockValue), icon: Wallet, iconBg: 'bg-orange-50', iconText: 'text-orange-600' },
             ].map((card, i) => (
-              <div key={i} className="rounded-2xl border border-[#EEEBE3] p-4 shadow-sm bg-white">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${card.iconBg}`} style={card.bgStyle}>
-                  <card.icon size={16} className={card.iconText} />
+              <div key={i} className="rounded-2xl border border-[#EEEBE3] p-2.5 sm:p-4 shadow-sm bg-white min-w-0">
+                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center mb-1.5 sm:mb-3 ${card.iconBg}`} style={card.bgStyle}>
+                  <card.icon size={14} className={card.iconText} />
                 </div>
-                <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{card.label}</p>
-                <p className="text-2xl font-black text-[#111111]">{card.value}</p>
+                <p className="text-[8.5px] sm:text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-0.5 sm:mb-1 leading-tight">{card.label}</p>
+                <p className="text-[15px] sm:text-2xl font-black text-[#111111] break-words leading-snug">{card.value}</p>
               </div>
             ))}
           </div>

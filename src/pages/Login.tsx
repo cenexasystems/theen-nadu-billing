@@ -2393,16 +2393,16 @@ export default function Dashboard() {
                     { label: 'Total Product Revenue', value: formatCurrency(analytics.totalCompletedRevenue), icon: <RMIcon size={18} />, from: 'from-emerald-500 to-teal-600' },
                     { label: 'Total Products Sold', value: String(Math.round(analytics.totalProductsSold)), icon: <Package size={18} />, from: 'from-blue-500 to-indigo-600' },
                     { label: 'Average Product Revenue', value: `${formatCurrency(analytics.averageProductRevenue)} / Product`, icon: <RMIcon size={18} />, from: 'from-violet-500 to-purple-600' },
-                    { label: 'Top Product', value: analytics.bestProduct.length > 15 ? analytics.bestProduct.slice(0, 15) + '...' : analytics.bestProduct, icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
+                    { label: 'Top Product', value: analytics.bestProduct, icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
                   ].map((card, i) => (
-                    <div key={i} className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
+                    <div key={i} className={`relative overflow-hidden rounded-2xl p-3 sm:p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
                       <div className="absolute inset-0 bg-gradient-to-tl from-white/30 via-white/10 to-transparent" />
                       <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-3">
-                          <p className="text-[10px] uppercase font-black text-white/80 tracking-wider">{card.label}</p>
-                          <div className="w-9 h-9 rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-sm">{card.icon}</div>
+                        <div className="flex items-center justify-between mb-1.5 sm:mb-3 gap-1.5">
+                          <p className="text-[8.5px] sm:text-[10px] uppercase font-black text-white/80 tracking-wider leading-tight">{card.label}</p>
+                          <div className="w-6 h-6 sm:w-9 sm:h-9 shrink-0 rounded-lg sm:rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-sm [&_svg]:w-3.5 [&_svg]:h-3.5 sm:[&_svg]:w-[18px] sm:[&_svg]:h-[18px]">{card.icon}</div>
                         </div>
-                        <p className="text-[22px] font-extrabold text-white drop-shadow-sm truncate">{card.value}</p>
+                        <p className="text-[14px] sm:text-[22px] font-extrabold text-white drop-shadow-sm break-words leading-snug">{card.value}</p>
                       </div>
                     </div>
                   ))}
@@ -2562,14 +2562,14 @@ export default function Dashboard() {
                     { label: 'Usage Rate', value: `${analytics.couponUsageRate.toFixed(1)}%`, icon: <TrendingUp size={18} />, from: 'from-violet-500 to-purple-600' },
                     { label: 'Unique Coupons', value: String(analytics.topCoupons.length), icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
                   ].map((card, i) => (
-                    <div key={i} className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
+                    <div key={i} className={`relative overflow-hidden rounded-2xl p-3 sm:p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
                       <div className="absolute inset-0 bg-gradient-to-tl from-white/30 via-white/10 to-transparent" />
                       <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-3">
-                          <p className="text-[10px] uppercase font-black text-white/80 tracking-wider">{card.label}</p>
-                          <div className="w-9 h-9 rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-sm">{card.icon}</div>
+                        <div className="flex items-center justify-between mb-1.5 sm:mb-3 gap-1.5">
+                          <p className="text-[8.5px] sm:text-[10px] uppercase font-black text-white/80 tracking-wider leading-tight">{card.label}</p>
+                          <div className="w-6 h-6 sm:w-9 sm:h-9 shrink-0 rounded-lg sm:rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-sm [&_svg]:w-3.5 [&_svg]:h-3.5 sm:[&_svg]:w-[18px] sm:[&_svg]:h-[18px]">{card.icon}</div>
                         </div>
-                        <p className="text-[22px] font-extrabold text-white drop-shadow-sm truncate">{card.value}</p>
+                        <p className="text-[14px] sm:text-[22px] font-extrabold text-white drop-shadow-sm break-words leading-snug">{card.value}</p>
                       </div>
                     </div>
                   ))}
