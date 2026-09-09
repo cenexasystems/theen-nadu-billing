@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { AlertTriangle, Volume2, VolumeX, Package } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { useSound } from '../context/SoundContext'
+import { useSound, getSharedAudioContext } from '../context/SoundContext'
 
 interface LowStockItem {
   id: string | number
@@ -32,7 +32,6 @@ export default function LowStockAlarmModal({ triggerKey }: { triggerKey?: string
   const { soundEnabled } = useSound()
   const [items, setItems] = useState<LowStockItem[] | null>(null)
   const intervalRef = useRef<number | null>(null)
-  const audioCtxRef = useRef<AudioContext | null>(null)
   const hasCheckedOnMount = useRef(false)
 
   useEffect(() => {
@@ -62,11 +61,7 @@ export default function LowStockAlarmModal({ triggerKey }: { triggerKey?: string
   const beep = () => {
     if (!soundEnabled) return
     try {
-      const AudioContextCtor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext
-      if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
-        audioCtxRef.current = new AudioContextCtor()
-      }
-      const ctx = audioCtxRef.current
+      const ctx = getSharedAudioContext()
       if (ctx.state === 'suspended') void ctx.resume()
       const now = ctx.currentTime
       // two-tone siren beep
@@ -96,14 +91,6 @@ export default function LowStockAlarmModal({ triggerKey }: { triggerKey?: string
     return () => { if (intervalRef.current) window.clearInterval(intervalRef.current) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items])
-
-  useEffect(() => {
-    return () => {
-      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
-        audioCtxRef.current.close().catch(() => {})
-      }
-    }
-  }, [])
 
   const acknowledge = () => {
     if (intervalRef.current) window.clearInterval(intervalRef.current)

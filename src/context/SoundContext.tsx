@@ -10,6 +10,18 @@ interface SoundContextType {
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
+// Shared across the whole app (SoundContext's play() and LowStockAlarmModal's siren both use
+// this single instance) so there's only ever one AudioContext, and so unlocking it on the
+// first tap benefits every sound cue, not just whichever component happened to create it.
+let sharedAudioCtx: AudioContext | null = null;
+export function getSharedAudioContext(): AudioContext {
+  const AudioContextCtor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext;
+  if (!sharedAudioCtx || sharedAudioCtx.state === 'closed') {
+    sharedAudioCtx = new AudioContextCtor();
+  }
+  return sharedAudioCtx;
+}
+
 export function SoundProvider({ children }: { children: React.ReactNode }) {
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('thenn_nadu_sounds');
@@ -20,12 +32,38 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('thenn_nadu_sounds', JSON.stringify(soundEnabled));
   }, [soundEnabled]);
 
+  const getContext = getSharedAudioContext;
+
+  // Mobile browsers (iOS Safari especially) only allow an AudioContext to start/resume
+  // inside a direct user gesture, and most play() calls here happen after an `await`
+  // (a Supabase save) by which point that gesture window has closed. Create the context
+  // and resume it on the very first tap/click anywhere in the app so it's already running
+  // by the time an async play() call needs it.
+  useEffect(() => {
+    const unlock = () => {
+      try {
+        const ctx = getContext();
+        if (ctx.state === 'suspended') void ctx.resume();
+      } catch {
+        // ignore — Web Audio simply unsupported in this browser
+      }
+    };
+    window.addEventListener('pointerdown', unlock, { passive: true });
+    window.addEventListener('touchstart', unlock, { passive: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('touchstart', unlock);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const play = (type: SoundType) => {
     if (!soundEnabled) return;
 
     try {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = new AudioContext();
+      const ctx = getContext();
+      if (ctx.state === 'suspended') void ctx.resume();
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
 
