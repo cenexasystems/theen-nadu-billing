@@ -1512,7 +1512,7 @@ export default function Dashboard() {
               <img src="/logo-icon.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-cover" />
             </div>
             {!sidebarCollapsed && (
-              <h1 className="text-[20px] font-black text-white whitespace-nowrap tracking-tight">Thenn Nadu Tailoring</h1>
+              <h1 className="text-[20px] font-black text-white whitespace-nowrap tracking-tight">Thenn Nadu</h1>
             )}
           </Link>
           <button
@@ -1531,7 +1531,7 @@ export default function Dashboard() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl shrink-0 overflow-hidden shadow-sm hover:scale-105 transition-transform">
               <img src="/logo-icon.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-cover" />
             </div>
-            <span className="text-[16px] font-black text-white whitespace-nowrap">Thenn Nadu Tailoring</span>
+            <span className="text-[16px] font-black text-white whitespace-nowrap">Thenn Nadu</span>
           </Link>
         </div>
         {/* Nav */}
