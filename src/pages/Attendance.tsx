@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Users, Calendar, AlertTriangle, Plus, X, Edit2, LogIn, LogOut } from 'lucide-react'
+import { Users, Calendar, AlertTriangle, Plus, X, Edit2, LogIn, LogOut, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency } from '../lib/retail'
 
@@ -127,6 +127,26 @@ export default function Attendance() {
   const toggleStaffActive = async (member: Staff) => {
     await supabase.from('staff').update({ is_active: !member.is_active }).eq('id', member.id)
     void fetchData()
+  }
+
+  const handleDeleteStaff = async (member: Staff) => {
+    if (!window.confirm(`Are you sure you want to delete ${member.name}?\n\nThis will permanently remove their records.`)) return
+    
+    try {
+      const { error } = await supabase.from('staff').delete().eq('id', member.id)
+      if (error) {
+        // If there's a foreign key constraint violation (e.g. attendance records exist)
+        if (error.code === '23503') {
+          alert(`Cannot delete ${member.name} because they have attendance records.\n\nPlease deactivate them instead.`)
+        } else {
+          throw error
+        }
+      } else {
+        void fetchData()
+      }
+    } catch (err: any) {
+      alert(`Error deleting staff: ${err.message}`)
+    }
   }
 
 
@@ -289,10 +309,16 @@ export default function Attendance() {
                         </button>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <button onClick={() => { setEditingStaff(member); setForm({ name: member.name, role: member.role, phone: member.phone || '', base_salary: String(member.base_salary) }); setShowModal(true) }}
-                          className="text-[#374151] hover:text-[#E87020] p-1.5 bg-gray-50 hover:bg-[#FFF8F2] rounded-lg border border-transparent hover:border-[#FDDBB4] transition-colors">
-                          <Edit2 size={14} />
-                        </button>
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => { setEditingStaff(member); setForm({ name: member.name, role: member.role, phone: member.phone || '', base_salary: String(member.base_salary) }); setShowModal(true) }}
+                            className="text-[#374151] hover:text-[#E87020] p-1.5 bg-gray-50 hover:bg-[#FFF8F2] rounded-lg border border-transparent hover:border-[#FDDBB4] transition-colors">
+                            <Edit2 size={14} />
+                          </button>
+                          <button onClick={() => void handleDeleteStaff(member)}
+                            className="text-red-500 hover:text-red-700 p-1.5 bg-gray-50 hover:bg-red-50 rounded-lg border border-transparent hover:border-red-200 transition-colors">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
