@@ -1512,7 +1512,7 @@ export default function Dashboard() {
               <img src="/logo-icon.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-cover" />
             </div>
             {!sidebarCollapsed && (
-              <h1 className="text-[20px] font-black text-white truncate tracking-tight">Thenn Nadu Tailoring</h1>
+              <h1 className="text-[20px] font-black text-white whitespace-nowrap tracking-tight">Thenn Nadu Tailoring</h1>
             )}
           </Link>
           <button
@@ -1527,11 +1527,11 @@ export default function Dashboard() {
         </div>
         {/* Mobile mini-header */}
         <div className="flex lg:hidden items-center justify-between px-4 py-4 border-b border-white/10">
-          <Link to="/pos" title="Go to Billing Panel" className="flex items-center gap-3 min-w-0">
+          <Link to="/pos" title="Go to Billing Panel" className="flex items-center gap-3 overflow-hidden">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl shrink-0 overflow-hidden shadow-sm hover:scale-105 transition-transform">
               <img src="/logo-icon.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-cover" />
             </div>
-            <span className="text-[16px] font-black text-white truncate">Thenn Nadu Tailoring</span>
+            <span className="text-[16px] font-black text-white whitespace-nowrap">Thenn Nadu Tailoring</span>
           </Link>
         </div>
         {/* Nav */}
