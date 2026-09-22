@@ -48,8 +48,8 @@ export default function Navbar() {
             <div className="w-10 h-10 sm:w-11 sm:h-11 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-sm shrink-0 border border-borderLight/40 group-hover:opacity-90 transition-opacity">
               <span className="text-[10px] font-black tracking-[0.24em] text-[#111111]">AT</span>
             </div>
-            <div className="flex min-w-0 flex-col leading-none">
-              <p className="truncate text-[12px] sm:text-[13px] font-bold leading-tight tracking-tight text-textMain md:text-[15px] font-headline">{BRAND_EN}</p>
+            <div className="flex flex-col leading-none">
+              <p className="whitespace-nowrap text-[12px] sm:text-[13px] font-bold leading-tight tracking-tight text-textMain md:text-[15px] font-headline">{BRAND_EN}</p>
               <p className="hidden text-[9px] font-bold uppercase tracking-[0.15em] text-maroon md:block">{BRAND_SUBTITLE}</p>
             </div>
           </Link>
