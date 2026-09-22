@@ -361,3 +361,42 @@ export async function completeAdvanceOrder(
 
   return result!
 }
+
+/**
+ * Permanently delete an advance order and all associated data:
+ * - advance_order_timeline rows
+ * - advance_order_payments rows
+ * - The completed order in the orders table (removes it from analytics/revenue)
+ * - The advance_orders row itself
+ * Also clears localStorage fallback data.
+ */
+export async function deleteAdvanceOrder(order: AdvanceOrder): Promise<void> {
+  const orderId = order.id
+
+  if (isSupabaseConfigured) {
+    // 1. Delete timeline events
+    await supabase.from('advance_order_timeline').delete().eq('advance_order_id', orderId)
+
+    // 2. Delete payment records
+    await supabase.from('advance_order_payments').delete().eq('advance_order_id', orderId)
+
+    // 3. Delete the linked completed order from the orders table (clears analytics/revenue)
+    if (order.completed_order_id) {
+      await supabase.from('orders').delete().eq('id', order.completed_order_id)
+    }
+    // Also attempt to delete by invoice number in case completed_order_id is not set
+    if (order.invoice_number) {
+      await supabase.from('orders').delete().eq('invoice_number', order.invoice_number)
+    }
+
+    // 4. Delete the advance order itself
+    const { error } = await supabase.from('advance_orders').delete().eq('id', orderId)
+    if (error) throw new Error(error.message)
+  }
+
+  // Clear localStorage fallback
+  saveLocalOrders(loadLocalOrders().filter(o => o.id !== orderId))
+  saveLocalTimeline(loadLocalTimeline().filter(t => t.advance_order_id !== orderId))
+  saveLocalPayments(loadLocalPayments().filter(p => p.advance_order_id !== orderId))
+}
+
