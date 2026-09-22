@@ -17,7 +17,7 @@ import { invoicePdfFile } from '../lib/invoicePdf'
 import { uploadInvoicePdf } from '../lib/storage'
 import { createOrderWithStock } from '../services/orderService'
 import { createAdvanceOrder, type AdvanceOrder, type AdvancePaymentMethod } from '../services/advanceOrderService'
-import { advanceReceiptPdf, downloadFile, printAdvanceReceipt } from '../lib/advanceReceipt'
+import { printAdvanceReceipt } from '../lib/advanceReceipt'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import {
   buildStructuredOrderItem,
@@ -498,7 +498,7 @@ export default function Pos(props: PosProps = {}) {
 
   // ── Generate bill ─────────────────────────────────────────────────────
   const generateBill = async () => {
-    if (!items.length) { play('error'); setError('Add at least one product.'); return }
+    if (!items.length) { setError('Add at least one product.'); return }
     // Validate required phone
     const normalizedPhone = normalizePhone(customer.phone || '')
     if (!normalizedPhone) { setError('Please enter a valid Malaysian mobile number (e.g. 0123456789 or +60 12-345 6789)'); return }
@@ -553,7 +553,7 @@ export default function Pos(props: PosProps = {}) {
       const effectiveBillingDate = billingDate.trim()
         ? new Date(billingDate).toISOString()
         : new Date().toISOString()
-      await supabase.from('orders').update({
+      const { error: fixupError } = await supabase.from('orders').update({
         subtotal,
         total,
         total_gst: totalGst,
@@ -568,6 +568,7 @@ export default function Pos(props: PosProps = {}) {
         tailor_name: tailorName.trim(),
         billing_date: effectiveBillingDate,
       }).eq('id', created.orderId)
+      if (fixupError) console.error('Order total/remarks fixup failed:', fixupError)
       const createdInvoice: InvoiceSnap = {
         id: created.orderId,
         invoiceNo: created.invoiceNo,
@@ -603,10 +604,8 @@ export default function Pos(props: PosProps = {}) {
         return []
       })
       if (lowStockItems.length > 0) {
-        play('alert')          // single alert sound replaces success when stock is low
+        play('alert')          // stock alert sound only — no sound on a normal sale
         setLowStockAlert(lowStockItems)
-      } else {
-        play('success')        // normal success sound when stock is fine
       }
 
       void persistInvoicePdf(createdInvoice)
@@ -614,7 +613,6 @@ export default function Pos(props: PosProps = {}) {
       setCustomer({ name: '', phone: '', address: '' })
       void fetchProducts()
     } catch (err: unknown) {
-      play('error')
       setError(err instanceof Error ? err.message : 'Failed to generate bill')
     } finally {
       setSaving(false)
@@ -721,22 +719,22 @@ export default function Pos(props: PosProps = {}) {
 
         {/* Low Stock Alert Toast — shown on invoice screen after billing */}
         {lowStockAlert.length > 0 && (
-          <div className="fixed top-4 right-4 z-[9999] max-w-sm w-full">
-            <div className="bg-white border-2 border-orange-400 rounded-2xl shadow-2xl p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
+          <div className="fixed top-4 left-4 right-4 sm:left-auto sm:w-full sm:max-w-sm z-[9999]">
+            <div className="bg-white border-2 border-orange-400 rounded-2xl shadow-2xl p-3.5 sm:p-4">
+              <div className="flex items-start justify-between gap-2.5 sm:gap-3">
+                <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
                   <div className="bg-orange-100 p-2 rounded-xl shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[13px] font-black text-[#111111]">⚠️ Low Stock Alert!</p>
                     <p className="text-[11px] text-[#6B7280] font-bold mt-0.5">These items need restocking:</p>
                     <ul className="mt-2 space-y-1">
                       {lowStockAlert.map((item, i) => (
-                        <li key={i} className="flex items-center gap-2">
+                        <li key={i} className="flex items-center gap-2 flex-wrap">
                           <span className={`w-2 h-2 rounded-full shrink-0 ${item.stock <= 0 ? 'bg-red-500' : 'bg-orange-400'}`} />
-                          <span className="text-[12px] font-bold text-[#111111]">{item.name}</span>
-                          <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${item.stock <= 0 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
+                          <span className="text-[12px] font-bold text-[#111111] truncate max-w-[140px] sm:max-w-none">{item.name}</span>
+                          <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${item.stock <= 0 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
                             {item.stock <= 0 ? 'Out of Stock' : `${item.stock} left`}
                           </span>
                         </li>
@@ -850,22 +848,22 @@ export default function Pos(props: PosProps = {}) {
 
       {/* Low Stock Alert Toast */}
       {lowStockAlert.length > 0 && (
-        <div className="fixed top-4 right-4 z-[9999] max-w-sm w-full animate-in slide-in-from-top-2">
-          <div className="bg-white border-2 border-orange-400 rounded-2xl shadow-2xl p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3">
+        <div className="fixed top-4 left-4 right-4 sm:left-auto sm:w-full sm:max-w-sm z-[9999] animate-in slide-in-from-top-2">
+          <div className="bg-white border-2 border-orange-400 rounded-2xl shadow-2xl p-3.5 sm:p-4">
+            <div className="flex items-start justify-between gap-2.5 sm:gap-3">
+              <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
                 <div className="bg-orange-100 p-2 rounded-xl shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <p className="text-[13px] font-black text-[#111111]">⚠️ Low Stock Alert!</p>
                   <p className="text-[11px] text-[#6B7280] font-bold mt-0.5">The following items need restocking:</p>
                   <ul className="mt-2 space-y-1">
                     {lowStockAlert.map((item, i) => (
-                      <li key={i} className="flex items-center gap-2">
+                      <li key={i} className="flex items-center gap-2 flex-wrap">
                         <span className={`w-2 h-2 rounded-full shrink-0 ${item.stock <= 0 ? 'bg-red-500' : 'bg-orange-400'}`} />
-                        <span className="text-[12px] font-bold text-[#111111]">{item.name}</span>
-                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${item.stock <= 0 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
+                        <span className="text-[12px] font-bold text-[#111111] truncate max-w-[140px] sm:max-w-none">{item.name}</span>
+                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded shrink-0 ${item.stock <= 0 ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'}`}>
                           {item.stock <= 0 ? 'Out of Stock' : `${item.stock} left`}
                         </span>
                       </li>
@@ -1027,7 +1025,7 @@ export default function Pos(props: PosProps = {}) {
                 </button>
                 <button
                   onClick={() => setAddProductOpen(true)}
-                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg bg-[#E87020] text-white text-[12px] md:text-[11px] font-black hover:bg-[#065F46] transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
+                  className="min-h-[44px] w-full md:w-auto px-3 py-2 rounded-lg bg-[#E87020] text-white text-[12px] md:text-[11px] font-black hover:bg-[#C85C10] transition-colors flex items-center justify-center gap-1.5 text-center md:flex-1"
                 >
                   <Plus size={12} /> ADD TO CATALOG
                 </button>
@@ -1061,7 +1059,7 @@ export default function Pos(props: PosProps = {}) {
                   />
                   <button
                     type="submit"
-                    className="h-10 rounded-lg bg-[#E87020] px-4 text-[11px] font-black text-white hover:bg-[#065F46]"
+                    className="h-10 rounded-lg bg-[#E87020] px-4 text-[11px] font-black text-white hover:bg-[#C85C10]"
                   >
                     ADD ITEM
                   </button>

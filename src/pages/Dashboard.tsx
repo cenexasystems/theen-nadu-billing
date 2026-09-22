@@ -45,6 +45,7 @@ import Expenses from './Expenses'
 import Attendance from './Attendance'
 import StaffPunch from './StaffPunch'
 import Inventory from './Inventory'
+import LowStockAlarmModal from '../components/LowStockAlarmModal'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
 import { invoicePdfFile } from '../lib/invoicePdf'
@@ -1476,7 +1477,7 @@ export default function Dashboard() {
       <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-sm">
         <AlertCircle className="mx-auto text-red-400 mb-4" size={48} />
         <h2 className="text-2xl font-black mb-2">{l('Unauthorized', 'அன� மதி இல� லை')}</h2>
-        <Link to="/" className="px-6 py-3 bg-sageDark text-white rounded-xl font-bold inline-block mt-4">{l('Go Home', 'ம� கப� பிற� க� ')}</Link>
+        <Link to="/" className="px-6 py-3 bg-maroon text-white rounded-xl font-bold inline-block mt-4">{l('Go Home', 'ம� கப� பிற� க� ')}</Link>
       </div>
     </div>
   )
@@ -1495,6 +1496,7 @@ export default function Dashboard() {
 
   return (
     <div className="admin-shell h-screen min-h-screen bg-bgMain flex flex-col lg:flex-row overflow-hidden">
+      <LowStockAlarmModal triggerKey={tab} />
       {/* Sidebar */}
       <aside
         className={[
@@ -1506,8 +1508,8 @@ export default function Dashboard() {
         {/* Desktop brand header */}
         <div className={`hidden lg:flex items-center relative transition-all duration-300 ${sidebarCollapsed ? 'flex-col items-center pt-5 pb-4 px-2 gap-3' : 'px-5 py-5 justify-between'}`}>
           <Link to="/pos" title="Go to Billing Panel" className={`flex items-center gap-3 min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'justify-center' : 'flex-1'}`}>
-            <div className="flex items-center justify-center shrink-0 w-11 h-11 rounded-xl bg-white border border-emerald-900/40 shadow-sm overflow-hidden p-1 hover:scale-105 transition-transform">
-              <img src="/logo.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-contain" />
+            <div className="flex items-center justify-center shrink-0 w-11 h-11 rounded-xl overflow-hidden shadow-sm hover:scale-105 transition-transform">
+              <img src="/logo-icon.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-cover" />
             </div>
             {!sidebarCollapsed && (
               <h1 className="text-[20px] font-black text-white truncate tracking-tight">Thenn Nadu Tailoring</h1>
@@ -1526,8 +1528,8 @@ export default function Dashboard() {
         {/* Mobile mini-header */}
         <div className="flex lg:hidden items-center justify-between px-4 py-4 border-b border-white/10">
           <Link to="/pos" title="Go to Billing Panel" className="flex items-center gap-3 min-w-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-emerald-900/40 shrink-0 overflow-hidden shadow-sm p-1 hover:scale-105 transition-transform">
-              <img src="/logo.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-contain" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl shrink-0 overflow-hidden shadow-sm hover:scale-105 transition-transform">
+              <img src="/logo-icon.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-cover" />
             </div>
             <span className="text-[16px] font-black text-white truncate">Thenn Nadu Tailoring</span>
           </Link>
@@ -2458,16 +2460,16 @@ export default function Dashboard() {
                     { label: 'Total Product Revenue', value: formatCurrency(analytics.totalCompletedRevenue), icon: <RMIcon size={18} />, from: 'from-emerald-500 to-teal-600' },
                     { label: 'Total Products Sold', value: String(Math.round(analytics.totalProductsSold)), icon: <Package size={18} />, from: 'from-blue-500 to-indigo-600' },
                     { label: 'Average Product Revenue', value: `${formatCurrency(analytics.averageProductRevenue)} / Product`, icon: <RMIcon size={18} />, from: 'from-violet-500 to-purple-600' },
-                    { label: 'Top Product', value: analytics.bestProduct.length > 15 ? analytics.bestProduct.slice(0, 15) + '...' : analytics.bestProduct, icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
+                    { label: 'Top Product', value: analytics.bestProduct, icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
                   ].map((card, i) => (
-                    <div key={i} className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
+                    <div key={i} className={`relative overflow-hidden rounded-2xl p-3 sm:p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
                       <div className="absolute inset-0 bg-gradient-to-tl from-white/30 via-white/10 to-transparent" />
                       <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-3">
-                          <p className="text-[10px] uppercase font-black text-white/80 tracking-wider">{card.label}</p>
-                          <div className="w-9 h-9 rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-sm">{card.icon}</div>
+                        <div className="flex items-center justify-between mb-1.5 sm:mb-3 gap-1.5">
+                          <p className="text-[8.5px] sm:text-[10px] uppercase font-black text-white/80 tracking-wider leading-tight">{card.label}</p>
+                          <div className="w-6 h-6 sm:w-9 sm:h-9 shrink-0 rounded-lg sm:rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-sm [&_svg]:w-3.5 [&_svg]:h-3.5 sm:[&_svg]:w-[18px] sm:[&_svg]:h-[18px]">{card.icon}</div>
                         </div>
-                        <p className="text-[22px] font-extrabold text-white drop-shadow-sm truncate">{card.value}</p>
+                        <p className="text-[14px] sm:text-[22px] font-extrabold text-white drop-shadow-sm break-words leading-snug">{card.value}</p>
                       </div>
                     </div>
                   ))}
@@ -2499,31 +2501,17 @@ export default function Dashboard() {
                     })
                     return filteredProds.length > 0 ? (
                       <>
-                      <div className="space-y-3 md:hidden">
+                      <div className="md:hidden rounded-xl border border-[#FDDBB4]/30 divide-y divide-[#FDDBB4]/20 overflow-hidden bg-white">
                         {filteredProds.slice(0, 50).map((p, i) => (
-                          <div key={`${p.name}-${p.variant || i}`} className="rounded-2xl border border-[#FDDBB4]/30 bg-[#FBFAF6] p-4">
-                            <div className="flex items-start justify-between gap-3">
+                          <div key={`${p.name}-${p.variant || i}`} className="flex items-start justify-between gap-2 px-3 py-2.5">
+                            <div className="min-w-0 flex items-start gap-2">
+                              <span className="text-[10px] font-bold text-[#9BAB9A] shrink-0 pt-0.5">#{i + 1}</span>
                               <div className="min-w-0">
-                                <p className="text-[13px] font-black text-[#9BAB9A]">#{i + 1}</p>
-                                <p className="text-[16px] font-bold text-[#111111] break-words">{p.name}</p>
-                                <p className="text-[13px] text-[#374151]">{p.variant || 'No variant'}</p>
-                              </div>
-                              <p className="text-[14px] font-black text-emerald-700">{formatCurrency(p.revenue)}</p>
-                            </div>
-                            <div className="mt-3 grid grid-cols-2 gap-3 text-[13px]">
-                              <div>
-                                <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Qty Sold</p>
-                                <p className="font-bold text-[#111111]">{Math.round(p.qty)}</p>
-                              </div>
-                              <div>
-                                <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Bills</p>
-                                <p className="font-bold text-[#111111]">{p.billCount}</p>
-                              </div>
-                              <div>
-                                <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Avg Revenue/Bill</p>
-                                <p className="font-bold text-[#111111]">{formatCurrency(p.billCount > 0 ? p.revenue / p.billCount : 0)}</p>
+                                <p className="truncate text-[13px] font-bold text-[#111111]">{p.name}</p>
+                                <p className="truncate text-[11px] text-[#6B7280]">{p.variant || 'No variant'} · Qty {Math.round(p.qty)} · {p.billCount} bill{p.billCount === 1 ? '' : 's'} · Avg {formatCurrency(p.billCount > 0 ? p.revenue / p.billCount : 0)}</p>
                               </div>
                             </div>
+                            <p className="shrink-0 text-[13px] font-black text-emerald-700">{formatCurrency(p.revenue)}</p>
                           </div>
                         ))}
                       </div>
@@ -2570,20 +2558,17 @@ export default function Dashboard() {
                 <h3 className="text-base font-black text-[#111111] mb-4">{l('Category Analytics', 'வகை பகுப்பாய்வு')}</h3>
                 {analytics.topCategories.length > 0 ? (
                   <>
-                  <div className="space-y-3 md:hidden">
+                  <div className="md:hidden rounded-xl border border-[#FDDBB4]/30 divide-y divide-[#FDDBB4]/20 overflow-hidden bg-white">
                     {analytics.topCategories.map((c, i) => (
-                      <div key={c.name} className="rounded-2xl border border-[#FDDBB4]/30 bg-[#FBFAF6] p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-[13px] font-black text-[#9BAB9A]">#{i + 1}</p>
-                            <p className="text-[16px] font-bold text-[#111111] break-words">{c.name}</p>
+                      <div key={c.name} className="flex items-start justify-between gap-2 px-3 py-2.5">
+                        <div className="min-w-0 flex items-start gap-2">
+                          <span className="text-[10px] font-bold text-[#9BAB9A] shrink-0 pt-0.5">#{i + 1}</span>
+                          <div className="min-w-0">
+                            <p className="truncate text-[13px] font-bold text-[#111111]">{c.name}</p>
+                            <p className="text-[11px] text-[#6B7280]">Qty {Math.round(c.qty)}</p>
                           </div>
-                          <p className="text-[14px] font-black text-emerald-700">{formatCurrency(c.revenue)}</p>
                         </div>
-                        <div className="mt-3">
-                          <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Qty Sold</p>
-                          <p className="font-bold text-[#111111]">{Math.round(c.qty)}</p>
-                        </div>
+                        <p className="shrink-0 text-[13px] font-black text-emerald-700">{formatCurrency(c.revenue)}</p>
                       </div>
                     ))}
                   </div>
@@ -2627,14 +2612,14 @@ export default function Dashboard() {
                     { label: 'Usage Rate', value: `${analytics.couponUsageRate.toFixed(1)}%`, icon: <TrendingUp size={18} />, from: 'from-violet-500 to-purple-600' },
                     { label: 'Unique Coupons', value: String(analytics.topCoupons.length), icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
                   ].map((card, i) => (
-                    <div key={i} className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
+                    <div key={i} className={`relative overflow-hidden rounded-2xl p-3 sm:p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
                       <div className="absolute inset-0 bg-gradient-to-tl from-white/30 via-white/10 to-transparent" />
                       <div className="relative z-10">
-                        <div className="flex items-center justify-between mb-3">
-                          <p className="text-[10px] uppercase font-black text-white/80 tracking-wider">{card.label}</p>
-                          <div className="w-9 h-9 rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-sm">{card.icon}</div>
+                        <div className="flex items-center justify-between mb-1.5 sm:mb-3 gap-1.5">
+                          <p className="text-[8.5px] sm:text-[10px] uppercase font-black text-white/80 tracking-wider leading-tight">{card.label}</p>
+                          <div className="w-6 h-6 sm:w-9 sm:h-9 shrink-0 rounded-lg sm:rounded-xl bg-white/25 backdrop-blur-sm flex items-center justify-center text-white shadow-sm [&_svg]:w-3.5 [&_svg]:h-3.5 sm:[&_svg]:w-[18px] sm:[&_svg]:h-[18px]">{card.icon}</div>
                         </div>
-                        <p className="text-[22px] font-extrabold text-white drop-shadow-sm truncate">{card.value}</p>
+                        <p className="text-[14px] sm:text-[22px] font-extrabold text-white drop-shadow-sm break-words leading-snug">{card.value}</p>
                       </div>
                     </div>
                   ))}
@@ -2699,26 +2684,17 @@ export default function Dashboard() {
                       <h3 className="text-[15px] font-bold text-[#111111]">All Coupons Performance</h3>
                       <span className="text-[11px] font-bold text-[#10B981]">{analytics.topCoupons.length} coupons</span>
                     </div>
-                    <div className="space-y-3 md:hidden">
+                    <div className="md:hidden rounded-xl border border-[#FDDBB4]/30 divide-y divide-[#FDDBB4]/20 overflow-hidden bg-white">
                       {analytics.topCoupons.map((coupon, i) => (
-                        <div key={coupon.code} className="rounded-2xl border border-[#FDDBB4]/30 bg-[#FBFAF6] p-4">
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <p className="text-[13px] font-black text-[#9BAB9A]">#{i + 1}</p>
-                              <p className="text-[16px] font-bold text-[#111111] break-words">{coupon.code}</p>
-                            </div>
-                            <p className="text-[14px] font-black text-emerald-700">{formatCurrency(coupon.discounts)}</p>
-                          </div>
-                          <div className="mt-3 grid grid-cols-2 gap-3 text-[13px]">
-                            <div>
-                              <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Orders</p>
-                              <p className="font-bold text-[#111111]">{coupon.usage}</p>
-                            </div>
-                            <div>
-                              <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Avg Discount</p>
-                              <p className="font-semibold text-[#374151]">{coupon.usage > 0 ? formatCurrency(coupon.discounts / coupon.usage) : '-'}</p>
+                        <div key={coupon.code} className="flex items-start justify-between gap-2 px-3 py-2.5">
+                          <div className="min-w-0 flex items-start gap-2">
+                            <span className="text-[10px] font-bold text-[#9BAB9A] shrink-0 pt-0.5">#{i + 1}</span>
+                            <div className="min-w-0">
+                              <p className="truncate text-[13px] font-bold text-[#111111]">{coupon.code}</p>
+                              <p className="text-[11px] text-[#6B7280]">{coupon.usage} order{coupon.usage === 1 ? '' : 's'} · Avg {coupon.usage > 0 ? formatCurrency(coupon.discounts / coupon.usage) : '-'}</p>
                             </div>
                           </div>
+                          <p className="shrink-0 text-[13px] font-black text-emerald-700">{formatCurrency(coupon.discounts)}</p>
                         </div>
                       ))}
                     </div>
@@ -2820,13 +2796,13 @@ export default function Dashboard() {
                     </>
                   ) : (
                     <button type="submit" disabled={searchLoading}
-                      className="sm:col-span-2 min-h-[48px] flex items-center justify-center gap-2 rounded-xl bg-[#E87020] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#065F46] disabled:opacity-60">
+                      className="sm:col-span-2 min-h-[48px] flex items-center justify-center gap-2 rounded-xl bg-[#E87020] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#C85C10] disabled:opacity-60">
                       <Search size={14} /> {searchLoading ? l('Searching...','தேடுகிறது...') : l('Search Bills','தேடு')}
                     </button>
                   )}
                   {datePreset === 'custom' && (
                     <button type="submit" disabled={searchLoading}
-                      className="sm:col-span-2 lg:col-span-4 min-h-[48px] flex items-center justify-center gap-2 rounded-xl bg-[#E87020] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#065F46] disabled:opacity-60">
+                      className="sm:col-span-2 lg:col-span-4 min-h-[48px] flex items-center justify-center gap-2 rounded-xl bg-[#E87020] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#C85C10] disabled:opacity-60">
                       <Search size={14} /> {searchLoading ? l('Searching...','தேடுகிறது...') : l('Search Bills','தேடு')}
                     </button>
                   )}
