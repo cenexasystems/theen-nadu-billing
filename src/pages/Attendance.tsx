@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Users, Calendar, AlertTriangle, Plus, X, Edit2, LogIn, LogOut, Trash2 } from 'lucide-react'
+import { Users, Calendar, AlertTriangle, Plus, X, Edit2, LogIn, LogOut, Trash2, Download, Clock } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency } from '../lib/retail'
 
@@ -70,8 +70,12 @@ export default function Attendance() {
     }
   }, [selectedDate])
 
-  const [reportMonth, setReportMonth] = useState(() => new Date().toISOString().substring(0, 7))
-  const [reportData, setReportData] = useState<Record<string, { present: number, half: number, absent: number, leave: number }>>({})
+  type DateFilter = 'all' | 'daily' | 'weekly' | 'monthly' | 'custom'
+  const [dateFilter, setDateFilter] = useState<DateFilter>('monthly')
+  const [customFrom, setCustomFrom] = useState('')
+  const [customTo, setCustomTo] = useState('')
+  const [selectedStaffFilter, setSelectedStaffFilter] = useState<string>('all')
+  const [analyticsData, setAnalyticsData] = useState<AttendanceRecord[]>([])
   const [reportLoading, setReportLoading] = useState(false)
 
   useEffect(() => { void fetchData() }, [fetchData])
@@ -81,27 +85,47 @@ export default function Attendance() {
     const fetchReport = async () => {
       setReportLoading(true)
       try {
-        const startDate = `${reportMonth}-01`
-        const dateObj = new Date(`${reportMonth}-01T00:00:00`)
-        dateObj.setMonth(dateObj.getMonth() + 1); dateObj.setDate(0)
-        const endDate = dateObj.toISOString().split('T')[0]
-        const { data } = await supabase.from('attendance').select('*').gte('date', startDate).lte('date', endDate)
+        let query = supabase.from('attendance').select('*')
+        
+        const today = new Date()
+        let fromDate = ''
+        let toDate = ''
+
+        if (dateFilter === 'daily') {
+          // Adjust for local timezone
+          const localToday = new Date(today.getTime() - (today.getTimezoneOffset() * 60000))
+          fromDate = localToday.toISOString().split('T')[0]
+          toDate = fromDate
+        } else if (dateFilter === 'weekly') {
+          const curr = new Date(today)
+          const first = curr.getDate() - curr.getDay() + 1
+          const firstDay = new Date(curr.setDate(first))
+          const lastDay = new Date(curr.setDate(first + 6))
+          fromDate = new Date(firstDay.getTime() - (firstDay.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+          toDate = new Date(lastDay.getTime() - (lastDay.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+        } else if (dateFilter === 'monthly') {
+          const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+          const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+          fromDate = new Date(firstDay.getTime() - (firstDay.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+          toDate = new Date(lastDay.getTime() - (lastDay.getTimezoneOffset() * 60000)).toISOString().split('T')[0]
+        } else if (dateFilter === 'custom') {
+          fromDate = customFrom
+          toDate = customTo
+        }
+
+        if (fromDate) query = query.gte('date', fromDate)
+        if (toDate) query = query.lte('date', toDate)
+        if (selectedStaffFilter !== 'all') query = query.eq('staff_id', selectedStaffFilter)
+
+        const { data } = await query
         if (data) {
-          const stats: Record<string, { present: number, half: number, absent: number, leave: number }> = {}
-          data.forEach((r: AttendanceRecord) => {
-            if (!stats[r.staff_id]) stats[r.staff_id] = { present: 0, half: 0, absent: 0, leave: 0 }
-            if (r.status === 'present') stats[r.staff_id].present++
-            else if (r.status === 'half-day') stats[r.staff_id].half++
-            else if (r.status === 'absent') stats[r.staff_id].absent++
-            else if (r.status === 'leave') stats[r.staff_id].leave++
-          })
-          setReportData(stats)
+          setAnalyticsData(data as AttendanceRecord[])
         }
       } catch (e) { console.error(e) }
       finally { setReportLoading(false) }
     }
     void fetchReport()
-  }, [tab, reportMonth])
+  }, [tab, dateFilter, customFrom, customTo, selectedStaffFilter])
 
   const markAttendance = async (staffId: string, status: string) => {
     setAttendanceMap(p => ({ ...p, [staffId]: status }))
@@ -155,6 +179,62 @@ export default function Attendance() {
   const absentCount = activeStaff.filter(s => attendanceMap[s.id] === 'absent').length
   const leaveCount = activeStaff.filter(s => ['half-day', 'leave'].includes(attendanceMap[s.id])).length
 
+  // -- Analytics Calculations --
+  // Hours Logged
+  const totalHoursLogged = analyticsData.reduce((total, r) => {
+    if (r.clock_in && r.clock_out) {
+      const inTime = new Date(r.clock_in).getTime()
+      const outTime = new Date(r.clock_out).getTime()
+      if (outTime > inTime) {
+        return total + (outTime - inTime) / (1000 * 60 * 60)
+      }
+    }
+    return total
+  }, 0)
+
+  // Avg Attendance
+  const totalPresent = analyticsData.filter(r => r.status === 'present').length
+  const totalHalf = analyticsData.filter(r => r.status === 'half-day').length
+  const totalRecordedDays = analyticsData.length
+  const avgAttendanceScore = totalRecordedDays > 0 
+    ? Math.round(((totalPresent + (totalHalf * 0.5)) / totalRecordedDays) * 100) 
+    : 0
+
+  // Per-staff stats for the table
+  const staffStats = activeStaff.map(member => {
+    const records = analyticsData.filter(r => r.staff_id === member.id)
+    return {
+      ...member,
+      present: records.filter(r => r.status === 'present').length,
+      half: records.filter(r => r.status === 'half-day').length,
+      absent: records.filter(r => r.status === 'absent').length,
+      leave: records.filter(r => r.status === 'leave').length,
+    }
+  }).filter(member => selectedStaffFilter === 'all' || member.id === selectedStaffFilter)
+
+  const handleExportCsv = () => {
+    if (staffStats.length === 0) return
+    const headers = ['Staff Member', 'Role', 'Present', 'Half Day', 'Absent', 'Leave']
+    const rows = staffStats.map(s => [
+      `"${s.name}"`, 
+      `"${s.role}"`, 
+      s.present, 
+      s.half, 
+      s.absent, 
+      s.leave
+    ])
+    
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n')
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `staff_analytics_${dateFilter}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   return (
     <div className="p-4 sm:p-6 space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
@@ -175,7 +255,7 @@ export default function Attendance() {
         {(['today', 'report', 'staff'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
             className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === t ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>
-            {t === 'today' ? "Today's Attendance" : t === 'report' ? 'Monthly Report' : 'Staff Management'}
+            {t === 'today' ? "Today's Attendance" : t === 'report' ? 'Staff Reports & Analytics' : 'Staff Management'}
           </button>
         ))}
       </div>
@@ -329,18 +409,80 @@ export default function Attendance() {
         </div>
       )}
 
-      {/* MONTHLY REPORT TAB */}
+      {/* STAFF REPORTS & ANALYTICS TAB */}
       {tab === 'report' && (
-        <div className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-[#FDDBB4]/60 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="bg-purple-100 p-2.5 rounded-xl text-purple-600"><Calendar size={20} /></div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280]">Select Month</p>
-                <input type="month" value={reportMonth} onChange={e => setReportMonth(e.target.value)} className="font-black text-[#111111] bg-transparent outline-none" />
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-black text-[#111111] flex items-center gap-2">
+                <span className="text-yellow-500">🏆</span> STAFF REPORTS & ANALYTICS
+              </h2>
+              <p className="text-sm text-[#6B7280] font-bold mt-1">
+                Comprehensive performance tracking, attendance analysis, and service revenue contributions.
+              </p>
+            </div>
+            <button onClick={handleExportCsv} className="bg-[#00875A] text-white px-4 py-2.5 rounded-xl text-sm font-black flex items-center gap-2 hover:bg-[#006e49] shrink-0">
+              <Download size={16} /> EXCEL DOWNLOAD
+            </button>
+          </div>
+
+          {/* Filters */}
+          <div className="bg-white p-4 rounded-2xl border border-[#FDDBB4]/60 shadow-sm flex flex-wrap gap-4 sm:gap-8 items-end">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Date Range Filter</label>
+              <div className="flex bg-gray-100 rounded-xl p-1">
+                {(['all', 'daily', 'weekly', 'monthly', 'custom'] as const).map(f => (
+                  <button key={f} onClick={() => setDateFilter(f)}
+                    className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs font-black uppercase transition-colors ${dateFilter === f ? 'bg-[#111111] text-white' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+                    {f}
+                  </button>
+                ))}
               </div>
             </div>
+
+            <div className={`flex flex-wrap gap-4 transition-opacity ${dateFilter === 'custom' ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Custom From Date</label>
+                <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} disabled={dateFilter !== 'custom'}
+                  className="border border-[#FDDBB4]/60 bg-white p-2 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Custom To Date</label>
+                <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} disabled={dateFilter !== 'custom'}
+                  className="border border-[#FDDBB4]/60 bg-white p-2 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
+              </div>
+            </div>
+
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Selected Staff</label>
+              <select value={selectedStaffFilter} onChange={e => setSelectedStaffFilter(e.target.value)}
+                className="w-full border border-[#FDDBB4]/60 bg-white p-2 rounded-xl text-sm font-bold outline-none focus:border-[#E87020] appearance-none">
+                <option value="all">-- All Staff Members --</option>
+                {activeStaff.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            </div>
           </div>
+
+          {/* KPI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-[#FDDBB4]/60 shadow-sm">
+              <div className="flex items-center gap-2 text-purple-600 mb-2">
+                <Clock size={16} /> <span className="text-[11px] font-black uppercase tracking-wider">Hours Logged</span>
+              </div>
+              <p className="text-3xl font-black text-[#111111]">{Math.round(totalHoursLogged)}H</p>
+              <p className="text-xs font-bold text-[#6B7280] mt-1">Cumulative duration</p>
+            </div>
+            
+            <div className="bg-white p-5 rounded-2xl border border-[#FDDBB4]/60 shadow-sm">
+              <div className="flex items-center gap-2 text-green-600 mb-2">
+                <Users size={16} /> <span className="text-[11px] font-black uppercase tracking-wider">Avg Attendance</span>
+              </div>
+              <p className="text-3xl font-black text-[#111111]">{avgAttendanceScore}%</p>
+              <p className="text-xs font-bold text-[#6B7280] mt-1">Present score</p>
+            </div>
+          </div>
+
+          {/* Table */}
           <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -356,27 +498,24 @@ export default function Attendance() {
                 </thead>
                 <tbody>
                   {reportLoading ? (
-                    <tr><td colSpan={6} className="text-center p-8 text-[#6B7280] font-bold">Loading report...</td></tr>
-                  ) : activeStaff.length === 0 ? (
-                    <tr><td colSpan={6} className="text-center p-8 text-[#6B7280] font-bold">No active staff members.</td></tr>
-                  ) : activeStaff.map(member => {
-                    const stats = reportData[member.id] || { present: 0, half: 0, absent: 0, leave: 0 }
-                    return (
-                      <tr key={member.id} className="border-b border-[#FDDBB4]/30 hover:bg-[#FAFAFA]">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#FFF8F2] text-[#E87020] border border-[#FDDBB4] flex items-center justify-center font-black text-sm shrink-0 uppercase">{member.name.charAt(0)}</div>
-                            <span className="font-bold text-[#111111] text-sm">{member.name}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-sm text-[#374151]">{member.role}</td>
-                        <td className="px-4 py-3 text-center font-bold text-green-700">{stats.present}</td>
-                        <td className="px-4 py-3 text-center font-bold text-orange-600">{stats.half}</td>
-                        <td className="px-4 py-3 text-center font-bold text-red-700">{stats.absent}</td>
-                        <td className="px-4 py-3 text-center font-bold text-blue-700">{stats.leave}</td>
-                      </tr>
-                    )
-                  })}
+                    <tr><td colSpan={6} className="text-center p-8 text-[#6B7280] font-bold">Loading analytics...</td></tr>
+                  ) : staffStats.length === 0 ? (
+                    <tr><td colSpan={6} className="text-center p-8 text-[#6B7280] font-bold">No active staff members match the filters.</td></tr>
+                  ) : staffStats.map(member => (
+                    <tr key={member.id} className="border-b border-[#FDDBB4]/30 hover:bg-[#FAFAFA]">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-[#FFF8F2] text-[#E87020] border border-[#FDDBB4] flex items-center justify-center font-black text-sm shrink-0 uppercase">{member.name.charAt(0)}</div>
+                          <span className="font-bold text-[#111111] text-sm">{member.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-[#374151]">{member.role}</td>
+                      <td className="px-4 py-3 text-center font-bold text-green-700">{member.present}</td>
+                      <td className="px-4 py-3 text-center font-bold text-orange-600">{member.half}</td>
+                      <td className="px-4 py-3 text-center font-bold text-red-700">{member.absent}</td>
+                      <td className="px-4 py-3 text-center font-bold text-blue-700">{member.leave}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
