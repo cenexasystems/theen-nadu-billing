@@ -43,11 +43,11 @@ export default function LowStockAlarmModal({ triggerKey }: { triggerKey?: string
     const check = async () => {
       const { data } = await supabase
         .from('products')
-        .select('id, name, category, stock_quantity, low_stock_alert, is_active')
+        .select('id, name, category, stock_quantity, low_stock_alert, is_active, item_type')
         .eq('is_active', true)
       if (cancelled || !data) return
-      const low = (data as ProductStockRow[])
-        .filter(p => p.stock_quantity <= (p.low_stock_alert || 5))
+      const low = (data as (ProductStockRow & { item_type?: string })[])
+        .filter(p => p.item_type !== 'service' && p.stock_quantity <= (p.low_stock_alert || 5))
         .map(p => ({
           id: p.id, name: p.name, category: p.category,
           stock_quantity: p.stock_quantity, low_stock_alert: p.low_stock_alert || 5,
