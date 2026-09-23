@@ -1,5 +1,5 @@
-export const BRAND_EN = "Thenn Nadu Tailoring"
-export const BRAND_TA = "Thenn Nadu Tailoring"
+export const BRAND_EN = "Thenn Nadu"
+export const BRAND_TA = "Thenn Nadu"
 export const BRAND_SUBTITLE = 'Thenn Nadu Legacy'
 export const BRAND_LOGO = '/logo.png'
 
