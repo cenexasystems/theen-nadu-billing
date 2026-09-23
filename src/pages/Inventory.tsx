@@ -78,6 +78,7 @@ const getErrorMessage = (err: unknown, fallback: string) => {
 }
 
 const getStatus = (p: InventoryProduct) => {
+  if (p.item_type === 'service') return 'ok'   // Services have no physical stock
   if (p.stock_quantity <= 0) return 'out'
   if (p.stock_quantity <= (p.low_stock_alert || 5)) return 'low'
   return 'ok'
@@ -445,7 +446,7 @@ export default function Inventory() {
 
   const openAdjust = (product: InventoryProduct) => {
     const status = getStatus(product)
-    if (status === 'low' || status === 'out') play('alert')
+    if ((status === 'low' || status === 'out') && product.item_type !== 'service') play('alert')
     setAdjustModal({ product, adjustType: 'restock', qty: '1', note: '' })
     setNotice('')
   }

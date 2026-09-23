@@ -593,10 +593,43 @@ export default function Pos(props: PosProps = {}) {
         paymentMethod: paymentMode,
       }
       setInvoice(createdInvoice)
-      // Low stock check — show visual alert banner + sound
+
+      // ── Deduct stock + write audit log for physical products only ──
+      for (const item of items) {
+        // Skip manual items (no DB product) and service items
+        const productId = item.parentProductId ? item.parentProductId : toProductId(item.id)
+        if (!productId) continue
+        const product = products.find(p => p.id.toString() === productId.toString())
+        if (!product) continue
+        // Only deduct stock for physical products, not services
+        const isService = (item as { itemType?: string }).itemType === 'service' || product.itemType === 'service'
+        if (isService) continue
+        const oldQty = product.stockQuantity || 0
+        const newQty = Math.max(0, oldQty - item.qty)
+        // Update product stock in DB
+        await supabase.from('products')
+          .update({ stock_quantity: newQty, updated_at: new Date().toISOString() })
+          .eq('id', productId)
+        // Write to inventory_logs for audit trail
+        await supabase.from('inventory_logs').insert({
+          product_id: productId,
+          old_quantity: oldQty,
+          new_quantity: newQty,
+          adjustment: -(item.qty),
+          reason: 'sale',
+          reference_id: created.invoiceNo,
+        })
+      }
+
+      // Low stock check — show visual alert banner + sound (physical products only)
       const lowStockItems = items.flatMap(item => {
-        const product = products.find(p => p.id.toString() === item.id?.toString())
+        const productId = item.parentProductId ? item.parentProductId : toProductId(item.id)
+        if (!productId) return []
+        const product = products.find(p => p.id.toString() === productId.toString())
         if (!product) return []
+        // Skip service items — services have no physical stock
+        const isService = (item as { itemType?: string }).itemType === 'service' || product.itemType === 'service'
+        if (isService) return []
         const newStock = (product.stockQuantity || 0) - item.qty
         if (newStock <= (product.lowStockAlert || 5)) {
           return [{ name: item.name, stock: Math.max(0, newStock) }]
