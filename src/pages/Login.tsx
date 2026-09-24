@@ -1477,13 +1477,23 @@ export default function Dashboard() {
           </button>
         </div>
         {/* Mobile mini-header */}
-        <div className="flex lg:hidden items-center justify-between px-4 py-4 border-b border-white/10">
-          <Link to="/pos" title="Go to Billing Panel" className="flex items-center gap-3 min-w-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-emerald-900/40 shrink-0 overflow-hidden shadow-sm p-1 hover:scale-105 transition-transform">
-              <img src="/logo.png" alt="Thenn Nadu Tailoring logo" className="w-full h-full object-contain" />
+        <div className="flex lg:hidden items-center justify-between px-3 py-3 border-b border-white/10">
+          <Link to="/pos" title="Go to Billing Panel" className="flex items-center gap-2 min-w-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white border border-[#E87020]/40 shrink-0 overflow-hidden shadow-sm p-1">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-[16px] font-black text-white truncate">Thenn Nadu Tailoring</span>
+            <span className="text-[14px] font-black text-white truncate">Staff Dashboard</span>
           </Link>
+          <button
+            onClick={() => {
+              useAdminAuthStore.getState().logout()
+              navigate('/admin-login', { replace: true })
+            }}
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white hover:bg-white/20 shrink-0"
+            title="Logout"
+          >
+            <Power size={16} />
+          </button>
         </div>
         {/* Nav */}
         <nav
@@ -1497,11 +1507,11 @@ export default function Dashboard() {
               className={[
                 'shrink-0 flex flex-col lg:flex-row items-center justify-center lg:justify-start',
                 'gap-1 lg:gap-3',
-                'h-[56px] w-[64px] lg:w-full lg:h-[48px]',
+                'h-10 w-10 lg:w-full lg:h-[48px]',
                 sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:px-4',
                 'px-0 py-1 lg:py-0',
                 'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all overflow-hidden',
-                tab === item.id ? 'bg-white text-maroon-dark shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white',
+                tab === item.id ? 'bg-white text-[#E87020] shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white',
               ].join(' ')}
             >
               <span className="shrink-0 flex items-center gap-1">
@@ -1519,9 +1529,9 @@ export default function Dashboard() {
               navigate('/admin-login', { replace: true })
             }}
             className={[
-              'shrink-0 flex flex-col lg:flex-row items-center justify-center lg:justify-start',
+              'shrink-0 hidden lg:flex flex-col lg:flex-row items-center justify-center lg:justify-start',
               'gap-1 lg:gap-3',
-              'h-[56px] w-[64px] lg:w-full lg:h-[48px]',
+              'lg:w-full lg:h-[48px]',
               sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:px-4',
               'px-0 py-1 lg:py-0',
               'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all text-white/70 hover:bg-white/10 hover:text-white lg:mt-auto mb-1 lg:mb-4 overflow-hidden',
@@ -1575,7 +1585,7 @@ export default function Dashboard() {
               <>
 
             {/* Revenue KPIs - 5 cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
               {[
                 { label: l('Total Revenue', 'மொத்த வருவாய்'),    value: formatCurrency(analytics.totalCompletedRevenue), from: 'from-emerald-50 via-emerald-50/80 to-teal-50', iconBg: 'from-emerald-400 to-teal-500', icon: <RMIcon size={16} /> },
                 { label: l("Today's Sales",  'இன்றைய விற்பனை'),  value: formatCurrency(analytics.todaySales),            from: 'from-blue-50 via-blue-50/80 to-indigo-50', iconBg: 'from-blue-400 to-indigo-500', icon: <TrendingUp size={16} /> },
@@ -1793,7 +1803,7 @@ export default function Dashboard() {
             </div>
 
             {/* Status summary cards */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {[
                 { label: l('Total Requests', 'மொத்த கோரிக்கை'), val: analytics.waRequests,  bg: 'bg-blue-50',   color: 'text-blue-700',   border: 'border-blue-100' },
                 { label: l('Pending', 'நிலுவை'),                 val: analytics.waPending,   bg: 'bg-amber-50',  color: 'text-amber-700',  border: 'border-amber-100' },

@@ -223,42 +223,42 @@ function InventoryAnalytics({ products, categories }: { products: InventoryProdu
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3 sm:space-y-5">
       {/* Filters + Export */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-[#EEEBE3] flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white p-3 sm:p-4 rounded-2xl shadow-sm border border-[#EEEBE3] flex flex-wrap items-center justify-between gap-2 sm:gap-3">
         <div className="flex flex-wrap gap-2">
           {(['all', 'today', 'week', 'month', 'custom'] as DatePreset[]).map(p => (
             <button key={p} onClick={() => applyPreset(p)}
-              className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${datePreset === p ? 'text-white' : 'bg-white border border-[#EEEBE3] text-[#374151] hover:bg-[#FAFAF7]'}`}
+              className={`px-3 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-colors ${datePreset === p ? 'text-white' : 'bg-white border border-[#EEEBE3] text-[#374151] hover:bg-[#FAFAF7]'}`}
               style={datePreset === p ? { background: PRIMARY } : undefined}>
               {p === 'all' ? 'All Time' : p === 'today' ? 'Today' : p === 'week' ? 'This Week' : p === 'month' ? 'This Month' : 'Custom'}
             </button>
           ))}
-          <button onClick={() => applyPreset(datePreset)} className="w-9 h-9 flex items-center justify-center rounded-xl border border-[#EEEBE3] text-[#6B7280] hover:bg-[#FAFAF7]">
+          <button onClick={() => applyPreset(datePreset)} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl border border-[#EEEBE3] text-[#6B7280] hover:bg-[#FAFAF7]">
             <RefreshCw size={14} />
           </button>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <button onClick={downloadSnapshotCSV} className="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-colors">
-            <Download size={14} /> Export Snapshot CSV
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <button onClick={downloadSnapshotCSV} className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-black text-[10px] sm:text-xs uppercase tracking-wider transition-colors">
+            <Download size={14} /> Export Snapshot
           </button>
-          <button onClick={downloadMovementsCSV} className="flex items-center gap-2 text-white px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider hover:opacity-90" style={{ background: PRIMARY }}>
-            <Download size={14} /> Export Movements CSV
+          <button onClick={downloadMovementsCSV} className="flex-1 sm:flex-none flex items-center justify-center gap-2 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl font-black text-[10px] sm:text-xs uppercase tracking-wider hover:opacity-90" style={{ background: PRIMARY }}>
+            <Download size={14} /> Export Movements
           </button>
         </div>
       </div>
 
       {datePreset === 'custom' && (
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-[#EEEBE3] flex flex-wrap gap-3 items-center">
+        <div className="bg-white p-3 sm:p-4 rounded-2xl shadow-sm border border-[#EEEBE3] flex flex-wrap gap-2 sm:gap-3 items-center">
           <div className="flex items-center gap-2">
             <label className="text-[10px] font-black uppercase text-[#6B7280]">From</label>
             <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
-              className="border border-[#EEEBE3] rounded-lg px-3 py-1.5 text-sm font-bold outline-none focus:border-[#E87020]" />
+              className="border border-[#EEEBE3] rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-bold outline-none focus:border-[#E87020]" />
           </div>
           <div className="flex items-center gap-2">
             <label className="text-[10px] font-black uppercase text-[#6B7280]">To</label>
             <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}
-              className="border border-[#EEEBE3] rounded-lg px-3 py-1.5 text-sm font-bold outline-none focus:border-[#E87020]" />
+              className="border border-[#EEEBE3] rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-bold outline-none focus:border-[#E87020]" />
           </div>
         </div>
       )}
@@ -271,12 +271,14 @@ function InventoryAnalytics({ products, categories }: { products: InventoryProdu
           { label: 'Lost / Damaged', value: `${lost} Units`, icon: AlertTriangle, iconBg: 'bg-red-50', iconText: 'text-red-600' },
           { label: 'Net Stock Delta', value: `${netDelta > 0 ? '+' : ''}${netDelta} Units`, icon: TrendingUp, iconBg: 'bg-[#E87020]', iconText: 'text-white' },
         ].map(c => (
-          <div key={c.label} className="bg-white rounded-2xl border border-[#EEEBE3] p-4 shadow-sm">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${c.iconBg}`}>
+          <div key={c.label} className="bg-white rounded-2xl border border-[#FDDBB4]/40 p-3 sm:p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="order-2 sm:order-1">
+              <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-0.5 sm:mb-1">{c.label}</p>
+              <p className="text-[20px] sm:text-xl font-bold text-[#111111] leading-tight break-words">{c.value}</p>
+            </div>
+            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 order-1 sm:order-2 self-start sm:self-auto ${c.iconBg}`}>
               <c.icon size={16} className={c.iconText} />
             </div>
-            <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{c.label}</p>
-            <p className="text-xl font-black text-[#111111]">{c.value}</p>
           </div>
         ))}
       </div>
@@ -632,46 +634,48 @@ export default function Inventory() {
   const adjustColor = adjustModal ? ADJUST_COLOR_CLASSES[ADJUST_TYPES.find(t => t.key === adjustModal.adjustType)!.color] : null
 
   return (
-    <div className="p-4 sm:p-6 space-y-5">
+    <div className="px-4 py-4 sm:p-6 space-y-3 sm:space-y-5">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-lg sm:text-2xl font-black text-[#111111] flex items-center gap-2">
-          <Package size={20} className="sm:w-6 sm:h-6" style={{ color: PRIMARY }} /> Inventory &amp; Products
+        <h1 className="text-[14px] sm:text-2xl font-black text-[#111111] flex items-center gap-2">
+          <Package size={16} className="sm:w-6 sm:h-6" style={{ color: PRIMARY }} /> Inventory &amp; Products
         </h1>
-        <button onClick={() => { void fetchProducts(); void fetchCategories() }} className="flex items-center gap-2 bg-white border border-[#EEEBE3] px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-[#374151] hover:bg-[#FAFAF7]">
-          <RefreshCw size={14} /> Refresh
+        <button onClick={() => { void fetchProducts(); void fetchCategories() }} className="flex items-center gap-1.5 sm:gap-2 bg-white border border-[#EEEBE3] px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-sm font-bold text-[#374151] hover:bg-[#FAFAF7]">
+          <RefreshCw size={12} className="sm:w-3.5 sm:h-3.5" /> <span className="hidden sm:inline">Refresh</span>
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="grid grid-cols-2 sm:flex gap-1.5 bg-white border border-[#EEEBE3] rounded-2xl p-2 shadow-sm">
+      <div className="flex overflow-x-auto sm:flex-wrap gap-1.5 bg-white border border-[#EEEBE3] rounded-2xl p-1.5 sm:p-2 shadow-sm hide-scrollbar">
         {TABS.map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)}
-            className={`flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-2.5 rounded-xl font-black text-[11px] sm:text-sm transition-colors text-center ${activeTab === t.key ? 'text-white' : 'text-[#374151] hover:bg-[#FAFAF7]'}`}
+            className={`flex flex-1 sm:flex-none items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-black text-[11px] sm:text-sm transition-colors whitespace-nowrap ${activeTab === t.key ? 'text-white' : 'text-[#374151] hover:bg-[#FAFAF7]'}`}
             style={activeTab === t.key ? { background: PRIMARY } : undefined}>
             <t.icon size={14} className="shrink-0 sm:w-4 sm:h-4" />
-            <span className="truncate">{t.label}</span>
+            <span className="hidden sm:inline">{t.label}</span>
           </button>
         ))}
       </div>
 
       {/* ── STOCK MANAGEMENT TAB ── */}
       {activeTab === 'stock' && (
-        <div className="space-y-5">
+        <div className="space-y-3 sm:space-y-5">
           {/* Summary Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: 'Total SKUs', value: products.length, icon: Layers, iconBg: '', iconText: 'text-white', bgStyle: { background: PRIMARY } },
               { label: 'Total Stock', value: `${totalStock} Units`, icon: Box, iconBg: 'bg-emerald-50', iconText: 'text-emerald-600' },
               { label: 'Low Stock Items', value: lowCount, icon: AlertTriangle, iconBg: 'bg-amber-50', iconText: 'text-amber-600' },
               { label: 'Stock Valuation', value: formatCurrency(stockValue), icon: Wallet, iconBg: 'bg-orange-50', iconText: 'text-orange-600' },
             ].map((card, i) => (
-              <div key={i} className="rounded-2xl border border-[#EEEBE3] p-2.5 sm:p-4 shadow-sm bg-white min-w-0">
-                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center mb-1.5 sm:mb-3 ${card.iconBg}`} style={card.bgStyle}>
-                  <card.icon size={14} className={card.iconText} />
+              <div key={i} className="rounded-2xl border border-[#FDDBB4]/40 p-3 sm:p-4 shadow-sm bg-white min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="order-2 sm:order-1">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-0.5 sm:mb-1">{card.label}</p>
+                  <p className="text-[20px] sm:text-2xl font-bold text-[#111111] leading-tight break-words">{card.value}</p>
                 </div>
-                <p className="text-[8.5px] sm:text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-0.5 sm:mb-1 leading-tight">{card.label}</p>
-                <p className="text-[15px] sm:text-2xl font-black text-[#111111] break-words leading-snug">{card.value}</p>
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 order-1 sm:order-2 self-start sm:self-auto ${card.iconBg}`} style={card.bgStyle}>
+                  <card.icon size={16} className={card.iconText} />
+                </div>
               </div>
             ))}
           </div>
@@ -680,7 +684,7 @@ export default function Inventory() {
           <div className="relative">
             <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
             <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search SKU name, category..."
-              className="w-full pl-10 pr-4 py-3 bg-white border border-[#EEEBE3] rounded-2xl text-sm font-bold outline-none focus:border-[#E87020]" />
+              className="w-full pl-10 pr-4 py-2 sm:py-3 bg-white border border-[#EEEBE3] rounded-xl sm:rounded-2xl text-sm font-bold outline-none focus:border-[#E87020]" />
           </div>
 
           {/* Filters */}
@@ -698,13 +702,13 @@ export default function Inventory() {
               const isActive = key === filter
               return (
                 <button key={key} onClick={() => setFilter(key)}
-                  className={`px-4 py-2 rounded-xl text-xs font-black tracking-wide ${isActive ? activeClass : 'bg-white border border-[#EEEBE3] text-[#374151] hover:bg-[#FAFAF7]'}`}
+                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs font-black tracking-wide ${isActive ? activeClass : 'bg-white border border-[#EEEBE3] text-[#374151] hover:bg-[#FAFAF7]'}`}
                   style={isActive && key === 'all' ? { background: PRIMARY } : undefined}>
                   {label}
                 </button>
               )
             })}
-            <button onClick={() => { setSearch(''); setFilter('all') }} className="w-9 h-9 flex items-center justify-center rounded-xl border border-[#EEEBE3] text-[#6B7280] hover:bg-[#FAFAF7]">
+            <button onClick={() => { setSearch(''); setFilter('all') }} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl border border-[#EEEBE3] text-[#6B7280] hover:bg-[#FAFAF7]">
               <RefreshCw size={14} />
             </button>
           </div>
@@ -716,7 +720,7 @@ export default function Inventory() {
                 <thead className="bg-[#FAFAF7] border-b border-[#EEEBE3]">
                   <tr>
                     {['Product', 'Category', 'Stock Level', 'Alert At', 'Selling Price', 'Actions'].map(h => (
-                      <th key={h} className="px-4 py-3 text-[11px] font-black uppercase tracking-wider text-[#374151] whitespace-nowrap">{h}</th>
+                      <th key={h} className="px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] font-black uppercase tracking-wider text-[#374151] whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -730,29 +734,29 @@ export default function Inventory() {
                     const pillClass = status === 'out' ? 'bg-red-100 text-red-700' : status === 'low' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
                     return (
                       <tr key={String(p.id)} className="border-b border-[#F0EEE9] hover:bg-[#FAFAF7]">
-                        <td className="px-4 py-3 font-bold text-[#111111] text-sm">{p.name}</td>
-                        <td className="px-4 py-3 text-sm text-[#374151]">{p.category || '—'}</td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black whitespace-nowrap ${pillClass}`}>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 font-bold text-[#111111] text-xs sm:text-sm whitespace-nowrap sm:whitespace-normal">{p.name}</td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-[#374151] whitespace-nowrap">{p.category || '—'}</td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3">
+                          <span className={`inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-black whitespace-nowrap ${pillClass}`}>
                             {p.stock_quantity} Units
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-[#374151] font-semibold">{p.low_stock_alert || 5}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-[#374151] font-semibold">{p.low_stock_alert || 5}</td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3">
                           <div className="flex items-center gap-1.5 whitespace-nowrap">
-                            <span className="text-sm font-black text-[#111111]">{formatCurrency(p.price)}</span>
+                            <span className="text-xs sm:text-sm font-black text-[#111111]">{formatCurrency(p.price)}</span>
                             <button onClick={() => startEditProduct(p)} className="text-[#9CA3AF] hover:text-[#111111]"><Edit2 size={12} /></button>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-3 sm:px-4 py-2 sm:py-3">
                           <div className="flex items-center gap-1.5">
                             <button onClick={() => openAdjust(p)}
-                              className="flex items-center gap-1 bg-[#FFF8F2] text-[#E87020] border border-[#FDDBB4] px-2.5 py-1.5 rounded-lg text-[11px] font-black hover:bg-orange-50">
-                              <RefreshCw size={11} /> Adjust
+                              className="flex items-center gap-1 bg-[#FFF8F2] text-[#E87020] border border-[#FDDBB4] px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg text-[10px] sm:text-[11px] font-black hover:bg-orange-50">
+                              <RefreshCw size={10} className="sm:w-3 sm:h-3" /> Adjust
                             </button>
                             <button onClick={() => void openLedger(p)}
-                              className="p-1.5 bg-gray-50 text-gray-500 hover:text-[#111111] hover:bg-gray-100 rounded-lg border border-transparent hover:border-[#EEEBE3]">
-                              <History size={13} />
+                              className="p-1 sm:p-1.5 bg-gray-50 text-gray-500 hover:text-[#111111] hover:bg-gray-100 rounded-lg border border-transparent hover:border-[#EEEBE3]">
+                              <History size={12} className="sm:w-3 sm:h-3" />
                             </button>
                           </div>
                         </td>
@@ -768,24 +772,24 @@ export default function Inventory() {
 
       {/* ── ADD / EDIT PRODUCTS TAB ── */}
       {activeTab === 'products' && (
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
           {/* Form */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleSaveProduct} className="bg-white rounded-2xl border border-[#EEEBE3] shadow-sm p-6 space-y-4">
+            <form onSubmit={handleSaveProduct} className="bg-white rounded-2xl border border-[#EEEBE3] shadow-sm p-4 sm:p-6 space-y-3 sm:space-y-4">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#FFF8F2] flex items-center justify-center shrink-0">
                   <Layers size={18} style={{ color: PRIMARY }} />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-base font-black text-[#111111]">{editingProduct ? 'Edit Product' : 'Add New Product to Catalog'}</h3>
+                    <h3 className="text-[14px] sm:text-base font-black text-[#111111]">{editingProduct ? 'Edit Product' : 'Add New Product to Catalog'}</h3>
                     {editingProduct && (
                       <button type="button" onClick={resetProductForm} className="text-xs text-[#6B7280] hover:text-[#111111] font-bold">
                         + New Product
                       </button>
                     )}
                   </div>
-                  <p className="text-xs text-[#9CA3AF]">Set pricing, stock and category for this item.</p>
+                  <p className="text-[11px] sm:text-xs text-[#9CA3AF]">Set pricing, stock and category for this item.</p>
                 </div>
               </div>
 
@@ -796,17 +800,17 @@ export default function Inventory() {
               )}
 
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Product Name *</label>
+                <label className="block text-[11px] sm:text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Product Name *</label>
                 <input type="text" required value={productForm.name} onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full border border-[#EEEBE3] p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
+                  className="w-full border border-[#EEEBE3] p-2 sm:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
                   placeholder="e.g. Salwar Kameez Set" />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Category</label>
+                  <label className="block text-[11px] sm:text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Category</label>
                   <select value={productForm.category} onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))}
-                    className="w-full border border-[#EEEBE3] p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020] bg-white">
+                    className="w-full border border-[#EEEBE3] p-2 sm:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020] bg-white">
                     <option value="">Select Category</option>
                     {categories.filter(c => c.is_active).map(c => (
                       <option key={String(c.id)} value={c.name_en}>{c.name_en}</option>
@@ -814,37 +818,37 @@ export default function Inventory() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Low Stock Alert</label>
+                  <label className="block text-[11px] sm:text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Low Stock Alert</label>
                   <input type="number" min="0" value={productForm.low_stock_alert} onChange={e => setProductForm(f => ({ ...f, low_stock_alert: e.target.value }))}
-                    className="w-full border border-[#EEEBE3] p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
+                    className="w-full border border-[#EEEBE3] p-2 sm:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Selling Price *</label>
+                  <label className="block text-[11px] sm:text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Selling Price *</label>
                   <input type="number" required step="0.01" min="0" value={productForm.price} onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))}
-                    className="w-full border border-[#EEEBE3] p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
+                    className="w-full border border-[#EEEBE3] p-2 sm:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
                     placeholder="0.00" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Cost Price</label>
+                  <label className="block text-[11px] sm:text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Cost Price</label>
                   <input type="number" step="0.01" min="0" value={productForm.purchase_price} onChange={e => setProductForm(f => ({ ...f, purchase_price: e.target.value }))}
-                    className="w-full border border-[#EEEBE3] p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
+                    className="w-full border border-[#EEEBE3] p-2 sm:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]"
                     placeholder="0.00" />
                 </div>
                 <div>
-                  <label className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-emerald-600 mb-1.5"><Box size={11} /> Current Stock</label>
+                  <label className="flex items-center gap-1 text-[11px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-600 mb-1.5"><Box size={11} /> Current Stock</label>
                   <input type="number" min="0" value={productForm.stock_quantity} onChange={e => setProductForm(f => ({ ...f, stock_quantity: e.target.value }))}
-                    className="w-full border border-emerald-300 bg-emerald-50/40 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-emerald-500" />
+                    className="w-full border border-emerald-300 bg-emerald-50/40 p-2 sm:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-emerald-500" />
                 </div>
               </div>
-              <p className="text-[10px] text-[#9CA3AF] -mt-2">Cost price is for your records only — not used in billing.</p>
+              <p className="text-[10px] text-[#9CA3AF] -mt-1 sm:-mt-2">Cost price is for your records only — not used in billing.</p>
 
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Description / Notes (Optional)</label>
+                <label className="block text-[11px] sm:text-[10px] font-black uppercase tracking-wider text-[#374151] mb-1.5">Description / Notes (Optional)</label>
                 <textarea value={productForm.description} onChange={e => setProductForm(f => ({ ...f, description: e.target.value }))} rows={2}
-                  className="w-full border border-[#EEEBE3] p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020] resize-none"
+                  className="w-full border border-[#EEEBE3] p-2 sm:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020] resize-none"
                   placeholder="Product material, care instructions, or rack location notes..." />
               </div>
 
@@ -931,15 +935,15 @@ export default function Inventory() {
 
       {/* ── CATEGORIES TAB ── */}
       {activeTab === 'categories' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {/* Add Category */}
-          <div className="bg-white rounded-2xl shadow-sm border border-[#EEEBE3] p-5">
-            <h3 className="text-base font-black text-[#111111] mb-4 flex items-center gap-2"><Plus size={16} style={{ color: PRIMARY }} /> Add Category</h3>
+          <div className="bg-white rounded-2xl shadow-sm border border-[#EEEBE3] p-4 sm:p-5">
+            <h3 className="text-[14px] sm:text-base font-black text-[#111111] mb-3 sm:mb-4 flex items-center gap-2"><Plus size={16} style={{ color: PRIMARY }} /> Add Category</h3>
             <form onSubmit={handleAddCategory} className="flex gap-2">
               <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="e.g. Blouse, Saree, Lehenga"
-                className="flex-1 border border-[#EEEBE3] p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required />
+                className="flex-1 border border-[#EEEBE3] p-2 sm:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required />
               <button type="submit" disabled={savingCat}
-                className="text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:opacity-90 disabled:opacity-50" style={{ background: PRIMARY }}
+                className="text-white px-4 py-2 sm:py-2.5 rounded-xl text-sm font-bold hover:opacity-90 disabled:opacity-50" style={{ background: PRIMARY }}
                 onMouseEnter={e => (e.currentTarget.style.background = PRIMARY_DARK)} onMouseLeave={e => (e.currentTarget.style.background = PRIMARY)}>
                 Add
               </button>

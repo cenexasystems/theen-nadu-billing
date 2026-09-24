@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Receipt, Plus, Trash2, X, AlertTriangle, Download } from 'lucide-react'
+import { Receipt, Plus, Trash2, X, AlertTriangle, Download, List, Tags } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency } from '../lib/retail'
 
@@ -158,11 +158,11 @@ export default function Expenses() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-5">
+    <div className="px-4 py-4 md:p-6 space-y-3 md:space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
         <div className="flex items-center gap-3">
           <Receipt size={24} className="text-[#E87020]" />
-          <h2 className="text-[22px] font-black text-[#111111]">Expense Tracker</h2>
+          <h2 className="text-[18px] md:text-[22px] font-black text-[#111111]">Expense Tracker</h2>
         </div>
       </div>
 
@@ -174,13 +174,17 @@ export default function Expenses() {
       )}
 
       <div className="flex gap-2 bg-[#F3F4F6] rounded-2xl p-1.5 w-fit">
-        <button onClick={() => setTab('expenses')} className={`px-4 py-2 rounded-xl text-sm font-black transition-all ${tab === 'expenses' ? 'bg-[#E87020] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>Expenses</button>
-        <button onClick={() => setTab('categories')} className={`px-4 py-2 rounded-xl text-sm font-black transition-all ${tab === 'categories' ? 'bg-[#E87020] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>Categories</button>
+        <button onClick={() => setTab('expenses')} className={`flex items-center gap-2 h-10 px-3 md:px-4 rounded-xl text-sm font-black transition-all ${tab === 'expenses' ? 'bg-[#E87020] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+          <List size={16} /><span className="hidden md:inline">Expenses</span>
+        </button>
+        <button onClick={() => setTab('categories')} className={`flex items-center gap-2 h-10 px-3 md:px-4 rounded-xl text-sm font-black transition-all ${tab === 'categories' ? 'bg-[#E87020] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+          <Tags size={16} /><span className="hidden md:inline">Categories</span>
+        </button>
       </div>
 
       {tab === 'expenses' && (
-        <div className="space-y-5">
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="space-y-3 md:space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
             {[
               { label: 'Today', value: formatCurrency(totalToday), color: 'text-red-600' },
               { label: 'This Week', value: formatCurrency(totalWeek), color: 'text-red-600' },
@@ -188,7 +192,7 @@ export default function Expenses() {
               { label: 'This Year', value: formatCurrency(totalYear), color: 'text-red-600' },
               { label: 'Total All Time', value: formatCurrency(totalAll), color: 'text-[#111111]' },
             ].map((c, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-[#FDDBB4]/60 p-3 sm:p-4 shadow-sm">
+              <div key={i} className="bg-white rounded-2xl border border-[#FDDBB4]/40 p-3 shadow-sm">
                 <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{c.label}</p>
                 <p className={`text-[16px] xl:text-[20px] font-black ${c.color} truncate`} title={c.value}>{c.value}</p>
               </div>
@@ -196,29 +200,31 @@ export default function Expenses() {
           </div>
 
           {/* Filter bar */}
-          <div className="bg-white rounded-2xl border border-[#FDDBB4]/60 shadow-sm px-4 py-3 flex flex-wrap items-center gap-3">
-            {/* FROM date */}
-            <div className="flex items-center gap-2 border border-[#E5E7EB] rounded-xl px-3 py-2 bg-[#F9FAFB]">
-              <span className="text-[11px] font-black uppercase text-[#6B7280]">From</span>
-              <input
-                type="date"
-                value={filterFrom}
-                onChange={e => { setFilterFrom(e.target.value); setDatePreset('all') }}
-                className="text-[12px] font-semibold text-[#111111] bg-transparent outline-none"
-              />
-            </div>
-            {/* TO date */}
-            <div className="flex items-center gap-2 border border-[#E5E7EB] rounded-xl px-3 py-2 bg-[#F9FAFB]">
-              <span className="text-[11px] font-black uppercase text-[#6B7280]">To</span>
-              <input
-                type="date"
-                value={filterTo}
-                onChange={e => { setFilterTo(e.target.value); setDatePreset('all') }}
-                className="text-[12px] font-semibold text-[#111111] bg-transparent outline-none"
-              />
+          <div className="bg-white rounded-2xl border border-[#FDDBB4]/40 shadow-sm p-3 flex flex-col lg:flex-row lg:items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* FROM date */}
+              <div className="flex items-center gap-2 border border-[#E5E7EB] rounded-xl px-3 h-10 bg-[#F9FAFB] flex-1 min-w-[130px]">
+                <span className="text-[11px] font-black uppercase text-[#6B7280]">From</span>
+                <input
+                  type="date"
+                  value={filterFrom}
+                  onChange={e => { setFilterFrom(e.target.value); setDatePreset('all') }}
+                  className="text-[12px] font-semibold text-[#111111] bg-transparent outline-none w-full"
+                />
+              </div>
+              {/* TO date */}
+              <div className="flex items-center gap-2 border border-[#E5E7EB] rounded-xl px-3 h-10 bg-[#F9FAFB] flex-1 min-w-[130px]">
+                <span className="text-[11px] font-black uppercase text-[#6B7280]">To</span>
+                <input
+                  type="date"
+                  value={filterTo}
+                  onChange={e => { setFilterTo(e.target.value); setDatePreset('all') }}
+                  className="text-[12px] font-semibold text-[#111111] bg-transparent outline-none w-full"
+                />
+              </div>
             </div>
             {/* Period presets */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 lg:pb-0">
               <span className="shrink-0 text-[11px] font-black uppercase text-[#6B7280] mr-1">Period</span>
               {([
                 { id: 'all' as const, label: 'All Time' },
@@ -228,26 +234,26 @@ export default function Expenses() {
                 { id: 'year' as const, label: 'This Year' },
               ]).map(p => (
                 <button key={p.id} onClick={() => applyPreset(p.id)}
-                  className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] font-black uppercase whitespace-nowrap transition-all ${datePreset === p.id ? 'bg-[#111111] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111] border border-[#E5E7EB] bg-white'}`}>
+                  className={`shrink-0 h-8 px-3 rounded-full text-[11px] font-black uppercase whitespace-nowrap transition-all ${datePreset === p.id ? 'bg-[#111111] text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111] border border-[#E5E7EB] bg-white'}`}>
                   {p.label}
                 </button>
               ))}
             </div>
             {/* Spacer + Export CSV */}
-            <div className="ml-auto flex items-center gap-2">
-              <button onClick={handleExportCSV} className="flex items-center gap-2 border border-[#E5E7EB] bg-white text-[#374151] px-3 py-2 rounded-xl text-[12px] font-black hover:bg-[#F9FAFB] transition-colors">
-                <Download size={14} /> Export CSV
+            <div className="lg:ml-auto flex items-center gap-2">
+              <button onClick={handleExportCSV} className="flex-1 lg:flex-none flex justify-center items-center gap-2 border border-[#E5E7EB] bg-white text-[#374151] h-10 px-3 rounded-xl text-[12px] font-black hover:bg-[#F9FAFB] transition-colors">
+                <Download size={14} /> <span className="hidden sm:inline">Export</span>
               </button>
-              <button onClick={() => setShowModal(true)} disabled={dbError} className="bg-[#E87020] text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[#C85C10] disabled:opacity-50">
+              <button onClick={() => setShowModal(true)} disabled={dbError} className="flex-[2] lg:flex-none flex justify-center items-center gap-2 bg-[#E87020] text-white h-10 px-4 rounded-xl text-sm font-bold hover:bg-[#C85C10] disabled:opacity-50">
                 <Plus size={16} /> Record Expense
               </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/40 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/60">
+              <table className="w-full text-left whitespace-nowrap md:whitespace-normal">
+                <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/40">
                   <tr>
                     <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151]">Date</th>
                     <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151]">Category</th>
@@ -267,7 +273,7 @@ export default function Expenses() {
                     <tr key={exp.id} className="border-b border-[#FDDBB4]/30 hover:bg-[#FAFAFA]">
                       <td className="px-4 py-3 text-sm font-semibold text-[#111111]">{new Date(exp.expense_date).toLocaleDateString('en-MY')}</td>
                       <td className="px-4 py-3">
-                        <span className="bg-[#FFF8F2] text-[#E87020] border border-[#FDDBB4] px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider">
+                        <span className="bg-[#FFF8F2] text-[#E87020] border border-[#FDDBB4]/60 px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider">
                           {exp.expense_categories?.name || 'Unknown'}
                         </span>
                       </td>
@@ -286,17 +292,17 @@ export default function Expenses() {
       )}
 
       {tab === 'categories' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 p-5">
-            <h3 className="text-base font-black text-[#111111] mb-4">Add Category</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/40 p-4 md:p-5">
+            <h3 className="text-[14px] md:text-base font-black text-[#111111] mb-3 md:mb-4">Add Category</h3>
             <form onSubmit={handleAddCategory} className="flex gap-2">
-              <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="e.g. Utility Bills" className="flex-1 border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required disabled={dbError} />
-              <button type="submit" disabled={dbError} className="bg-[#E87020] text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-[#C85C10] disabled:opacity-50">Add</button>
+              <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="e.g. Utility Bills" className="flex-1 border border-[#FDDBB4]/60 h-10 px-3 rounded-xl text-[14px] font-bold outline-none focus:border-[#E87020]" required disabled={dbError} />
+              <button type="submit" disabled={dbError} className="bg-[#E87020] text-white h-10 px-4 rounded-xl text-[14px] font-bold hover:bg-[#C85C10] disabled:opacity-50">Add</button>
             </form>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/40 overflow-hidden">
             <table className="w-full text-left">
-              <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/60">
+              <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/40">
                 <tr>
                   <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151]">Category Name</th>
                   <th className="px-4 py-3 text-[11px] font-black uppercase text-[#374151] text-center">Status</th>
@@ -329,34 +335,34 @@ export default function Expenses() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-xl font-black text-[#111111]">Record Expense</h2>
+          <div className="bg-white rounded-2xl w-full max-w-sm md:max-w-md p-5 md:p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-4 md:mb-5">
+              <h2 className="text-[18px] md:text-xl font-black text-[#111111]">Record Expense</h2>
               <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-gray-100"><X size={18} /></button>
             </div>
             <form onSubmit={handleSaveExpense} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-black uppercase text-[#374151] mb-1.5">Date</label>
-                <input type="date" value={form.expense_date} onChange={e => setForm({...form, expense_date: e.target.value})} className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required />
+                <label className="block text-[11px] font-black uppercase text-[#374151] mb-1.5">Date</label>
+                <input type="date" value={form.expense_date} onChange={e => setForm({...form, expense_date: e.target.value})} className="w-full border border-[#FDDBB4]/60 h-10 px-3 rounded-xl text-[14px] font-bold outline-none focus:border-[#E87020]" required />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase text-[#374151] mb-1.5">Category</label>
-                <select value={form.category_id} onChange={e => setForm({...form, category_id: e.target.value})} className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020] bg-white" required>
+                <label className="block text-[11px] font-black uppercase text-[#374151] mb-1.5">Category</label>
+                <select value={form.category_id} onChange={e => setForm({...form, category_id: e.target.value})} className="w-full border border-[#FDDBB4]/60 h-10 px-3 rounded-xl text-[14px] font-bold outline-none focus:border-[#E87020] bg-white" required>
                   <option value="">Select Category</option>
                   {categories.filter(c => c.is_active).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase text-[#374151] mb-1.5">Amount (RM)</label>
-                <input type="number" step="0.01" min="0" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required placeholder="0.00" />
+                <label className="block text-[11px] font-black uppercase text-[#374151] mb-1.5">Amount (RM)</label>
+                <input type="number" step="0.01" min="0" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} className="w-full border border-[#FDDBB4]/60 h-10 px-3 rounded-xl text-[14px] font-bold outline-none focus:border-[#E87020]" required placeholder="0.00" />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase text-[#374151] mb-1.5">Description / Note</label>
-                <input type="text" value={form.description} onChange={e => setForm({...form, description: e.target.value})} className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" placeholder="Optional details..." />
+                <label className="block text-[11px] font-black uppercase text-[#374151] mb-1.5">Description / Note</label>
+                <input type="text" value={form.description} onChange={e => setForm({...form, description: e.target.value})} className="w-full border border-[#FDDBB4]/60 h-10 px-3 rounded-xl text-[14px] font-bold outline-none focus:border-[#E87020]" placeholder="Optional details..." />
               </div>
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-gray-100 p-3 rounded-xl font-bold text-sm hover:bg-gray-200">Cancel</button>
-                <button type="submit" disabled={submitting} className="flex-1 bg-[#E87020] text-white p-3 rounded-xl font-bold text-sm hover:bg-[#C85C10] disabled:opacity-50">{submitting ? 'Saving...' : 'Save Expense'}</button>
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-gray-100 h-10 rounded-xl font-bold text-[14px] hover:bg-gray-200">Cancel</button>
+                <button type="submit" disabled={submitting} className="flex-1 bg-[#E87020] text-white h-10 rounded-xl font-bold text-[14px] hover:bg-[#C85C10] disabled:opacity-50">{submitting ? 'Saving...' : 'Save Expense'}</button>
               </div>
             </form>
           </div>

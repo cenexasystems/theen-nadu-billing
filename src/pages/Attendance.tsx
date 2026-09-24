@@ -236,13 +236,13 @@ export default function Attendance() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-5">
+    <div className="p-3 md:p-6 space-y-3 md:space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
-        <h1 className="text-2xl font-black text-[#111111] flex items-center gap-2"><Users size={24} className="text-[#E87020]" /> Attendance & Staff</h1>
+        <h1 className="text-xl md:text-2xl font-black text-[#111111] flex items-center gap-2"><Users size={24} className="text-[#E87020]" /> Attendance & Staff</h1>
       </div>
 
       {dbError && (
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-xl flex items-start gap-3">
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 md:p-4 rounded-xl flex items-start gap-3">
           <AlertTriangle size={20} className="shrink-0 mt-0.5" />
           <div>
             <p className="font-black text-sm">Database tables not set up yet!</p>
@@ -254,7 +254,7 @@ export default function Attendance() {
       <div className="flex gap-2 flex-wrap">
         {(['today', 'report', 'staff'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${tab === t ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>
+            className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-xl font-bold text-[11px] md:text-sm transition-colors ${tab === t ? 'bg-[#E87020] text-white' : 'bg-white border border-[#FDDBB4]/60 text-[#374151] hover:bg-orange-50'}`}>
             {t === 'today' ? "Today's Attendance" : t === 'report' ? 'Staff Reports & Analytics' : 'Staff Management'}
           </button>
         ))}
@@ -262,24 +262,24 @@ export default function Attendance() {
 
       {/* TODAY TAB */}
       {tab === 'today' && (
-        <div className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-[#FDDBB4]/60 shadow-sm">
+        <div className="space-y-3 md:space-y-5">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 md:gap-4 bg-white p-3 md:p-4 rounded-2xl border border-[#FDDBB4]/40 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="bg-orange-100 p-2.5 rounded-xl text-orange-600"><Calendar size={20} /></div>
+              <div className="bg-orange-100 p-2 md:p-2.5 rounded-xl text-orange-600"><Calendar size={20} /></div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-wider text-[#6B7280]">Select Date</p>
-                <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} className="font-black text-[#111111] bg-transparent outline-none" />
+                <p className="text-[10px] md:text-[11px] font-black uppercase tracking-wider text-[#6B7280]">Select Date</p>
+                <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} className="font-black text-[#111111] bg-transparent outline-none h-10" />
               </div>
             </div>
-            <div className="flex gap-4 sm:gap-6 flex-wrap">
-              <div className="text-center"><p className="text-[10px] font-black uppercase text-[#6B7280]">Total</p><p className="text-xl font-black">{activeStaff.length}</p></div>
-              <div className="text-center"><p className="text-[10px] font-black uppercase text-[#6B7280]">Present</p><p className="text-xl font-black text-green-600">{presentCount}</p></div>
-              <div className="text-center"><p className="text-[10px] font-black uppercase text-[#6B7280]">Absent</p><p className="text-xl font-black text-red-600">{absentCount}</p></div>
-              <div className="text-center"><p className="text-[10px] font-black uppercase text-[#6B7280]">Leave/Half</p><p className="text-xl font-black text-orange-600">{leaveCount}</p></div>
+            <div className="grid grid-cols-2 sm:flex gap-3 md:gap-6 w-full sm:w-auto">
+              <div className="text-center bg-gray-50 sm:bg-transparent rounded-lg p-2 sm:p-0"><p className="text-[10px] md:text-[11px] font-black uppercase text-[#6B7280]">Total</p><p className="text-lg md:text-xl font-black">{activeStaff.length}</p></div>
+              <div className="text-center bg-green-50 sm:bg-transparent rounded-lg p-2 sm:p-0"><p className="text-[10px] md:text-[11px] font-black uppercase text-[#6B7280]">Present</p><p className="text-lg md:text-xl font-black text-green-600">{presentCount}</p></div>
+              <div className="text-center bg-red-50 sm:bg-transparent rounded-lg p-2 sm:p-0"><p className="text-[10px] md:text-[11px] font-black uppercase text-[#6B7280]">Absent</p><p className="text-lg md:text-xl font-black text-red-600">{absentCount}</p></div>
+              <div className="text-center bg-orange-50 sm:bg-transparent rounded-lg p-2 sm:p-0"><p className="text-[10px] md:text-[11px] font-black uppercase text-[#6B7280]">Leave/Half</p><p className="text-lg md:text-xl font-black text-orange-600">{leaveCount}</p></div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/40 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/60">
@@ -334,7 +334,7 @@ export default function Attendance() {
                               }
                               return (
                                 <button key={s} onClick={() => void markAttendance(member.id, s)} disabled={dbError}
-                                  className={`px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider transition-all disabled:opacity-50 ${colorClass}`}>
+                                  className={`px-2 py-1 rounded-lg border text-[11px] font-black uppercase tracking-wider transition-all disabled:opacity-50 ${colorClass}`}>
                                   {s.replace('-', ' ')}
                                 </button>
                               )
@@ -353,14 +353,14 @@ export default function Attendance() {
 
       {/* STAFF TAB */}
       {tab === 'staff' && (
-        <div className="space-y-5">
+        <div className="space-y-3 md:space-y-5">
           <div className="flex justify-end">
             <button onClick={() => { setEditingStaff(null); setForm({ name: '', role: '', phone: '', base_salary: '' }); setShowModal(true) }} disabled={dbError}
-              className="bg-[#E87020] text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[#C85C10] disabled:opacity-50">
+              className="bg-[#E87020] text-white px-3 py-2 md:px-4 md:py-2 rounded-xl text-[11px] md:text-sm font-bold flex items-center gap-2 hover:bg-[#C85C10] disabled:opacity-50">
               <Plus size={16} /> Add Staff
             </button>
           </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/40 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/60">
@@ -411,52 +411,52 @@ export default function Attendance() {
 
       {/* STAFF REPORTS & ANALYTICS TAB */}
       {tab === 'report' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="space-y-3 md:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 md:gap-4">
             <div>
-              <h2 className="text-xl font-black text-[#111111] flex items-center gap-2">
+              <h2 className="text-lg md:text-xl font-black text-[#111111] flex items-center gap-2">
                 <span className="text-yellow-500">🏆</span> STAFF REPORTS & ANALYTICS
               </h2>
-              <p className="text-sm text-[#6B7280] font-bold mt-1">
+              <p className="text-xs md:text-sm text-[#6B7280] font-bold mt-1">
                 Comprehensive performance tracking, attendance analysis, and service revenue contributions.
               </p>
             </div>
-            <button onClick={handleExportCsv} className="bg-[#00875A] text-white px-4 py-2.5 rounded-xl text-sm font-black flex items-center gap-2 hover:bg-[#006e49] shrink-0">
+            <button onClick={handleExportCsv} className="bg-[#00875A] text-white px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-[11px] md:text-sm font-black flex items-center gap-2 hover:bg-[#006e49] shrink-0">
               <Download size={16} /> EXCEL DOWNLOAD
             </button>
           </div>
 
           {/* Filters */}
-          <div className="bg-white p-4 rounded-2xl border border-[#FDDBB4]/60 shadow-sm flex flex-wrap gap-4 sm:gap-8 items-end">
+          <div className="bg-white p-3 md:p-4 rounded-2xl border border-[#FDDBB4]/40 shadow-sm flex flex-col md:flex-row gap-3 md:gap-8 md:items-end">
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Date Range Filter</label>
-              <div className="flex bg-gray-100 rounded-xl p-1">
+              <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Date Range Filter</label>
+              <div className="flex flex-wrap bg-gray-100 rounded-xl p-1 gap-1">
                 {(['all', 'daily', 'weekly', 'monthly', 'custom'] as const).map(f => (
                   <button key={f} onClick={() => setDateFilter(f)}
-                    className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs font-black uppercase transition-colors ${dateFilter === f ? 'bg-[#111111] text-white' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+                    className={`px-2 py-1.5 sm:px-3 md:px-4 md:py-1.5 rounded-lg text-[10px] md:text-xs font-black uppercase transition-colors ${dateFilter === f ? 'bg-[#111111] text-white' : 'text-[#6B7280] hover:text-[#111111]'}`}>
                     {f}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className={`flex flex-wrap gap-4 transition-opacity ${dateFilter === 'custom' ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
+            <div className={`flex flex-col sm:flex-row gap-3 md:gap-4 transition-opacity ${dateFilter === 'custom' ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Custom From Date</label>
+                <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Custom From Date</label>
                 <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)} disabled={dateFilter !== 'custom'}
-                  className="border border-[#FDDBB4]/60 bg-white p-2 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
+                  className="w-full border border-[#FDDBB4]/40 bg-white p-2 h-10 rounded-xl text-xs md:text-sm font-bold outline-none focus:border-[#E87020]" />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Custom To Date</label>
+                <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Custom To Date</label>
                 <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)} disabled={dateFilter !== 'custom'}
-                  className="border border-[#FDDBB4]/60 bg-white p-2 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
+                  className="w-full border border-[#FDDBB4]/40 bg-white p-2 h-10 rounded-xl text-xs md:text-sm font-bold outline-none focus:border-[#E87020]" />
               </div>
             </div>
 
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-[10px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Selected Staff</label>
+            <div className="flex-1 w-full md:w-auto md:min-w-[200px]">
+              <label className="block text-[10px] md:text-[11px] font-black uppercase tracking-wider text-[#6B7280] mb-2">Selected Staff</label>
               <select value={selectedStaffFilter} onChange={e => setSelectedStaffFilter(e.target.value)}
-                className="w-full border border-[#FDDBB4]/60 bg-white p-2 rounded-xl text-sm font-bold outline-none focus:border-[#E87020] appearance-none">
+                className="w-full h-10 border border-[#FDDBB4]/40 bg-white p-2 rounded-xl text-xs md:text-sm font-bold outline-none focus:border-[#E87020] appearance-none">
                 <option value="all">-- All Staff Members --</option>
                 {activeStaff.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
@@ -464,26 +464,26 @@ export default function Attendance() {
           </div>
 
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-[#FDDBB4]/60 shadow-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+            <div className="bg-white p-3 md:p-5 rounded-2xl border border-[#FDDBB4]/40 shadow-sm">
               <div className="flex items-center gap-2 text-purple-600 mb-2">
                 <Clock size={16} /> <span className="text-[11px] font-black uppercase tracking-wider">Hours Logged</span>
               </div>
-              <p className="text-3xl font-black text-[#111111]">{Math.round(totalHoursLogged)}H</p>
-              <p className="text-xs font-bold text-[#6B7280] mt-1">Cumulative duration</p>
+              <p className="text-2xl md:text-3xl font-black text-[#111111]">{Math.round(totalHoursLogged)}H</p>
+              <p className="text-[10px] md:text-xs font-bold text-[#6B7280] mt-1">Cumulative duration</p>
             </div>
             
-            <div className="bg-white p-5 rounded-2xl border border-[#FDDBB4]/60 shadow-sm">
+            <div className="bg-white p-3 md:p-5 rounded-2xl border border-[#FDDBB4]/40 shadow-sm">
               <div className="flex items-center gap-2 text-green-600 mb-2">
                 <Users size={16} /> <span className="text-[11px] font-black uppercase tracking-wider">Avg Attendance</span>
               </div>
-              <p className="text-3xl font-black text-[#111111]">{avgAttendanceScore}%</p>
-              <p className="text-xs font-bold text-[#6B7280] mt-1">Present score</p>
+              <p className="text-2xl md:text-3xl font-black text-[#111111]">{avgAttendanceScore}%</p>
+              <p className="text-[10px] md:text-xs font-bold text-[#6B7280] mt-1">Present score</p>
             </div>
           </div>
 
           {/* Table */}
-          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/60 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#FDDBB4]/40 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-[#FAFAFA] border-b border-[#FDDBB4]/60">
@@ -524,32 +524,32 @@ export default function Attendance() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-xl font-black text-[#111111]">{editingStaff ? 'Edit Staff' : 'Add Staff'}</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 md:p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm md:max-w-md p-4 md:p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-4 md:mb-5">
+              <h2 className="text-lg md:text-xl font-black text-[#111111]">{editingStaff ? 'Edit Staff' : 'Add Staff'}</h2>
               <button onClick={() => setShowModal(false)} className="p-2 rounded-xl hover:bg-gray-100"><X size={18} /></button>
             </div>
-            <form onSubmit={handleSaveStaff} className="space-y-4">
+            <form onSubmit={handleSaveStaff} className="space-y-3 md:space-y-4">
               <div>
-                <label className="block text-[10px] font-black uppercase text-[#374151] mb-1.5">Full Name *</label>
-                <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required />
+                <label className="block text-[10px] md:text-[11px] font-black uppercase text-[#374151] mb-1.5">Full Name *</label>
+                <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full h-10 border border-[#FDDBB4]/40 p-2 md:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase text-[#374151] mb-1.5">Role / Job Title *</label>
-                <input type="text" value={form.role} onChange={e => setForm({...form, role: e.target.value})} placeholder="e.g. Tailor, Manager" className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required />
+                <label className="block text-[10px] md:text-[11px] font-black uppercase text-[#374151] mb-1.5">Role / Job Title *</label>
+                <input type="text" value={form.role} onChange={e => setForm({...form, role: e.target.value})} placeholder="e.g. Tailor, Manager" className="w-full h-10 border border-[#FDDBB4]/40 p-2 md:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" required />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase text-[#374151] mb-1.5">Phone Number</label>
-                <input type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="+60" className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
+                <label className="block text-[10px] md:text-[11px] font-black uppercase text-[#374151] mb-1.5">Phone Number</label>
+                <input type="tel" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="+60" className="w-full h-10 border border-[#FDDBB4]/40 p-2 md:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" />
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase text-[#374151] mb-1.5">Base Salary (RM)</label>
-                <input type="number" step="0.01" min="0" value={form.base_salary} onChange={e => setForm({...form, base_salary: e.target.value})} className="w-full border border-[#FDDBB4]/60 p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" placeholder="0.00" />
+                <label className="block text-[10px] md:text-[11px] font-black uppercase text-[#374151] mb-1.5">Base Salary (RM)</label>
+                <input type="number" step="0.01" min="0" value={form.base_salary} onChange={e => setForm({...form, base_salary: e.target.value})} className="w-full h-10 border border-[#FDDBB4]/40 p-2 md:p-2.5 rounded-xl text-sm font-bold outline-none focus:border-[#E87020]" placeholder="0.00" />
               </div>
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-gray-100 p-3 rounded-xl font-bold text-sm hover:bg-gray-200">Cancel</button>
-                <button type="submit" disabled={submitting} className="flex-1 bg-[#E87020] text-white p-3 rounded-xl font-bold text-sm hover:bg-[#C85C10] disabled:opacity-50">{submitting ? 'Saving...' : 'Save Staff'}</button>
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-gray-100 p-2 md:p-3 rounded-xl font-bold text-[11px] md:text-sm hover:bg-gray-200 h-10">Cancel</button>
+                <button type="submit" disabled={submitting} className="flex-1 bg-[#E87020] text-white p-2 md:p-3 rounded-xl font-bold text-[11px] md:text-sm hover:bg-[#C85C10] disabled:opacity-50 h-10">{submitting ? 'Saving...' : 'Save Staff'}</button>
               </div>
             </form>
           </div>
