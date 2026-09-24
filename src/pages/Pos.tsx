@@ -134,6 +134,7 @@ export default function Pos(props: PosProps = {}) {
   const [referenceNumber, setReferenceNumber] = useState('')
   const [tailorName, setTailorName] = useState('')
   const [billingDate, setBillingDate] = useState('') // '' = use current date/time
+  const [billingTime, setBillingTime] = useState('')
   const [paymentType, setPaymentType] = useState<string>('Cash')
   const [saving, setSaving] = useState(false)
   const [shipping, setShipping] = useState<string>('0')
@@ -378,6 +379,7 @@ export default function Pos(props: PosProps = {}) {
     setReferenceNumber('')
     setTailorName('')
     setBillingDate('')
+    setBillingTime('')
     setBillGstEnabled(false)
     setGstInput('')
     setGstType('percent')
@@ -550,9 +552,14 @@ export default function Pos(props: PosProps = {}) {
       // The RPC may store an incorrect total if items JSONB parsing differs.
       // This guarantees the correct client-computed values are always saved.
       // Determine the effective billing date/time
-      const effectiveBillingDate = billingDate.trim()
-        ? new Date(billingDate).toISOString()
-        : new Date().toISOString()
+      let effectiveBillingDate = new Date().toISOString()
+      if (billingDate.trim()) {
+        const now = new Date()
+        const h = now.getHours().toString().padStart(2, '0')
+        const m = now.getMinutes().toString().padStart(2, '0')
+        const s = now.getSeconds().toString().padStart(2, '0')
+        effectiveBillingDate = new Date(`${billingDate.trim()}T${h}:${m}:${s}`).toISOString()
+      }
       const { error: fixupError } = await supabase.from('orders').update({
         subtotal,
         total,
@@ -573,7 +580,7 @@ export default function Pos(props: PosProps = {}) {
         id: created.orderId,
         invoiceNo: created.invoiceNo,
         orderType: getOrderType(),
-        date: billingDate.trim() ? new Date(billingDate).toISOString() : created.createdAt,
+        date: effectiveBillingDate,
         items: [...items],
         subtotal,
         shipping: Number(shipping || 0),
@@ -965,72 +972,72 @@ export default function Pos(props: PosProps = {}) {
         <div className="flex-[2.1] flex flex-col gap-6 lg:overflow-y-auto lg:pb-4 hide-scrollbar">
 
           {/* Customer Details Card */}
-          <div className="bg-white rounded-2xl border border-[#FDDBB4]/40 shadow-sm p-4 md:p-5">
-            <h3 className="text-[18px] md:text-[14px] font-black text-[#111111] flex items-center gap-2 mb-4">
+          <div className="bg-white rounded-2xl border border-[#FDDBB4]/40 shadow-sm p-3 md:p-5">
+            <h3 className="text-[16px] md:text-[14px] font-black text-[#111111] flex items-center gap-2 mb-3 md:mb-4">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#E87020]"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
               Customer Details
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               <div>
-                <label className="block text-[13px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Customer Name</label>
+                <label className="block text-[11px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1">Customer Name</label>
                 <input
                   type="text"
                   value={customer.name}
                   onChange={e => setCustomer({...customer, name: e.target.value})}
                   placeholder="Enter name"
-                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-10 md:h-12 px-3 md:px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[14px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
-                <label className="block text-[13px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Mobile Number (WhatsApp)</label>
+                <label className="block text-[11px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1">Mobile Number (WhatsApp)</label>
                 <input
                   type="text"
                   value={customer.phone}
                   onChange={e => setCustomer({...customer, phone: e.target.value})}
                   placeholder="Enter WhatsApp number"
-                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-10 md:h-12 px-3 md:px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[14px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
-                <label className="block text-[13px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Remarks (Internal)</label>
+                <label className="block text-[11px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1">Remarks (Internal)</label>
                 <input
                   type="text"
                   value={remarks}
                   onChange={e => setRemarks(e.target.value)}
                   placeholder="Optional remarks"
-                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-10 md:h-12 px-3 md:px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[14px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
-                <label className="block text-[13px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Reference Number</label>
+                <label className="block text-[11px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1">Reference Number</label>
                 <input
                   type="text"
                   value={referenceNumber}
                   onChange={e => setReferenceNumber(e.target.value)}
                   placeholder="Optional ref no."
-                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-10 md:h-12 px-3 md:px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[14px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
-                <label className="block text-[13px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Tailor Name</label>
+                <label className="block text-[11px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1">Tailor Name</label>
                 <input
                   type="text"
                   value={tailorName}
                   onChange={e => setTailorName(e.target.value)}
                   placeholder="Optional tailor name"
-                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
+                  className="w-full h-10 md:h-12 px-3 md:px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[14px] md:text-[13px] font-bold text-[#111111] placeholder:text-gray-400 placeholder:font-medium"
                 />
               </div>
               <div>
-                <label className="block text-[13px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1.5">Billing Date (Optional)</label>
+                <label className="block text-[11px] md:text-[10px] font-black text-[#374151] tracking-wider uppercase mb-1">Billing Date (Optional)</label>
                 <input
                   id="pos-billing-date"
                   type="date"
                   value={billingDate}
                   onChange={e => setBillingDate(e.target.value)}
-                  className="w-full h-12 px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[16px] md:text-[13px] font-bold text-[#111111]"
+                  className="w-full h-10 md:h-12 px-3 md:px-4 bg-white border border-[#FDDBB4]/60 rounded-xl focus:outline-none focus:border-[#E87020] text-[14px] md:text-[13px] font-bold text-[#111111]"
                 />
-                <p className="mt-1 text-[10px] text-gray-400 font-medium">Leave blank to use today's date &amp; time</p>
+                <p className="mt-0.5 text-[10px] text-gray-400 font-medium">Leave blank to use today's date &amp; time</p>
               </div>
             </div>
           </div>
