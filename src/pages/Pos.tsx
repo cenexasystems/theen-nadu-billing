@@ -378,7 +378,6 @@ export default function Pos(props: PosProps = {}) {
     setReferenceNumber('')
     setTailorName('')
     setBillingDate('')
-    setBillingTime('')
     setBillGstEnabled(false)
     setGstInput('')
     setGstType('percent')
