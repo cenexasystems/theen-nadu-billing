@@ -334,7 +334,7 @@ function InventoryAnalytics({ products, categories }: { products: InventoryProdu
             <TrendingUp size={16} className="text-emerald-500" /> Highest Stock Value (Current)
           </h4>
           <div className="space-y-3">
-            {products.filter(p => p.stock_quantity > 0)
+            {products.filter(p => p.item_type !== 'service' && p.stock_quantity > 0)
               .sort((a, b) => (b.stock_quantity * b.price) - (a.stock_quantity * a.price))
               .slice(0, 5).map((p, i) => (
                 <div key={p.id} className="flex justify-between items-center p-3 rounded-xl bg-[#FAFAF7] border border-[#F0EEE9]">
@@ -348,7 +348,7 @@ function InventoryAnalytics({ products, categories }: { products: InventoryProdu
                   <p className="font-black text-emerald-600 shrink-0 ml-2">{formatCurrency(p.stock_quantity * p.price)}</p>
                 </div>
             ))}
-            {products.filter(p => p.stock_quantity > 0).length === 0 && <p className="text-sm text-slate-400 text-center py-4">No data.</p>}
+            {products.filter(p => p.item_type !== 'service' && p.stock_quantity > 0).length === 0 && <p className="text-sm text-slate-400 text-center py-4">No data.</p>}
           </div>
         </div>
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#EEEBE3]">
@@ -356,7 +356,7 @@ function InventoryAnalytics({ products, categories }: { products: InventoryProdu
             <PieChart size={16} className="text-purple-500" /> Stock by Category (Current)
           </h4>
           <div className="space-y-3">
-            {Object.entries(products.reduce((acc, p) => {
+            {Object.entries(products.filter(p => p.item_type !== 'service').reduce((acc, p) => {
               const cat = p.category || 'Uncategorised'
               acc[cat] = (acc[cat] || 0) + p.stock_quantity
               return acc
@@ -369,7 +369,7 @@ function InventoryAnalytics({ products, categories }: { products: InventoryProdu
                 <p className="font-black text-slate-600 shrink-0"><span className="text-purple-600">{qty}</span> items</p>
               </div>
             ))}
-            {categories.length === 0 && products.length === 0 && <p className="text-sm text-slate-400 text-center py-4">No data.</p>}
+            {products.filter(p => p.item_type !== 'service').length === 0 && <p className="text-sm text-slate-400 text-center py-4">No data.</p>}
           </div>
         </div>
       </div>
@@ -431,18 +431,20 @@ export default function Inventory() {
   }, [fetchProducts, fetchCategories])
 
   // ── Stock Management ──────────────────────────────────────────────
-  const filtered = products.filter(p => {
+  const physicalProducts = products.filter(p => p.item_type !== 'service')
+  
+  const filtered = physicalProducts.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || (p.category || '').toLowerCase().includes(search.toLowerCase())
     const status = getStatus(p)
     if (filter === 'all') return matchSearch
     return matchSearch && status === filter
   })
 
-  const okCount = products.filter(p => getStatus(p) === 'ok').length
-  const lowCount = products.filter(p => getStatus(p) === 'low').length
-  const outCount = products.filter(p => getStatus(p) === 'out').length
-  const stockValue = products.reduce((s, p) => s + (p.stock_quantity * p.price), 0)
-  const totalStock = products.reduce((s, p) => s + p.stock_quantity, 0)
+  const okCount = physicalProducts.filter(p => getStatus(p) === 'ok').length
+  const lowCount = physicalProducts.filter(p => getStatus(p) === 'low').length
+  const outCount = physicalProducts.filter(p => getStatus(p) === 'out').length
+  const stockValue = physicalProducts.reduce((s, p) => s + (p.stock_quantity * p.price), 0)
+  const totalStock = physicalProducts.reduce((s, p) => s + p.stock_quantity, 0)
 
   const openAdjust = (product: InventoryProduct) => {
     const status = getStatus(product)

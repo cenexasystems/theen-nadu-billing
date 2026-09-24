@@ -134,7 +134,6 @@ export default function Pos(props: PosProps = {}) {
   const [referenceNumber, setReferenceNumber] = useState('')
   const [tailorName, setTailorName] = useState('')
   const [billingDate, setBillingDate] = useState('') // '' = use current date/time
-  const [billingTime, setBillingTime] = useState('')
   const [paymentType, setPaymentType] = useState<string>('Cash')
   const [saving, setSaving] = useState(false)
   const [shipping, setShipping] = useState<string>('0')
